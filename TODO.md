@@ -2,8 +2,8 @@
 - [x] Iterator
 - [x] Bounded Stack
 - [x] Unbounded Stack
-- [ ] Bounded Queue
-- [ ] Unbounded Queue
+- [x] Bounded Queue
+- [x] Unbounded Queue
 - [ ] Deque
 - [ ] Circular List
 - [ ] ArrayList
