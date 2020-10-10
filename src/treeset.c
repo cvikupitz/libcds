@@ -26,38 +26,40 @@
 #include "treeset.h"
 
 /*
- * struct for a node inside the tree
+ * The struct for a node inside the tree
  */
 typedef struct node {
-    struct node *left;          /* pointer to left child node */
-    struct node *right;         /* pointer to right child node */
-    void *data;                 /* the stored node data */
-    unsigned int height;        /* height of node in tree */
+    struct node *left;          /* Pointer to left child node */
+    struct node *right;         /* Pointer to right child node */
+    void *data;                 /* The stored node data */
+    unsigned int height;        /* Height of node in tree */
 } Node;
 
 /*
- * struct for the treeset ADT
+ * The struct for the treeset ADT.
  */
 struct treeset {
-    int (*cmp)(void *, void *); /* comparator used for comparing items in tree */
-    Node *root;                 /* root node of the tree */
-    long size;                  /* the treeset's size */
+    int (*cmp)(void *, void *); /* Comparator used for comparing items in tree */
+    Node *root;                 /* Root node of the tree */
+    long size;                  /* The treeset's size */
 };
 
 /*
- * makeshift iterator for populating tree elements via tree traversal
+ * Makeshift iterator for populating tree elements via tree traversal.
  */
 typedef struct tree_iter {
-    void **items;       /* array of treeset items */
-    long next;          /* next index in iteration */
+    void **items;       /* Array of treeset items */
+    long next;          /* Next index in iteration */
 } TreeIter;
 
 Status treeset_new(TreeSet **tree, int (*comparator)(void *, void *)) {
 
+    /* Allocate the struct, check for allocation failures */
     TreeSet *temp = (TreeSet *)malloc(sizeof(TreeSet));
     if (temp == NULL)
         return STAT_ALLOC_FAILURE;
 
+    /* Initialize remaining struct members */
     temp->cmp = comparator;
     temp->root = NULL;
     temp->size = 0L;
@@ -67,8 +69,8 @@ Status treeset_new(TreeSet **tree, int (*comparator)(void *, void *)) {
 }
 
 /*
- * fetches and returns the node with the specified value, or NULL if the item is
- * not present
+ * Fetches and returns the node with the specified value, or NULL if the item is
+ * not present.
  */
 static Node *fetchNode(TreeSet *tree, void *data) {
 
@@ -83,16 +85,20 @@ static Node *fetchNode(TreeSet *tree, void *data) {
     return temp;
 }
 
-/* returns the height of the given node */
+/* Returns the height of the given node */
 #define HEIGHT(x) (x != NULL) ? x->height : 0
 
 /*
- * returns the MAXIMUM of the two specified values
+ * Returns the maximum of the two specified values.
  */
 static int maximum(unsigned int a, unsigned int b) {
     return (a > b) ? a : b;
 }
 
+/*
+ * Performs a rotation to the left on the specified node, updates the new
+ * heights, then returns the root of the new subtree.
+ */
 static Node *rotateWithRightChild(Node *node) {
 
     Node *temp = node->right;
@@ -104,6 +110,10 @@ static Node *rotateWithRightChild(Node *node) {
     return temp;
 }
 
+/*
+ * Performs a rotation to the right on the specified node, updates the new
+ * heights, then returns the root of the new subtree.
+ */
 static Node *rotateWithLeftChild(Node *node) {
 
     Node *temp = node->left;
@@ -115,18 +125,28 @@ static Node *rotateWithLeftChild(Node *node) {
     return temp;
 }
 
+/*
+ * Performs a left-right rotation on the specified node, then returns the
+ * root of the new subtree.
+ */
 static Node *doubleWithLeftChild(Node *node) { 
-
     node->left = rotateWithRightChild(node->right);
     return rotateWithLeftChild(node);
 }
 
+/*
+ * Performs a right-left rotation on the specified node, then returns the
+ * root of the new subtree.
+ */
 static Node *doubleWithRightChild(Node *node) {
-
     node->right = rotateWithLeftChild(node->left);
     return rotateWithRightChild(node);
 }
 
+/*
+ * Recursive method to insert the node 'node' into the new subtree with the
+ * specified root 'temp'. Returns the root of the new modified subtree.
+ */
 static Node *insertNode(Node *node, Node *temp, int (*cmp)(void *, void *)) {
 
     if (temp == NULL) {
@@ -162,11 +182,11 @@ static Node *insertNode(Node *node, Node *temp, int (*cmp)(void *, void *)) {
 
 Status treeset_add(TreeSet *tree, void *item) {
 
-    /* check to see if item is already present */
+    /* Checks if the element is already present */
     if ( fetchNode(tree, item) != NULL )
         return STAT_KEY_ALREADY_EXISTS;
 
-    /* Create node for insertion */
+    /* Allocates the node for insertion */
     Node *node = (Node *)malloc(sizeof(Node));
     if (node == NULL)
         return STAT_ALLOC_FAILURE;
@@ -174,7 +194,7 @@ Status treeset_add(TreeSet *tree, void *item) {
     node->left = node->right = NULL;
     node->height = 1;
 
-    /* insert node into tree, perform rebalancing as needed */
+    /* Inserts the node into the tree */
     tree->root = insertNode(node, tree->root, tree->cmp);
     tree->size++;
     
@@ -182,25 +202,22 @@ Status treeset_add(TreeSet *tree, void *item) {
 }
 
 Boolean treeset_contains(TreeSet *tree, void *item) {
-
     return ( fetchNode(tree, item) != NULL ) ? TRUE : FALSE;
 }
 
 /*
- * returns the node with the minimum value in the given subtree
+ * Fetches and returns the node with the minimum value in the given subtree.
  */
 static Node *getMin(Node *node) {
-
     while (node->left != NULL)
         node = node->left;
     return node;
 }
 
 /*
- * returns the node with the MAXIMUM value in the given subtree
+ * Fetches and returns the node with the maximum value in the given subtree.
  */
 static Node *getMax(Node *node) {
-
     while (node->right != NULL)
         node = node->right;
     return node;
@@ -208,7 +225,7 @@ static Node *getMax(Node *node) {
 
 Status treeset_first(TreeSet *tree, void **first) {
 
-    /* treeset is empty, do nothing */
+    /* Checks if the tree is currently empty */
     if (treeset_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
 
@@ -220,7 +237,7 @@ Status treeset_first(TreeSet *tree, void **first) {
 
 Status treeset_last(TreeSet *tree, void **last) {
 
-    /* treeset is empty, do nothing */
+    /* Checks if the tree is currently empty */
     if (treeset_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
 
@@ -235,13 +252,13 @@ Status treeset_floor(TreeSet *tree, void *item, void **floor) {
     Node *temp = NULL;
     Node *current = tree->root;
 
-    /* treeset is empty, no floor available */
+    /* Checks if the tree is currently empty */
     if (treeset_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
 
     while (current != NULL) {
         int cmp = (*tree->cmp)(item, current->data);
-        if (cmp == 0) {  /* value found, return as floor */
+        if (cmp == 0) {  /* Value found, return as floor */
             temp = current;
             break;
         }
@@ -265,13 +282,13 @@ Status treeset_ceiling(TreeSet *tree, void *item, void **ceiling) {
     Node *temp = NULL;
     Node *current = tree->root;
 
-    /* treeset is empty, no ceiling available */
+    /* Checks if the tree is currently empty */
     if (treeset_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
 
     while (current != NULL) {
         int cmp = (*tree->cmp)(item, current->data);
-        if (cmp == 0) {  /* value found, return as ceiling */
+        if (cmp == 0) {  /* Value found, return as ceiling */
             temp = current;
             break;
         }
@@ -295,7 +312,7 @@ Status treeset_lower(TreeSet *tree, void *item, void **lower) {
     Node *temp = NULL;
     Node *current = tree->root;
 
-    /* treeset is empty, no lower value available */
+    /* Checks if the tree is currently empty */
     if (treeset_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
 
@@ -321,7 +338,7 @@ Status treeset_higher(TreeSet *tree, void *item, void **higher) {
     Node *temp = NULL;
     Node *current = tree->root;
 
-    /* treeset is empty, no higher value available */
+    /* Checks if the tree is currently empty */
     if (treeset_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
 
@@ -342,6 +359,10 @@ Status treeset_higher(TreeSet *tree, void *item, void **higher) {
     return STAT_SUCCESS;
 }
 
+/*
+ * Recursive method that removes the specified element from the specified subtree.
+ * Returns the root of the new modified subtree.
+ */
 static Node *deleteNode(Node *node, void *item, int (*cmp)(void *, void *), void (*destructor)(void *)) {
 
     int res = (*cmp)(node->data, item);
@@ -361,12 +382,12 @@ static Node *deleteNode(Node *node, void *item, int (*cmp)(void *, void *), void
 
 Status treeset_pollFirst(TreeSet *tree, void **first) {
 
-    /* fetch the minimum node from the tree */
+    /* Fetches the minimum node from the tree */
     Node *node = getMin(tree->root);
     if (node == NULL)
         return STAT_STRUCT_EMPTY;
 
-    /* remove the node, perform rebalance as needed */
+    /* Removes the node from the tree */
     *first = node->data;
     tree->root = deleteNode(tree->root, node->data, tree->cmp, NULL);
     tree->size--;
@@ -376,12 +397,12 @@ Status treeset_pollFirst(TreeSet *tree, void **first) {
 
 Status treeset_pollLast(TreeSet *tree, void **last) {
 
-    /* fetch the minimum node from the tree */
+    /* Fetches the maximum node from the tree */
     Node *node = getMax(tree->root);
     if (node == NULL)
         return STAT_STRUCT_EMPTY;
 
-    /* remove the node, perform rebalance as needed */
+    /* Removes the node from the tree */
     *last = node->data;
     tree->root = deleteNode(tree->root, node->data, tree->cmp, NULL);
     tree->size--;
@@ -391,16 +412,16 @@ Status treeset_pollLast(TreeSet *tree, void **last) {
 
 Status treeset_remove(TreeSet *tree, void *item, void (*destructor)(void *)) {
 
-    /* check if the tree is empty */
+    /* Checks if the tree is currently empty */
     if (tree->size == 0L)
         return STAT_STRUCT_EMPTY;
 
-    /* fetch the node from the tree */
+    /* Find the node in the tree, return error if not found */
     Node *node = fetchNode(tree, item);
     if (node == NULL)
         return STAT_NOT_FOUND;
 
-    /* remove the node, perform rebalance as needed */
+    /* Remove the node from the tree */
     tree->root = deleteNode(tree->root, item, tree->cmp, destructor);
     tree->size--;
 
@@ -408,7 +429,7 @@ Status treeset_remove(TreeSet *tree, void *item, void (*destructor)(void *)) {
 }
 
 /*
- * function used to clear out all tree items via a post-order traversal
+ * Function used to clear out all tree items via a post-order traversal.
  */
 static void clearTree(Node *node, void (*destructor)(void *)) {
 
@@ -423,24 +444,21 @@ static void clearTree(Node *node, void (*destructor)(void *)) {
 }
 
 void treeset_clear(TreeSet *tree, void (*destructor)(void *)) {
-
     clearTree(tree->root, destructor);
     tree->root = NULL;
     tree->size = 0L;
 }
 
 long treeset_size(TreeSet *tree) {
-
     return tree->size;
 }
 
 Boolean treeset_isEmpty(TreeSet *tree) {
-
     return ( tree->size == 0L ) ? TRUE : FALSE;
 }
 
 /*
- * populates the array with treeset tiems via an in-order traversal
+ * Populates the array with treeset items via an in-order traversal.
  */
 static void populateArray(TreeIter *iter, Node *node) {
 
@@ -452,25 +470,24 @@ static void populateArray(TreeIter *iter, Node *node) {
 }
 
 /*
- * local method to allocate and create an array representation
- * of the treeset
+ * Local method to allocate and create an array representation of the treeset.
  */
 static Status generateArray(TreeSet *tree, void ***array, long *len) {
 
     size_t bytes;
     void **items = NULL;
 
-    /* do not create array if empty */
+    /* Does not create the array if empty */
     if (treeset_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
 
-    /* allocate memory for the array */
+    /* Allocates memory for the array */
     bytes = ( tree->size * sizeof(void *) );
     items = (void **)malloc(bytes);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
-    /* populate array with treeset items */
+    /* Populates the array with treeset items */
     TreeIter iter = {items, 0L};
     populateArray(&iter, tree->root);
     *len = tree->size;
@@ -480,7 +497,6 @@ static Status generateArray(TreeSet *tree, void ***array, long *len) {
 }
 
 Status treeset_toArray(TreeSet *tree, void ***array, long *len) {
-
     return generateArray(tree, array, len);
 }
 
@@ -490,12 +506,12 @@ Status treeset_iterator(TreeSet *tree, Iterator **iter) {
     void **items = NULL;
     long len;
 
-    /* generate the array of treeset items for iterator */
+    /* Generates the array of treeset items for iterator */
     Status status = generateArray(tree, &items, &len);
     if (status != STAT_SUCCESS)
         return status;
 
-    /* create a new iterator with the list items */
+    /* Creates a new iterator with the list items */
     status = iterator_new(&temp, items, len);
     if (status != STAT_SUCCESS) {
         free(items);
@@ -507,7 +523,6 @@ Status treeset_iterator(TreeSet *tree, Iterator **iter) {
 }
 
 void treeset_destroy(TreeSet *tree, void (*destructor)(void *)) {
-
     clearTree(tree->root, destructor);
     free(tree);
 }

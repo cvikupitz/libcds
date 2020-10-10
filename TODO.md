@@ -11,7 +11,7 @@
 - [x] Heap
 - [x] HashMap
 - [x] HashSet
-- [ ] TreeSet
+- [x] TreeSet
 
 ### Testing
 - [ ] Iterator
