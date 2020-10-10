@@ -6,7 +6,7 @@
 - [x] Unbounded Queue
 - [x] Deque
 - [x] Circular List
-- [ ] ArrayList
+- [x] ArrayList
 - [ ] LinkedList
 - [ ] Heap
 - [ ] HashMap
