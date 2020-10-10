@@ -4,7 +4,7 @@
 - [x] Unbounded Stack
 - [x] Bounded Queue
 - [x] Unbounded Queue
-- [ ] Deque
+- [x] Deque
 - [ ] Circular List
 - [ ] ArrayList
 - [ ] LinkedList
