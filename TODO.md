@@ -8,7 +8,7 @@
 - [x] Circular List
 - [x] ArrayList
 - [x] LinkedList
-- [ ] Heap
+- [x] Heap
 - [ ] HashMap
 - [ ] HashSet
 - [ ] TreeSet
