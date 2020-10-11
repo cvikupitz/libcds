@@ -7,13 +7,16 @@ CFLAGS=-W -Wall -g
 IFLAG=-Iinclude
 LFLAGS=-L. -lcds
 CUNIT=-lcunit
-OBJS=boundedstack_tests.o iterator_tests.o queue_tests.o stack_tests.o
-EXECS=boundedstack_tests iterator_tests queue_tests stack_tests
+OBJS=boundedqueue_tests.o boundedstack_tests.o iterator_tests.o queue_tests.o \
+     stack_tests.o
+EXECS=boundedqueue_tests boundedstack_tests iterator_tests queue_tests stack_tests
 
 # Builds executable for all tests
 all: $(EXECS)
 
 # Builds executables to separately run ADT tests
+boundedqueue_tests: boundedqueue_tests.o
+	$(CC) $(CFLAGS) $(IFLAG) boundedqueue_tests.o -o boundedqueue_tests $(LFLAGS) $(CUNIT)
 boundedstack_tests: boundedstack_tests.o
 	$(CC) $(CFLAGS) $(IFLAG) boundedstack_tests.o -o boundedstack_tests $(LFLAGS) $(CUNIT)
 iterator_tests: iterator_tests.o
@@ -28,6 +31,8 @@ clean:
 	rm -f $(OBJS) $(EXECS)
 
 # Builds the .obj files
+boundedqueue_tests.o:
+	$(CC) $(CFLAGS) $(IFLAG) -c boundedqueue_tests.c
 boundedstack_tests.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c boundedstack_tests.c
 iterator_tests.o:
