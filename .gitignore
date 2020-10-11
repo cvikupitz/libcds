@@ -66,3 +66,6 @@ linkedlist_tests
 queue_tests
 stack_tests
 treeset_tests
+
+# SWP Files
+.*.swp

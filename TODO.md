@@ -16,9 +16,9 @@
 ### Testing
 - [x] Iterator
 - [ ] Bounded Stack
-- [ ] Unbounded Stack
+- [x] Unbounded Stack
 - [ ] Bounded Queue
-- [ ] Unbounded Queue
+- [x] Unbounded Queue
 - [ ] Deque
 - [ ] Circular List
 - [ ] ArrayList
