@@ -26,19 +26,6 @@
 #include <CUnit/Basic.h>
 #include "stack.h"
 
-// test push
-// test peek
-// test pop
-// test size
-// test isEmpty
-// test size
-// test clear
-// test iterator
-  // test empty vs full
-// test array
-  // test empty vs full
-
-
 static void validateEmptyStack(Stack *stack) {
 
     Status stat;
@@ -72,7 +59,7 @@ void testEmptyStack() {
 
     stat = stack_new(&stack);
     if (stat != STAT_SUCCESS)
-        CU_FAIL("ERROR: testEmptyStack() - allocation failure");
+        CU_FAIL_FATAL("ERROR: testEmptyStack() - allocation failure");
     
     validateEmptyStack(stack);
     stack_destroy(stack, NULL);
@@ -87,7 +74,7 @@ void testSingleItem() {
 
     stat = stack_new(&stack);
     if (stat != STAT_SUCCESS)
-        CU_FAIL("ERROR: testSingleItem() - allocation failure");
+        CU_FAIL_FATAL("ERROR: testSingleItem() - allocation failure");
 
     stat = stack_push(stack, singleItem);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
@@ -115,7 +102,9 @@ void testSingleItem() {
     CU_PASS("testSingleItem() - Test Passed");
 }
 
+#define LEN 6
 static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple"};
+
 void testPushPop() {
     
     Stack *stack;
@@ -123,13 +112,13 @@ void testPushPop() {
 
     stat = stack_new(&stack);
     if (stat != STAT_SUCCESS)
-        CU_FAIL("ERROR: testPushPop() - allocation failure");
+        CU_FAIL_FATAL("ERROR: testPushPop() - allocation failure");
 
     int i;
     long size;
     Boolean isEmpty;
     char *element;
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < LEN; i++) {
         stat = stack_push(stack, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
         size = stack_size(stack);
@@ -141,14 +130,14 @@ void testPushPop() {
         CU_ASSERT_TRUE( strcmp(element, array[i]) == 0 );
     }
 
-    for (i = 5; i >= 0; i++) {
+    for (i = LEN - 1; i >= 0; i--) {
         stat = stack_pop(stack, (void **)&element);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
         CU_ASSERT_TRUE( strcmp(element, array[i]) == 0 );
         size = stack_size(stack);
         isEmpty = stack_isEmpty(stack);
-        CU_ASSERT_EQUAL(size, i + 1);
-        CU_ASSERT_EQUAL(isEmpty, FALSE);
+        CU_ASSERT_EQUAL(size, i);
+        CU_ASSERT_EQUAL( isEmpty, (size != 0L) ? FALSE : TRUE );
     }
 
     stack_destroy(stack, NULL);
@@ -162,8 +151,24 @@ void testStackToArray() {
 
     stat = stack_new(&stack);
     if (stat != STAT_SUCCESS)
-        CU_FAIL("ERROR: testStackToArray() - allocation failure");
+        CU_FAIL_FATAL("ERROR: testStackToArray() - allocation failure");
 
+    int i, j;
+    for (i = 0; i < LEN; i++) {
+        stat = stack_push(stack, array[i]);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    }
+
+    char **items;
+    long len;
+    stat = stack_toArray(stack, (void ***)&items, &len);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_EQUAL(len, LEN);
+
+    for (i = 0, j = LEN - 1; i < len; i++, j--)
+        CU_ASSERT_TRUE( strcmp(items[i], array[j]) == 0 );
+
+    free(items);
     stack_destroy(stack, NULL);
     CU_PASS("testStackToArray() - Test Passed");
 }
@@ -175,8 +180,27 @@ void testStackIterator() {
 
     stat = stack_new(&stack);
     if (stat != STAT_SUCCESS)
-        CU_FAIL("ERROR: testStackIterator() - allocation failure");
+        CU_FAIL_FATAL("ERROR: testStackIterator() - allocation failure");
 
+    int i;
+    for (i = 0; i < LEN; i++) {
+        stat = stack_push(stack, array[i]);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    }
+
+    Iterator *iter;
+    stat = stack_iterator(stack, &iter);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+
+    char *element;
+    i = LEN - 1;
+    while (iterator_hasNext(iter) == TRUE) {
+        stat = iterator_next(iter, (void **)&element);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        CU_ASSERT_TRUE( strcmp(element, array[i--]) == 0 );
+    }
+
+    iterator_destroy(iter);
     stack_destroy(stack, NULL);
     CU_PASS("testStackIterator() - Test Passed");
 }
@@ -188,10 +212,10 @@ void testStackClear() {
 
     stat = stack_new(&stack);
     if (stat != STAT_SUCCESS)
-        CU_FAIL("ERROR: testStackClear() - allocation failure");
+        CU_FAIL_FATAL("ERROR: testStackClear() - allocation failure");
 
     int i;
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < LEN; i++) {
         stat = stack_push(stack, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
