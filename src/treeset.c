@@ -378,6 +378,8 @@ static Node *deleteNode(Node *node, void *item, int (*cmp)(void *, void *), void
         free(node);
         node = NULL;
     }
+
+    return NULL;
 }
 
 Status treeset_pollFirst(TreeSet *tree, void **first) {

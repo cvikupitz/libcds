@@ -14,7 +14,7 @@
 - [x] TreeSet
 
 ### Testing
-- [ ] Iterator
+- [x] Iterator
 - [ ] Bounded Stack
 - [ ] Unbounded Stack
 - [ ] Bounded Queue
@@ -28,3 +28,9 @@
 - [ ] HashSet
 - [ ] TreeSet
 
+### Misc.
+- [ ] API Docs
+- [ ] README
+- [ ] Library Building
+- [ ] Repo Organization
+- [ ] Change Log

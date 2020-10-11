@@ -1,15 +1,19 @@
 CC=gcc
-CFLAGS=-W -Wall -g -c
+CFLAGS=-W -Wall -g
 INCLUDES=-Iinclude
+CUNIT=-lcunit
 OBJS=arraylist.o boundedqueue.o boundedstack.o circularlist.o \
      deque.o hashmap.o hashset.o heap.o iterator.o linkedlist.o \
      queue.o stack.o treeset.o
-LIBS=libcds.a
+LIB=libcds.a
+
+libcds.a: $(OBJS)
+	ar rcs $(LIB) $(OBJS)
 
 all: $(OBJS)
 
 clean:
-	rm -f $(OBJS) $(EXEC)
+	rm -f $(OBJS) $(LIB)
 
 arraylist.o: arraylist.c arraylist.h common.h iterator.h
 boundedqueue.o: boundedqueue.c boundedqueue.h common.h iterator.h
