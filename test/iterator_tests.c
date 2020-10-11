@@ -26,7 +26,7 @@
 #include <CUnit/Basic.h>
 #include "iterator.h"
 
-static void testEmptyIterator() {
+void testEmptyIterator() {
 
     Iterator *iter = NULL;
     Status stat;
@@ -48,7 +48,7 @@ static void testEmptyIterator() {
 
 static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple"};
 
-static void testIteration() {
+void testIteration() {
 
     Iterator *iter = NULL;
     Status stat;
