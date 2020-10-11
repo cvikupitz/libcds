@@ -1,3 +1,7 @@
+############################################
+# Makefile for libcds library
+# Author: Cole Vikupitz
+############################################
 CC=gcc
 CFLAGS=-W -Wall -g
 IFLAG=-Iinclude
@@ -6,14 +10,18 @@ OBJS=arraylist.o boundedqueue.o boundedstack.o circularlist.o \
      queue.o stack.o treeset.o
 LIB=libcds.a
 
+# Compiles and builds the static library
 $(LIB): $(OBJS)
 	ar -rcs $(LIB) $(OBJS)
 
+# Compiles .obj files for all ADTs
 all: $(OBJS)
 
+# Cleans up files
 clean:
 	rm -f $(OBJS) $(LIB)
 
+# Targets for compiling the .obj files
 arraylist.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c arraylist.c
 boundedqueue.o:
