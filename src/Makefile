@@ -6,8 +6,8 @@ OBJS=arraylist.o boundedqueue.o boundedstack.o circularlist.o \
      queue.o stack.o treeset.o
 LIB=libcds.a
 
-libcds.a: $(OBJS)
-	ar rcs $(LIB) $(OBJS)
+$(LIB): $(OBJS)
+	ar -rcs $(LIB) $(OBJS)
 
 all: $(OBJS)
 
