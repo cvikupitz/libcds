@@ -1,7 +1,6 @@
 CC=gcc
 CFLAGS=-W -Wall -g
-INCLUDES=-Iinclude
-CUNIT=-lcunit
+IFLAG=-Iinclude
 OBJS=arraylist.o boundedqueue.o boundedstack.o circularlist.o \
      deque.o hashmap.o hashset.o heap.o iterator.o linkedlist.o \
      queue.o stack.o treeset.o
@@ -15,16 +14,29 @@ all: $(OBJS)
 clean:
 	rm -f $(OBJS) $(LIB)
 
-arraylist.o: arraylist.c arraylist.h common.h iterator.h
-boundedqueue.o: boundedqueue.c boundedqueue.h common.h iterator.h
-boundedstack.o: boundedstack.c boundedstack.h common.h iterator.h
-circularlist.o: circularlist.c circularlist.h common.h iterator.h
-deque.o: deque.c deque.h common.h iterator.h
-hashmap.o: hashmap.c hashmap.h common.h iterator.h
-hashset.o: hashset.c hashset.h common.h iterator.h
-heap.o: heap.c heap.h common.h iterator.h
-iterator.o: iterator.c iterator.h common.h
-linkedlist.o: linkedlist.c linkedlist.h common.h iterator.h
-queue.o: queue.c queue.h common.h iterator.h
-stack.o: stack.c stack.h common.h iterator.h
-treeset.o: treeset.c treeset.h common.h iterator.h
+arraylist.o:
+	$(CC) $(CFLAGS) $(IFLAG) -c arraylist.c
+boundedqueue.o:
+	$(CC) $(CFLAGS) $(IFLAG) -c boundedqueue.c
+boundedstack.o: 
+	$(CC) $(CFLAGS) $(IFLAG) -c boundedstack.c
+circularlist.o: 
+	$(CC) $(CFLAGS) $(IFLAG) -c circularlist.c
+deque.o:
+	$(CC) $(CFLAGS) $(IFLAG) -c deque.c
+hashmap.o:
+	$(CC) $(CFLAGS) $(IFLAG) -c hashmap.c
+hashset.o:
+	$(CC) $(CFLAGS) $(IFLAG) -c hashset.c
+heap.o:
+	$(CC) $(CFLAGS) $(IFLAG) -c heap.c
+iterator.o: 
+	$(CC) $(CFLAGS) $(IFLAG) -c iterator.c
+linkedlist.o: 
+	$(CC) $(CFLAGS) $(IFLAG) -c linkedlist.c
+queue.o: 
+	$(CC) $(CFLAGS) $(IFLAG) -c queue.c
+stack.o:
+	$(CC) $(CFLAGS) $(IFLAG) -c stack.c
+treeset.o: 
+	$(CC) $(CFLAGS) $(IFLAG) -c treeset.c
