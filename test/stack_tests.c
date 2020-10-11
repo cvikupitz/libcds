@@ -1,18 +1,36 @@
-#include <stdio.h>
+/**
+ * MIT License
+ *
+ * Copyright (c) 2020 Cole Vikupitz
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 #include <stdlib.h>
-#include <CUnit/CUnit.h>
 #include <CUnit/Basic.h>
 #include "stack.h"
 
-static void testEmptyStack() {
+static void validateEmptyStack(Stack *stack) {
 
-    Stack *stack;
     Status stat;
-
-    stat = stack_new(&stack);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-
     int *element;
+    
     stat = stack_peek(stack, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
     stat = stack_pop(stack, (void **)&element);
@@ -32,48 +50,20 @@ static void testEmptyStack() {
     long len;
     stat = stack_toArray(stack, (void ***)&array, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
-    stack_destroy(stack, NULL);
-    CU_PASS("Suite testEmptyStack() tests passed.");
 }
 
-#define ITEM 99
-static void testSingleElement() {
+static void testEmptyStack() {
 
-    Stack *stack;
+    Stack *stack = NULL;
     Status stat;
 
     stat = stack_new(&stack);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-
-    int *item = (int *)malloc(sizeof(int));
-    if (item == NULL)
-        CU_FAIL("testSingleElement - allocation failure");
-    *item = ITEM;
-    stat = stack_push(stack, item);
-
-    int *element;
-    stat = stack_peek(stack, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_EQUAL(*element, ITEM);
-
-    long size = stack_size(stack);
-    CU_ASSERT_EQUAL(size, 1L);
-
-    Boolean isEmpty = stack_isEmpty(stack);
-    CU_ASSERT_EQUAL(isEmpty, FALSE);
+    if (stat != STAT_SUCCESS)
+        CU_FAIL("ERROR: testEmptyStack() - allocation failure");
     
-    Iterator *iter;
-    stat = stack_iterator(stack, &iter);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-
-    int **array;
-    long len;
-    stat = stack_toArray(stack, (void ***)&array, &len);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_EQUAL(*len, 1L);
-
-    CU_PASS("Suite testSingleElement() tests passed.");
+    validateEmptyStack(stack);
+    stack_destroy(stack, NULL);
+    CU_PASS("testEmptyStack() - Test Passed");
 }
 
 #define UNUSED __attribute__((unused))
@@ -89,7 +79,6 @@ int main(UNUSED int argc, UNUSED char **argv) {
     }
 
     CU_add_test(suite, "Empty stack", testEmptyStack);
-    CU_add_test(suite, "Single Element", testSingleElement);
     
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
