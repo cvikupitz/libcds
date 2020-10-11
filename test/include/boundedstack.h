@@ -181,6 +181,6 @@ Status boundedstack_iterator(BoundedStack *stack, Iterator **iter);
  * Returns:
  *    None
  */
-void boundedqueue_destroy(BoundedStack *stack, void (*destructor)(void *));
+void boundedstack_destroy(BoundedStack *stack, void (*destructor)(void *));
 
 #endif  /* _BOUNDED_STACK_H__ */
