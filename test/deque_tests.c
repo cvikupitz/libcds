@@ -29,139 +29,229 @@
 static void validateEmptyDeque(Deque *deque) {
 
     Status stat;
-    int *element;
+    char *element;
     
-    stat = deque_peek(queue, (void **)&element);
+    stat = deque_first(deque, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = queue_dequeue(queue, (void **)&element);
+    stat = deque_last(deque, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    stat = deque_removeFirst(deque, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    stat = deque_removeLast(deque, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
-    long size = queue_size(queue);
+    long size = deque_size(deque);
     CU_ASSERT_EQUAL(size, 0L);
 
-    Boolean isEmpty = queue_isEmpty(queue);
+    Boolean isEmpty = deque_isEmpty(deque);
     CU_ASSERT_EQUAL(isEmpty, TRUE);
     
     Iterator *iter;
-    stat = queue_iterator(queue, &iter);
+    stat = deque_iterator(deque, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
     int **array;
     long len;
-    stat = queue_toArray(queue, (void ***)&array, &len);
+    stat = deque_toArray(deque, (void ***)&array, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
 void testEmptyDeque() {
 
-    Deque *queue = NULL;
+    Deque *deque = NULL;
     Status stat;
 
-    stat = queue_new(&queue);
+    stat = deque_new(&deque);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEmptyDeque() - allocation failure");
     
-    validateEmptyDeque(queue);
-    queue_destroy(queue, NULL);
+    validateEmptyDeque(deque);
+    deque_destroy(deque, NULL);
     CU_PASS("testEmptyDeque() - Test Passed");
 }
 
 static char *singleItem = "Test";
-void testSingleItem() {
-    
-    Deque *queue;
+#define LEN 6
+static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple"};
+
+static void validateSingleItem(Deque *deque) {
+
     Status stat;
 
-    stat = queue_new(&queue);
-    if (stat != STAT_SUCCESS)
-        CU_FAIL_FATAL("ERROR: testSingleItem() - allocation failure");
-
-    stat = queue_enqueue(queue, singleItem);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-
-    long size = queue_size(queue);
-    Boolean isEmpty = queue_isEmpty(queue);
+    long size = deque_size(deque);
+    Boolean isEmpty = deque_isEmpty(deque);
     CU_ASSERT_EQUAL(size, 1L);
     CU_ASSERT_EQUAL(isEmpty, FALSE);
 
     char *element;
-    stat = queue_peek(queue, (void **)&element);
+    stat = deque_first(deque, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-
-    stat = queue_dequeue(queue, (void **)&element);
+    stat = deque_last(deque, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-
-    stat = queue_dequeue(queue, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
-    validateEmptyDeque(queue);
-    queue_destroy(queue, NULL);
-
-    CU_PASS("testSingleItem() - Test Passed");
 }
 
-#define LEN 6
-static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple"};
-
-void testEnqueueDequeue() {
+void testSingleItemFromFirst() {
     
-    Deque *queue;
+    Deque *deque;
+    Status stat;
+    char *element;
+
+    stat = deque_new(&deque);
+    if (stat != STAT_SUCCESS)
+        CU_FAIL_FATAL("ERROR: testSingleItemFromFirst() - allocation failure");
+
+    stat = deque_addFirst(deque, singleItem);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+
+    validateSingleItem(deque);
+    stat = deque_removeFirst(deque, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
+    stat = deque_removeFirst(deque, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+
+    validateEmptyDeque(deque);
+    deque_destroy(deque, NULL);
+
+    CU_PASS("testSingleItemFromFirst() - Test Passed");
+}
+
+void testSingleItemFromLast() {
+    
+    Deque *deque;
+    Status stat;
+    char *element;
+
+    stat = deque_new(&deque);
+    if (stat != STAT_SUCCESS)
+        CU_FAIL_FATAL("ERROR: testSingleItemFromLast() - allocation failure");
+
+    stat = deque_addLast(deque, singleItem);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+
+    validateSingleItem(deque);
+    stat = deque_removeLast(deque, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
+    stat = deque_removeLast(deque, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+
+    validateEmptyDeque(deque);
+    deque_destroy(deque, NULL);
+
+    CU_PASS("testSingleItemFromLast() - Test Passed");
+}
+
+void testEndequeDedequeFromFirst() {
+    
+    Deque *deque;
     Status stat;
 
-    stat = queue_new(&queue);
+    stat = deque_new(&deque);
     if (stat != STAT_SUCCESS)
-        CU_FAIL_FATAL("ERROR: testEnqueueDequeue() - allocation failure");
+        CU_FAIL_FATAL("ERROR: testEndequeDedequeFromFirst() - allocation failure");
 
     int i;
     long size;
     Boolean isEmpty;
     char *element;
     for (i = 0; i < LEN; i++) {
-        stat = queue_enqueue(queue, array[i]);
+        stat = deque_addFirst(deque, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        size = queue_size(queue);
-        isEmpty = queue_isEmpty(queue);
+        size = deque_size(deque);
+        isEmpty = deque_isEmpty(deque);
         CU_ASSERT_EQUAL(size, i + 1);
         CU_ASSERT_EQUAL(isEmpty, FALSE);
-        stat = queue_peek(queue, (void **)&element);
+        stat = deque_first(deque, (void **)&element);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        CU_ASSERT_TRUE( strcmp(element, array[i]) == 0 );
+        stat = deque_last(deque, (void **)&element);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
         CU_ASSERT_TRUE( strcmp(element, array[0]) == 0 );
     }
 
-    for (i = 0; i < 0; i++) {
-        stat = queue_dequeue(queue, (void **)&element);
+    for (i = LEN - 1; i >= 0; i--) {
+        stat = deque_removeFirst(deque, (void **)&element);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
         CU_ASSERT_TRUE( strcmp(element, array[i]) == 0 );
-        size = queue_size(queue);
-        isEmpty = queue_isEmpty(queue);
+        size = deque_size(deque);
+        isEmpty = deque_isEmpty(deque);
         CU_ASSERT_EQUAL(size, i);
         CU_ASSERT_EQUAL( isEmpty, (size != 0L) ? FALSE : TRUE );
     }
 
-    queue_destroy(queue, NULL);
-    CU_PASS("testEnqueueDequeue() - Test Passed");
+    stat = deque_removeFirst(deque, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    deque_destroy(deque, NULL);
+
+    CU_PASS("testEndequeDedequeFromFirst() - Test Passed");
+}
+
+void testEndequeDedequeFromLast() {
+    
+    Deque *deque;
+    Status stat;
+
+    stat = deque_new(&deque);
+    if (stat != STAT_SUCCESS)
+        CU_FAIL_FATAL("ERROR: testEndequeDedequeFromLast() - allocation failure");
+
+    int i;
+    long size;
+    Boolean isEmpty;
+    char *element;
+    for (i = 0; i < LEN; i++) {
+        stat = deque_addLast(deque, array[i]);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        size = deque_size(deque);
+        isEmpty = deque_isEmpty(deque);
+        CU_ASSERT_EQUAL(size, i + 1);
+        CU_ASSERT_EQUAL(isEmpty, FALSE);
+        stat = deque_first(deque, (void **)&element);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        CU_ASSERT_TRUE( strcmp(element, array[0]) == 0 );
+        stat = deque_last(deque, (void **)&element);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        CU_ASSERT_TRUE( strcmp(element, array[i]) == 0 );
+    }
+
+    for (i = LEN - 1; i >= 0; i--) {
+        stat = deque_removeLast(deque, (void **)&element);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        CU_ASSERT_TRUE( strcmp(element, array[i]) == 0 );
+        size = deque_size(deque);
+        isEmpty = deque_isEmpty(deque);
+        CU_ASSERT_EQUAL(size, i);
+        CU_ASSERT_EQUAL( isEmpty, (size != 0L) ? FALSE : TRUE );
+    }
+
+    stat = deque_removeLast(deque, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    deque_destroy(deque, NULL);
+
+    CU_PASS("testEndequeDedequeFromLast() - Test Passed");
 }
 
 void testDequeToArray() {
 
-    Deque *queue;
+    Deque *deque;
     Status stat;
 
-    stat = queue_new(&queue);
+    stat = deque_new(&deque);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testDequeToArray() - allocation failure");
 
     int i;
     for (i = 0; i < LEN; i++) {
-        stat = queue_enqueue(queue, array[i]);
+        stat = deque_addLast(deque, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
     char **items;
     long len;
-    stat = queue_toArray(queue, (void ***)&items, &len);
+    stat = deque_toArray(deque, (void ***)&items, &len);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_EQUAL(len, LEN);
 
@@ -169,27 +259,27 @@ void testDequeToArray() {
         CU_ASSERT_TRUE( strcmp(items[i], array[i]) == 0 );
 
     free(items);
-    queue_destroy(queue, NULL);
+    deque_destroy(deque, NULL);
     CU_PASS("testDequeToArray() - Test Passed");
 }
 
 void testDequeIterator() {
 
-    Deque *queue;
+    Deque *deque;
     Status stat;
 
-    stat = queue_new(&queue);
+    stat = deque_new(&deque);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testDequeIterator() - allocation failure");
 
     int i;
     for (i = 0; i < LEN; i++) {
-        stat = queue_enqueue(queue, array[i]);
+        stat = deque_addLast(deque, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
     Iterator *iter;
-    stat = queue_iterator(queue, &iter);
+    stat = deque_iterator(deque, &iter);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 
     char *element;
@@ -201,28 +291,28 @@ void testDequeIterator() {
     }
 
     iterator_destroy(iter);
-    queue_destroy(queue, NULL);
+    deque_destroy(deque, NULL);
     CU_PASS("testDequeIterator() - Test Passed");
 }
 
 void testDequeClear() {
     
-    Deque *queue;
+    Deque *deque;
     Status stat;
 
-    stat = queue_new(&queue);
+    stat = deque_new(&deque);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testDequeClear() - allocation failure");
 
     int i;
     for (i = 0; i < LEN; i++) {
-        stat = queue_enqueue(queue, array[i]);
+        stat = deque_addFirst(deque, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    queue_clear(queue, NULL);
-    validateEmptyDeque(queue);
-    queue_destroy(queue, NULL);
+    deque_clear(deque, NULL);
+    validateEmptyDeque(deque);
+    deque_destroy(deque, NULL);
 
     CU_PASS("testDequeClear() - Test Passed");
 }
@@ -239,9 +329,11 @@ int main(UNUSED int argc, UNUSED char **argv) {
         return CU_get_error();
     }
 
-    CU_add_test(suite, "Empty queue", testEmptyDeque);
-    CU_add_test(suite, "Single item", testSingleItem);
-    CU_add_test(suite, "Enqueue & dequeue", testEnqueueDequeue);
+    CU_add_test(suite, "Empty deque", testEmptyDeque);
+    CU_add_test(suite, "Single item from first", testSingleItemFromFirst);
+    CU_add_test(suite, "Single item from last", testSingleItemFromLast);
+    CU_add_test(suite, "Deque insert & delete from head", testEndequeDedequeFromFirst);
+    CU_add_test(suite, "Deque insert & delete from tail", testEndequeDedequeFromLast);
     CU_add_test(suite, "Deque toArray", testDequeToArray);
     CU_add_test(suite, "Deque iterator", testDequeIterator);
     CU_add_test(suite, "Deque clear", testDequeClear);

@@ -11,7 +11,7 @@
 - [x] Heap
 - [x] HashMap
 - [x] HashSet
-- [x] TreeSet
+- [ ] TreeSet
 
 ### Testing
 - [x] Iterator
@@ -19,7 +19,7 @@
 - [x] Unbounded Stack
 - [x] Bounded Queue
 - [x] Unbounded Queue
-- [ ] Deque
+- [x] Deque
 - [x] Circular List
 - [ ] ArrayList
 - [ ] LinkedList
