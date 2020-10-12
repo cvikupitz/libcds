@@ -63,7 +63,7 @@ Status arraylist_new(ArrayList **list, long capacity) {
 }
 
 /* Macro used to validate the given index i */
-#define INDEX_VALID(i,N) ( 0 <= i && i < N ) ? TRUE : FALSE
+#define INDEX_VALID(i,N) ( 0L <= i && i < N ) ? TRUE : FALSE
 
 /*
  * Extends the arraylist's capacity to the new specified capacity. Returns TRUE if
@@ -138,12 +138,12 @@ Status arraylist_insert(ArrayList *list, long i, void *item) {
 
 Status arraylist_get(ArrayList *list, long i, void **item) {
 
-    /* Checks if the index is valid */
-    if (INDEX_VALID(i, list->size) == FALSE)
-        return STAT_INVALID_INDEX;
     /* Checks if the list is currently empty */
     if (arraylist_isEmpty(list) == TRUE)
         return STAT_STRUCT_EMPTY;
+    /* Checks if the index is valid */
+    if (INDEX_VALID(i, list->size) == FALSE)
+        return STAT_INVALID_INDEX;
     *item = list->data[i];
 
     return STAT_SUCCESS;
@@ -151,12 +151,12 @@ Status arraylist_get(ArrayList *list, long i, void **item) {
 
 Status arraylist_set(ArrayList *list, long i, void *item, void **previous) {
 
-    /* Checks if the index is valid */
-    if (INDEX_VALID(i, list->size) == FALSE)
-        return STAT_INVALID_INDEX;
     /* Checks if the list is currently empty */
     if (arraylist_isEmpty(list) == TRUE)
         return STAT_STRUCT_EMPTY;
+    /* Checks if the index is valid */
+    if (INDEX_VALID(i, list->size) == FALSE)
+        return STAT_INVALID_INDEX;
 
     *previous = list->data[i];
     list->data[i] = item;
@@ -166,13 +166,13 @@ Status arraylist_set(ArrayList *list, long i, void *item, void **previous) {
 
 Status arraylist_remove(ArrayList *list, long i, void **item) {
 
-    /* Checks if the index is valid */
-    if (INDEX_VALID(i, list->size) == FALSE)
-        return STAT_INVALID_INDEX;
     /* Checks if the list is currently empty */
     if (arraylist_isEmpty(list) == TRUE)
         return STAT_STRUCT_EMPTY;
-
+    /* Checks if the index is valid */
+    if (INDEX_VALID(i, list->size) == FALSE)
+        return STAT_INVALID_INDEX;
+    
     *item = list->data[i];
     /* Shift items to fill gap after removal */
     shiftLeft(list, i);

@@ -191,7 +191,7 @@ static void clearHeap(Heap *heap, void (*destructor)(void *)) {
 
     void *temp;
 
-    while (heap_poll(heap, &temp))
+    while (heap_poll(heap, &temp) == STAT_SUCCESS)
         if (destructor != NULL)
             (*destructor)(temp);
 }

@@ -38,11 +38,9 @@ static void validateEmptyHeap(Heap *heap) {
     Status stat;
     int *element;
     
-    printf("heap_peek");
     stat = heap_peek(heap, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
-    printf("heap poll");
     stat = heap_poll(heap, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
@@ -52,16 +50,13 @@ static void validateEmptyHeap(Heap *heap) {
     Boolean isEmpty = heap_isEmpty(heap);
     CU_ASSERT_EQUAL(isEmpty, TRUE);
    
-    printf("iter");
     Iterator *iter;
     stat = heap_iterator(heap, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
-    printf("array");
     int **array;
     long len;
     stat = heap_toArray(heap, (void ***)&array, &len);
-    printf("done....\n");
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
@@ -90,8 +85,8 @@ void testSingleItem() {
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testSingleItem() - allocation failure");
 
-    stat = heap_insert(heap, singleItem);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    //stat = heap_insert(heap, singleItem);
+    //CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 
     long size = heap_size(heap);
     Boolean isEmpty = heap_isEmpty(heap);
