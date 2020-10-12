@@ -60,7 +60,7 @@ Status circularlist_addFirst(CircularList *list, void *item) {
 
     /* Allocates the node for insertion */
     Node *node = (Node *)malloc(sizeof(Node));
-    if (node != NULL)
+    if (node == NULL)
         return STAT_ALLOC_FAILURE;
 
     node->data = item;

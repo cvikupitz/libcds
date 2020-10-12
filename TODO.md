@@ -20,7 +20,7 @@
 - [x] Bounded Queue
 - [x] Unbounded Queue
 - [ ] Deque
-- [ ] Circular List
+- [x] Circular List
 - [ ] ArrayList
 - [ ] LinkedList
 - [ ] Heap
