@@ -65,21 +65,21 @@ Status heap_new(Heap **heap, long capacity, int (*comparator)(void *, void *)) {
 }
 
 /* Returns the left child index of i */
-#define LEFT_CHILD(i)  ( (2 * i) + 1 )
+#define LEFT_CHILD(i)    ( ( 2 * (i) ) + 1 )
 /* Returns the right child index of i */
-#define RIGHT_CHILD(i) ( (2 * i) + 2 )
+#define RIGHT_CHILD(i)   ( ( 2 * (i) ) + 2 )
 /* Returns the parent index of i */
-#define PARENT(i)      ( (i - 1) / 2 )
+#define PARENT(i)        ( ( (i) - 1 ) / 2 )
 
 /* Returns TRUE if i has a left child index, FALSE if not */
-#define HAS_LEFT(i,N)  ( LEFT_CHILD(i) < N ) ? TRUE : FALSE
+#define HAS_LEFT(i,N)    ( ( (LEFT_CHILD(i)) < (N) ) ? TRUE : FALSE )
 /* Returns TRUE if i has a right child index, FALSE if not */
-#define HAS_RIGHT(i,N) ( RIGHT_CHILD(i) < N ) ? TRUE : FALSE
+#define HAS_RIGHT(i,N)   ( ( (RIGHT_CHILD(i)) < (N) ) ? TRUE : FALSE )
 /* Returns TRUE if i has a parent index, FALSE if not */
-#define HAS_PARENT(i)  ( PARENT(i) >= 0 ) ? TRUE : FALSE
+#define HAS_PARENT(i)    ( ( (PARENT(i)) >= 0 ) ? TRUE : FALSE )
 
 /* Macro for comparing heap items given the indecies; used for readability */
-#define CMP(x,y) (*heap->cmp)(heap->data[x], heap->data[y])
+#define CMP(x,y)         ( (*heap->cmp)(heap->data[x], heap->data[y]) )
 
 /*
  * Swaps two elements in the array of items given the two indecies.

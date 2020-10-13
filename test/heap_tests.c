@@ -85,8 +85,8 @@ void testSingleItem() {
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testSingleItem() - allocation failure");
 
-    //stat = heap_insert(heap, singleItem);
-    //CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    stat = heap_insert(heap, singleItem);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 
     long size = heap_size(heap);
     Boolean isEmpty = heap_isEmpty(heap);
