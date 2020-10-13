@@ -59,8 +59,8 @@ Status linkedlist_new(LinkedList **list) {
     return STAT_SUCCESS;
 }
 
-/* Returns TRUE if i is a valid index, FALSE if not */
-#define INDEX_VALID(i,N) ( 0 <= i && i < N ) ? TRUE : FALSE
+/* Macro used to validate the given index i */
+#define INDEX_VALID(i,N) ( ( 0L <= (i) && (i) < (N) ) ? TRUE : FALSE )
 
 /*
  * Fetches the node from list at the specified index.
