@@ -145,6 +145,7 @@ Status arraylist_ensureCapacity(ArrayList *list, long capacity);
  *    list - The array list to operate on.
  * Returns:
  *    STAT_SUCCESS - Operation was successful.
+ *    STAT_STRUCT_EMPTY - ArrayList is currently empty.
  *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status arraylist_trimToSize(ArrayList *list);

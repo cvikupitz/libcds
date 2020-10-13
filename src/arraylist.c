@@ -63,7 +63,7 @@ Status arraylist_new(ArrayList **list, long capacity) {
 }
 
 /* Macro used to validate the given index i */
-#define INDEX_VALID(i,N) ( 0L <= i && i < N ) ? TRUE : FALSE
+#define INDEX_VALID(i,N) ( ( 0L <= (i) && (i) < (N) ) ? TRUE : FALSE )
 
 /*
  * Extends the arraylist's capacity to the new specified capacity. Returns TRUE if
@@ -141,6 +141,7 @@ Status arraylist_get(ArrayList *list, long i, void **item) {
     /* Checks if the list is currently empty */
     if (arraylist_isEmpty(list) == TRUE)
         return STAT_STRUCT_EMPTY;
+
     /* Checks if the index is valid */
     if (INDEX_VALID(i, list->size) == FALSE)
         return STAT_INVALID_INDEX;
@@ -193,6 +194,10 @@ Status arraylist_ensureCapacity(ArrayList *list, long capacity) {
 
 Status arraylist_trimToSize(ArrayList *list) {
 
+    /* Checks if the list is currently empty */
+    if (arraylist_isEmpty(list) == TRUE)
+        return STAT_STRUCT_EMPTY;
+    
     /* Only trim if size < capacity */
     if (list->size != list->capacity)
         if (ensureCapacity(list, list->size) == FALSE)
