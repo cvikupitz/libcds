@@ -22,12 +22,16 @@
  * SOFTWARE.
  */
 
-#include <stdio.h>
 #include <stdlib.h>
 #include <CUnit/Basic.h>
 #include "heap.h"
 
 #define CAPACITY 2L
+
+static char *singleItem = "Test";
+#define LEN 9
+static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple", "gray", "white", "black"};
+static char *orderedArray[] = {"black", "blue", "gray", "green", "orange", "purple", "red", "white", "yellow"};
 
 static int heapCmp(void *x, void *y) {
     return strcmp((char *)x, (char *)y);
@@ -74,8 +78,6 @@ void testEmptyHeap() {
     CU_PASS("testEmptyHeap() - Test Passed");
 }
 
-static char *singleItem = "Test";
-
 void testSingleItem() {
     
     Heap *heap;
@@ -111,6 +113,138 @@ void testSingleItem() {
     CU_PASS("testSingleItem() - Test Passed");
 }
 
+void testUnorderedSet() {
+
+    Heap *heap;
+    Status stat;
+
+    stat = heap_new(&heap, CAPACITY, heapCmp);
+    if (stat != STAT_SUCCESS)
+        CU_FAIL_FATAL("ERROR: testUnorderedSet() - allocation failure");
+
+    int i;
+    for (i = 0; i < LEN; i++) {
+        stat = heap_insert(heap, array[i]);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    }
+
+    char *element;
+    for (i = 0; i < LEN; i++) {
+        stat = heap_peek(heap, (void **)&element);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        CU_ASSERT_TRUE( strcmp(element, orderedArray[i]) == 0);
+        stat = heap_poll(heap, (void **)&element);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        CU_ASSERT_TRUE( strcmp(element, orderedArray[i]) == 0);
+    }
+
+    heap_destroy(heap, NULL);
+
+    CU_PASS("testUnorderedSet() - Test Passed");
+}
+
+void testOrderedSet() {
+
+    Heap *heap;
+    Status stat;
+
+    stat = heap_new(&heap, CAPACITY, heapCmp);
+    if (stat != STAT_SUCCESS)
+        CU_FAIL_FATAL("ERROR: testOrderedSet() - allocation failure");
+
+    int i;
+    for (i = 0; i < LEN; i++) {
+        stat = heap_insert(heap, orderedArray[i]);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    }
+
+    char *element;
+    for (i = 0; i < LEN; i++) {
+        stat = heap_peek(heap, (void **)&element);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        CU_ASSERT_TRUE( strcmp(element, orderedArray[i]) == 0);
+        stat = heap_poll(heap, (void **)&element);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        CU_ASSERT_TRUE( strcmp(element, orderedArray[i]) == 0);
+    }
+
+    heap_destroy(heap, NULL);
+
+    CU_PASS("testOrderedSet() - Test Passed");
+}
+
+void testHeapClear() {
+    
+    Heap *heap;
+    Status stat;
+
+    stat = heap_new(&heap, CAPACITY, heapCmp);
+    if (stat != STAT_SUCCESS)
+        CU_FAIL_FATAL("ERROR: testHeapClear() - allocation failure");
+
+    int i;
+    for (i = 0; i < LEN; i++) {
+        stat = heap_insert(heap, array[i]);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    }
+
+    heap_clear(heap, NULL);
+    validateEmptyHeap(heap);
+    heap_destroy(heap, NULL);
+
+    CU_PASS("testHeapClear() - Test Passed");
+}
+
+void testHeapToArray() {
+
+    Heap *heap;
+    Status stat;
+
+    stat = heap_new(&heap, CAPACITY, heapCmp);
+    if (stat != STAT_SUCCESS)
+        CU_FAIL_FATAL("ERROR: testHeapToArray() - allocation failure");
+
+    int i;
+    for (i = 0; i < LEN; i++) {
+        stat = heap_insert(heap, array[i]);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    }
+
+    char **items;
+    long len;
+    stat = heap_toArray(heap, (void ***)&items, &len);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_EQUAL(len, LEN);
+
+    free(items);
+    heap_destroy(heap, NULL);
+    CU_PASS("testHeapToArray() - Test Passed");
+}
+
+void testHeapIterator() {
+
+    Heap *heap;
+    Status stat;
+
+    stat = heap_new(&heap, CAPACITY, heapCmp);
+    if (stat != STAT_SUCCESS)
+        CU_FAIL_FATAL("ERROR: testHeapIterator() - allocation failure");
+
+    int i;
+    for (i = 0; i < LEN; i++) {
+        stat = heap_insert(heap, array[i]);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    }
+
+    Iterator *iter;
+    stat = heap_iterator(heap, &iter);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+
+    iterator_destroy(iter);
+    heap_destroy(heap, NULL);
+    CU_PASS("testHeapIterator() - Test Passed");
+}
+
 #define UNUSED __attribute__((unused))
 int main(UNUSED int argc, UNUSED char **argv) {
 
@@ -125,10 +259,11 @@ int main(UNUSED int argc, UNUSED char **argv) {
 
     CU_add_test(suite, "Empty heap", testEmptyHeap);
     CU_add_test(suite, "Single item", testSingleItem);
-    //CU_add_test(suitie, "Enheap & deheap", testEnheapDeheap);
-    //CU_add_test(suite, "Heap toArray", testHeapToArray);
-    //CU_add_test(suite, "Heap iterator", testHeapIterator);
-    //CU_add_test(suite, "Heap clear", testHeapClear);
+    CU_add_test(suite, "Unordered set", testUnorderedSet);
+    CU_add_test(suite, "Ordered set", testOrderedSet);
+    CU_add_test(suite, "Heap toArray", testHeapToArray);
+    CU_add_test(suite, "Heap iterator", testHeapIterator);
+    CU_add_test(suite, "Heap clear", testHeapClear);
     
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();

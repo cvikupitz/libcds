@@ -23,7 +23,7 @@
 - [x] Circular List
 - [x] ArrayList
 - [x] LinkedList
-- [ ] Heap
+- [x] Heap
 - [ ] HashMap
 - [ ] HashSet
 - [ ] TreeSet
@@ -31,6 +31,3 @@
 ### Misc.
 - [ ] API Docs
 - [ ] README
-- [ ] Library Building
-- [ ] Repo Organization
-- [ ] Change Log
