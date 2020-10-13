@@ -26,6 +26,11 @@
 #include <CUnit/Basic.h>
 #include "stack.h"
 
+static char *singleItem = "Test";
+
+#define LEN 6
+static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple"};
+
 static void validateEmptyStack(Stack *stack) {
 
     Status stat;
@@ -66,7 +71,6 @@ void testEmptyStack() {
     CU_PASS("testEmptyStack() - Test Passed");
 }
 
-static char *singleItem = "Test";
 void testSingleItem() {
     
     Stack *stack;
@@ -101,9 +105,6 @@ void testSingleItem() {
 
     CU_PASS("testSingleItem() - Test Passed");
 }
-
-#define LEN 6
-static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple"};
 
 void testPushPop() {
     

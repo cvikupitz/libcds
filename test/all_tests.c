@@ -22,6 +22,7 @@
  * SOFTWARE.
  */
 
+#define UNUSED __attribute__((unused))
 int main(int argc, char **argv) {
 
     return 0;
