@@ -22,7 +22,7 @@
 - [x] Deque
 - [x] Circular List
 - [x] ArrayList
-- [ ] LinkedList
+- [x] LinkedList
 - [ ] Heap
 - [ ] HashMap
 - [ ] HashSet
