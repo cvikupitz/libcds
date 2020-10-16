@@ -24,8 +24,8 @@
 - [x] ArrayList
 - [x] LinkedList
 - [x] Heap
-- [ ] HashMap
-- [ ] HashSet
+- [x] HashMap
+- [x] HashSet
 - [ ] TreeSet
 
 ### Misc.
