@@ -65,7 +65,7 @@ typedef enum {
     /**
      * Status reserved for HashMap's put() method. Indicates that the key-value insertion
      * was successful, but that the map already contains the key and the previous value
-     * has been replcaed with the new value.
+     * has been replaced with the new value.
      */
     STAT_ENTRY_REPLACED = 2,
 
@@ -98,9 +98,9 @@ typedef enum {
 
     /**
      * Operation could not be completed due to an invalid or out-of-bounds index specified. This
-     * is most common with lists or any other structures whose elements may be accessed via a
-     * specified array index. The index a caller may specify could fall outside the valid range
-     * (i.e. the value is below 0 or greater than the largest index allowed).
+     * is for data structures whose elements may be accessed via a specified array index. The index a
+     * caller may specify could fall outside the valid range (i.e. the value is below 0 or greater than
+     * the largest index allowed).
      */
     STAT_INVALID_INDEX = 7,
 
