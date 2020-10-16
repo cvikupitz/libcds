@@ -173,7 +173,7 @@ Status arraylist_remove(ArrayList *list, long i, void **item) {
     /* Checks if the index is valid */
     if (INDEX_VALID(i, list->size) == FALSE)
         return STAT_INVALID_INDEX;
-    
+
     *item = list->data[i];
     /* Shift items to fill gap after removal */
     shiftLeft(list, i);
@@ -197,7 +197,7 @@ Status arraylist_trimToSize(ArrayList *list) {
     /* Checks if the list is currently empty */
     if (arraylist_isEmpty(list) == TRUE)
         return STAT_STRUCT_EMPTY;
-    
+
     /* Only trim if size < capacity */
     if (list->size != list->capacity)
         if (ensureCapacity(list, list->size) == FALSE)

@@ -26,9 +26,9 @@ arraylist.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c arraylist.c
 boundedqueue.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c boundedqueue.c
-boundedstack.o: 
+boundedstack.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c boundedstack.c
-circularlist.o: 
+circularlist.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c circularlist.c
 deque.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c deque.c
@@ -38,13 +38,13 @@ hashset.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c hashset.c
 heap.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c heap.c
-iterator.o: 
+iterator.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c iterator.c
-linkedlist.o: 
+linkedlist.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c linkedlist.c
-queue.o: 
+queue.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c queue.c
 stack.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c stack.c
-treeset.o: 
+treeset.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c treeset.c

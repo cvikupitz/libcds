@@ -76,7 +76,7 @@ static Node *fetchNode(LinkedList *list, long index) {
         temp = list->head;
         for (i = 0L; i < index; i++)
             temp = temp->next;
-    } else {    
+    } else {
         /* Traverses backwards from the tail to node */
         temp = list->tail;
         for (i = list->size - 1; i > index; i--)

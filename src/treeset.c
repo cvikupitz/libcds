@@ -124,7 +124,7 @@ static Node *rotateWithLeftChild(Node *node) {
  * Performs a left-right rotation on the specified node, then returns the
  * root of the new subtree.
  */
-static Node *doubleWithLeftChild(Node *node) { 
+static Node *doubleWithLeftChild(Node *node) {
     node->left = rotateWithRightChild(node->right);
     return rotateWithLeftChild(node);
 }
@@ -147,7 +147,7 @@ static Node *insertNode(Node *node, Node *temp, int (*cmp)(void *, void *)) {
     if (temp == NULL) {
         temp = node;
     } else if ( (*cmp)(node->data, temp->data) < 0 ) {
-        
+
         temp->left = insertNode(node, temp->left, cmp);
         if ( HEIGHT(temp->left) - HEIGHT(temp->right) == 2 ) {
             if ( (*cmp)(node->data, temp->data) < 0 )
@@ -156,7 +156,7 @@ static Node *insertNode(Node *node, Node *temp, int (*cmp)(void *, void *)) {
                 return doubleWithLeftChild(temp);
         }
     } else if ( (*cmp)(node->data, temp->data) > 0 ) {
-    
+
         temp->right = insertNode(node, temp->right, cmp);
         if ( HEIGHT(temp->right) - HEIGHT(temp->left) == 2 ) {
             if ( (*cmp)(node->data, temp->data) > 0 )
@@ -192,7 +192,7 @@ Status treeset_add(TreeSet *tree, void *item) {
     /* Inserts the node into the tree */
     tree->root = insertNode(node, tree->root, tree->cmp);
     tree->size++;
-    
+
     return STAT_SUCCESS;
 }
 
