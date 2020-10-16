@@ -459,7 +459,7 @@ int main(UNUSED int argc, UNUSED char **argv) {
         return CU_get_error();
     }
 
-    CU_pSuite suite = CU_add_suite("ArrayList Tests", NULL, NULL);
+    CU_pSuite suite = CU_add_suite("LinkedList Tests", NULL, NULL);
     if (suite == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
