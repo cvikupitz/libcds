@@ -43,7 +43,7 @@ static void validateEmptyBoundedQueue(BoundedQueue *queue) {
     Iterator *iter;
     char *element, **array;
     long size, len;
-    
+
     stat = boundedqueue_peek(queue, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
     stat = boundedqueue_dequeue(queue, (void **)&element);
@@ -51,18 +51,15 @@ static void validateEmptyBoundedQueue(BoundedQueue *queue) {
 
     size = boundedqueue_size(queue);
     CU_ASSERT_EQUAL(size, 0L);
-
     isEmpty = boundedqueue_isEmpty(queue);
     CU_ASSERT_EQUAL(isEmpty, TRUE);
-    
     stat = boundedqueue_iterator(queue, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
     stat = boundedqueue_toArray(queue, (void ***)&array, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
-void testEmptyBoundedQueue() {
+static void testEmptyBoundedQueue() {
 
     BoundedQueue *queue;
     Status stat;
@@ -70,14 +67,15 @@ void testEmptyBoundedQueue() {
     stat = boundedqueue_new(&queue, CAPACITY);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEmptyBoundedQueue() - allocation failure");
-    
+
     validateEmptyBoundedQueue(queue);
     boundedqueue_destroy(queue, NULL);
+
     CU_PASS("testEmptyBoundedQueue() - Test Passed");
 }
 
-void testSingleItem() {
-    
+static void testSingleItem() {
+
     BoundedQueue *queue;
     Status stat;
     Boolean isEmpty;
@@ -103,18 +101,16 @@ void testSingleItem() {
     stat = boundedqueue_dequeue(queue, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-
     stat = boundedqueue_dequeue(queue, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
     validateEmptyBoundedQueue(queue);
     boundedqueue_destroy(queue, NULL);
 
     CU_PASS("testSingleItem() - Test Passed");
 }
 
-void testEnqueueDequeue() {
-    
+static void testEnqueueDequeue() {
+
     BoundedQueue *queue;
     Status stat;
     Boolean isEmpty, isFull;
@@ -162,10 +158,11 @@ void testEnqueueDequeue() {
     }
 
     boundedqueue_destroy(queue, NULL);
+
     CU_PASS("testEnqueueDequeue() - Test Passed");
 }
 
-void testBoundedQueueToArray() {
+static void testBoundedQueueToArray() {
 
     BoundedQueue *queue;
     Status stat;
@@ -191,10 +188,11 @@ void testBoundedQueueToArray() {
 
     free(items);
     boundedqueue_destroy(queue, NULL);
+
     CU_PASS("testBoundedQueueToArray() - Test Passed");
 }
 
-void testBoundedQueueIterator() {
+static void testBoundedQueueIterator() {
 
     BoundedQueue *queue;
     Iterator *iter;
@@ -223,11 +221,12 @@ void testBoundedQueueIterator() {
 
     iterator_destroy(iter);
     boundedqueue_destroy(queue, NULL);
+
     CU_PASS("testBoundedQueueIterator() - Test Passed");
 }
 
-void testBoundedQueueClear() {
-    
+static void testBoundedQueueClear() {
+
     BoundedQueue *queue;
     Status stat;
     int i;
@@ -251,22 +250,23 @@ void testBoundedQueueClear() {
 #define UNUSED __attribute__((unused))
 int main(UNUSED int argc, UNUSED char **argv) {
 
-    if (CUE_SUCCESS != CU_initialize_registry())
+    if (CU_initialize_registry() != CUE_SUCCESS) {
         return CU_get_error();
+    }
 
-    CU_pSuite suite = CU_add_suite("BoundedQueue Tests", NULL, NULL);
+    CU_pSuite suite = CU_add_suite("ArrayList Tests", NULL, NULL);
     if (suite == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
 
-    CU_add_test(suite, "Empty queue", testEmptyBoundedQueue);
-    CU_add_test(suite, "Single item", testSingleItem);
-    CU_add_test(suite, "Enqueue & dequeue", testEnqueueDequeue);
-    CU_add_test(suite, "BoundedQueue toArray", testBoundedQueueToArray);
-    CU_add_test(suite, "BoundedQueue iterator", testBoundedQueueIterator);
-    CU_add_test(suite, "BoundedQueue clear", testBoundedQueueClear);
-    
+    CU_add_test(suite, "BoundedQueue - Empty Queue", testEmptyBoundedQueue);
+    CU_add_test(suite, "BoundedQueue - Single Item", testSingleItem);
+    CU_add_test(suite, "BoundedQueue - Enqueue & Dequeue", testEnqueueDequeue);
+    CU_add_test(suite, "BoundedQueue - Array", testBoundedQueueToArray);
+    CU_add_test(suite, "BoundedQueue - Iterator", testBoundedQueueIterator);
+    CU_add_test(suite, "BoundedQueue - Clear", testBoundedQueueClear);
+
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();

@@ -68,7 +68,7 @@ static void validateEmptyHashSet(HashSet *set) {
     Boolean isEmpty;
     char **array;
     long size, len;
-    
+
     stat = hashset_contains(set, singleItem);
     CU_ASSERT_EQUAL(stat, FALSE);
     stat = hashset_remove(set, singleItem, NULL);
@@ -76,18 +76,15 @@ static void validateEmptyHashSet(HashSet *set) {
 
     size = hashset_size(set);
     CU_ASSERT_EQUAL(size, 0L);
-
     isEmpty = hashset_isEmpty(set);
     CU_ASSERT_EQUAL(isEmpty, TRUE);
-    
     stat = hashset_iterator(set, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
     stat = hashset_toArray(set, (void ***)&array, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
-void testEmptyHashSet() {
+static void testEmptyHashSet() {
 
     HashSet *set;
     Status stat;
@@ -95,14 +92,15 @@ void testEmptyHashSet() {
     stat = hashset_new(&set, hash, strCmp, CAPACITY, LOAD_FACTOR);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEmptyHashSet() - allocation failure");
-    
+
     validateEmptyHashSet(set);
     hashset_destroy(set, NULL);
+
     CU_PASS("testEmptyHashSet() - Test Passed");
 }
 
-void testSingleItem() {
-    
+static void testSingleItem() {
+
     HashSet *set;
     Status stat;
     Boolean isEmpty, exists;
@@ -138,7 +136,7 @@ void testSingleItem() {
     CU_PASS("testSingleItem() - Test Passed");
 }
 
-void testCompleteSet() {
+static void testCompleteSet() {
 
     HashSet *set;
     Status stat;
@@ -168,13 +166,13 @@ void testCompleteSet() {
 
     stat = hashset_remove(set, array[0], NULL);
     CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
-
     hashset_destroy(set, NULL);
+
     CU_PASS("testCompleteSet() - Test Passed");
 }
 
-void testHashSetClear() {
-    
+static void testHashSetClear() {
+
     HashSet *set;
     Status stat;
     int i;
@@ -195,7 +193,7 @@ void testHashSetClear() {
     CU_PASS("testHashSetClear() - Test Passed");
 }
 
-void testHashSetToArray() {
+static void testHashSetToArray() {
 
     HashSet *set;
     Status stat;
@@ -218,10 +216,11 @@ void testHashSetToArray() {
 
     free(items);
     hashset_destroy(set, NULL);
+
     CU_PASS("testHashSetToArray() - Test Passed");
 }
 
-void testHashSetIterator() {
+static void testHashSetIterator() {
 
     HashSet *set;
     Iterator *iter;
@@ -242,27 +241,29 @@ void testHashSetIterator() {
 
     iterator_destroy(iter);
     hashset_destroy(set, NULL);
+
     CU_PASS("testHashSetIterator() - Test Passed");
 }
 
 #define UNUSED __attribute__((unused))
 int main(UNUSED int argc, UNUSED char **argv) {
 
-    if (CUE_SUCCESS != CU_initialize_registry())
+    if (CU_initialize_registry() != CUE_SUCCESS) {
         return CU_get_error();
+    }
 
-    CU_pSuite suite = CU_add_suite("HashSet Tests", NULL, NULL);
+    CU_pSuite suite = CU_add_suite("ArrayList Tests", NULL, NULL);
     if (suite == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
 
-    CU_add_test(suite, "Empty hashset", testEmptyHashSet);
-    CU_add_test(suite, "Single item", testSingleItem);
-    CU_add_test(suite, "Full set", testCompleteSet);
-    CU_add_test(suite, "Hashset clear", testHashSetClear);
-    CU_add_test(suite, "HashSet toArray", testHashSetToArray);
-    CU_add_test(suite, "HashSet iterator", testHashSetIterator);
+    CU_add_test(suite, "HashSet - Empty", testEmptyHashSet);
+    CU_add_test(suite, "HashSet - Single Item", testSingleItem);
+    CU_add_test(suite, "HashSet - Full Set", testCompleteSet);
+    CU_add_test(suite, "Hashset - Clear", testHashSetClear);
+    CU_add_test(suite, "HashSet - Array", testHashSetToArray);
+    CU_add_test(suite, "HashSet - Iterator", testHashSetIterator);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();

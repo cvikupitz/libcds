@@ -26,38 +26,43 @@
 #include <CUnit/Basic.h>
 #include "iterator.h"
 
+/* Collection of items used for testing */
+#define LEN 6
+static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple"};
+
 void testEmptyIterator() {
 
-    Iterator *iter = NULL;
+    Iterator *iter;
     Status stat;
+    Boolean hasNext;
+    char *item;
 
     stat = iterator_new(&iter, NULL, 0L);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEmptyIterator() - allocation failure");
 
-    Boolean hasNext = iterator_hasNext(iter);
+    hasNext = iterator_hasNext(iter);
     CU_ASSERT_EQUAL(hasNext, FALSE);
-
-    void *item;
-    stat = iterator_next(iter, &item);
+    stat = iterator_next(iter, (void **)&item);
     CU_ASSERT_EQUAL(stat, STAT_ITERATION_END);
 
     iterator_destroy(iter);
+
     CU_PASS("testEmptyIterator() - Test Passed.");
 }
 
-static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple"};
-
 void testIteration() {
 
-    Iterator *iter = NULL;
+    Iterator *iter;
     Status stat;
+    Boolean hasNext;
+    char *item, **items;
+    int i;
 
-    char **items = (char **)malloc(sizeof(char *) * 6);
+    items = (char **)malloc(sizeof(char *) * 6);
     if (items == NULL)
         CU_FAIL_FATAL("ERROR: testIteration() - allocation failure");
-    int i;
-    for (i = 0; i < 6; i++)
+    for (i = 0; i < LEN; i++)
         items[i] = array[i];
 
     stat = iterator_new(&iter, (void **)items, 6L);
@@ -66,9 +71,7 @@ void testIteration() {
         CU_FAIL_FATAL("ERROR: testIteration() - allocation failure");
     }
 
-    char *item;
-    Boolean hasNext;
-    for (i = 0; i < 6; i++) {
+    for (i = 0; i < LEN; i++) {
         hasNext = iterator_hasNext(iter);
         CU_ASSERT_EQUAL(hasNext, TRUE);
         stat = iterator_next(iter, (void **)&item);
@@ -82,24 +85,26 @@ void testIteration() {
     CU_ASSERT_EQUAL(stat, STAT_ITERATION_END);
 
     iterator_destroy(iter);
+
     CU_PASS("testIteration() - Test Passed");
 }
 
 #define UNUSED __attribute__((unused))
 int main(UNUSED int argc, UNUSED char **argv) {
 
-    if (CUE_SUCCESS != CU_initialize_registry())
+    if (CU_initialize_registry() != CUE_SUCCESS) {
         return CU_get_error();
+    }
 
-    CU_pSuite suite = CU_add_suite("Iterator Tests", NULL, NULL);
+    CU_pSuite suite = CU_add_suite("ArrayList Tests", NULL, NULL);
     if (suite == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
 
-    CU_add_test(suite, "testEmptyIterator", testEmptyIterator);
-    CU_add_test(suite, "testIteration", testIteration);
-    
+    CU_add_test(suite, "Iterator - Empty", testEmptyIterator);
+    CU_add_test(suite, "Iterator - Full Set", testIteration);
+
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();

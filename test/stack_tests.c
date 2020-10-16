@@ -26,55 +26,58 @@
 #include <CUnit/Basic.h>
 #include "stack.h"
 
+/* Single item used for testing */
 static char *singleItem = "Test";
 
+/* Collection of items used for testing */
 #define LEN 6
 static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple"};
 
 static void validateEmptyStack(Stack *stack) {
 
+    Iterator *iter;
     Status stat;
-    int *element;
-    
+    Boolean isEmpty;
+    char *element, **array;
+    long size, len;
+
     stat = stack_peek(stack, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
     stat = stack_pop(stack, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
-    long size = stack_size(stack);
+    size = stack_size(stack);
     CU_ASSERT_EQUAL(size, 0L);
-
-    Boolean isEmpty = stack_isEmpty(stack);
+    isEmpty = stack_isEmpty(stack);
     CU_ASSERT_EQUAL(isEmpty, TRUE);
-    
-    Iterator *iter;
     stat = stack_iterator(stack, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
-    int **array;
-    long len;
     stat = stack_toArray(stack, (void ***)&array, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
-void testEmptyStack() {
+static void testEmptyStack() {
 
-    Stack *stack = NULL;
+    Stack *stack;
     Status stat;
 
     stat = stack_new(&stack);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEmptyStack() - allocation failure");
-    
+
     validateEmptyStack(stack);
     stack_destroy(stack, NULL);
+
     CU_PASS("testEmptyStack() - Test Passed");
 }
 
-void testSingleItem() {
-    
+static void testSingleItem() {
+
     Stack *stack;
     Status stat;
+    Boolean isEmpty;
+    long size;
+    char *element;
 
     stat = stack_new(&stack);
     if (stat != STAT_SUCCESS)
@@ -83,12 +86,11 @@ void testSingleItem() {
     stat = stack_push(stack, singleItem);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 
-    long size = stack_size(stack);
-    Boolean isEmpty = stack_isEmpty(stack);
+    size = stack_size(stack);
+    isEmpty = stack_isEmpty(stack);
     CU_ASSERT_EQUAL(size, 1L);
     CU_ASSERT_EQUAL(isEmpty, FALSE);
 
-    char *element;
     stat = stack_peek(stack, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
@@ -96,7 +98,6 @@ void testSingleItem() {
     stat = stack_pop(stack, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-
     stat = stack_pop(stack, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
@@ -106,19 +107,19 @@ void testSingleItem() {
     CU_PASS("testSingleItem() - Test Passed");
 }
 
-void testPushPop() {
-    
+static void testPushPop() {
+
     Stack *stack;
     Status stat;
+    Boolean isEmpty;
+    int i;
+    long size;
+    char *element;
 
     stat = stack_new(&stack);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testPushPop() - allocation failure");
 
-    int i;
-    long size;
-    Boolean isEmpty;
-    char *element;
     for (i = 0; i < LEN; i++) {
         stat = stack_push(stack, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
@@ -142,26 +143,27 @@ void testPushPop() {
     }
 
     stack_destroy(stack, NULL);
+
     CU_PASS("testPushPop() - Test Passed");
 }
 
-void testStackToArray() {
+static void testStackToArray() {
 
     Stack *stack;
     Status stat;
+    char **items;
+    int i, j;
+    long len;
 
     stat = stack_new(&stack);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testStackToArray() - allocation failure");
 
-    int i, j;
     for (i = 0; i < LEN; i++) {
         stat = stack_push(stack, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    char **items;
-    long len;
     stat = stack_toArray(stack, (void ***)&items, &len);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_EQUAL(len, LEN);
@@ -171,29 +173,30 @@ void testStackToArray() {
 
     free(items);
     stack_destroy(stack, NULL);
+
     CU_PASS("testStackToArray() - Test Passed");
 }
 
-void testStackIterator() {
+static void testStackIterator() {
 
+    Iterator *iter;
     Stack *stack;
     Status stat;
+    int i;
+    char *element;
 
     stat = stack_new(&stack);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testStackIterator() - allocation failure");
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = stack_push(stack, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    Iterator *iter;
     stat = stack_iterator(stack, &iter);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 
-    char *element;
     i = LEN - 1;
     while (iterator_hasNext(iter) == TRUE) {
         stat = iterator_next(iter, (void **)&element);
@@ -203,19 +206,20 @@ void testStackIterator() {
 
     iterator_destroy(iter);
     stack_destroy(stack, NULL);
+
     CU_PASS("testStackIterator() - Test Passed");
 }
 
-void testStackClear() {
-    
+static void testStackClear() {
+
     Stack *stack;
     Status stat;
+    int i;
 
     stat = stack_new(&stack);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testStackClear() - allocation failure");
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = stack_push(stack, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
@@ -231,22 +235,23 @@ void testStackClear() {
 #define UNUSED __attribute__((unused))
 int main(UNUSED int argc, UNUSED char **argv) {
 
-    if (CUE_SUCCESS != CU_initialize_registry())
+    if (CU_initialize_registry() != CUE_SUCCESS) {
         return CU_get_error();
+    }
 
-    CU_pSuite suite = CU_add_suite("Stack Tests", NULL, NULL);
+    CU_pSuite suite = CU_add_suite("ArrayList Tests", NULL, NULL);
     if (suite == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
 
-    CU_add_test(suite, "Empty stack", testEmptyStack);
-    CU_add_test(suite, "Single item", testSingleItem);
-    CU_add_test(suite, "Push & pop", testPushPop);
-    CU_add_test(suite, "Stack toArray", testStackToArray);
-    CU_add_test(suite, "Stack iterator", testStackIterator);
-    CU_add_test(suite, "Stack clear", testStackClear);
-    
+    CU_add_test(suite, "Stack - Empty Stack", testEmptyStack);
+    CU_add_test(suite, "Stack - Single Item", testSingleItem);
+    CU_add_test(suite, "Stack - Push & Pop", testPushPop);
+    CU_add_test(suite, "Stack - Array", testStackToArray);
+    CU_add_test(suite, "Stack - Iterator", testStackIterator);
+    CU_add_test(suite, "Stack - Clear", testStackClear);
+
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();

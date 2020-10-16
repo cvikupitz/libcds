@@ -43,7 +43,7 @@ static void validateEmptyBoundedStack(BoundedStack *stack) {
     Boolean isEmpty, isFull;
     long size, len;
     char *element, **array;
-    
+
     stat = boundedstack_peek(stack, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
     stat = boundedstack_pop(stack, (void **)&element);
@@ -56,15 +56,14 @@ static void validateEmptyBoundedStack(BoundedStack *stack) {
     CU_ASSERT_EQUAL(isEmpty, TRUE);
     isFull = boundedstack_isFull(stack);
     CU_ASSERT_EQUAL(isFull, FALSE);
-    
+
     stat = boundedstack_iterator(stack, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
     stat = boundedstack_toArray(stack, (void ***)&array, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
-void testEmptyBoundedStack() {
+static void testEmptyBoundedStack() {
 
     BoundedStack *stack;
     Status stat;
@@ -72,14 +71,15 @@ void testEmptyBoundedStack() {
     stat = boundedstack_new(&stack, CAPACITY);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEmptyBoundedStack() - allocation failure");
-    
+
     validateEmptyBoundedStack(stack);
     boundedstack_destroy(stack, NULL);
+
     CU_PASS("testEmptyBoundedStack() - Test Passed");
 }
 
-void testSingleItem() {
-    
+static void testSingleItem() {
+
     BoundedStack *stack;
     Status stat;
     Boolean isEmpty, isFull;
@@ -109,7 +109,6 @@ void testSingleItem() {
     stat = boundedstack_pop(stack, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-
     stat = boundedstack_pop(stack, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
@@ -119,8 +118,8 @@ void testSingleItem() {
     CU_PASS("testSingleItem() - Test Passed");
 }
 
-void testPushPop() {
-    
+static void testPushPop() {
+
     BoundedStack *stack;
     Status stat;
     Boolean isEmpty, isFull;
@@ -170,10 +169,11 @@ void testPushPop() {
     }
 
     boundedstack_destroy(stack, NULL);
+
     CU_PASS("testPushPop() - Test Passed");
 }
 
-void testBoundedStackToArray() {
+static void testBoundedStackToArray() {
 
     BoundedStack *stack;
     Status stat;
@@ -199,10 +199,11 @@ void testBoundedStackToArray() {
 
     free(items);
     boundedstack_destroy(stack, NULL);
+
     CU_PASS("testBoundedStackToArray() - Test Passed");
 }
 
-void testBoundedStackIterator() {
+static void testBoundedStackIterator() {
 
     BoundedStack *stack;
     Iterator *iter;
@@ -231,11 +232,12 @@ void testBoundedStackIterator() {
 
     iterator_destroy(iter);
     boundedstack_destroy(stack, NULL);
+
     CU_PASS("testBoundedStackIterator() - Test Passed");
 }
 
-void testBoundedStackClear() {
-    
+static void testBoundedStackClear() {
+
     BoundedStack *stack;
     Status stat;
     int i;
@@ -259,22 +261,23 @@ void testBoundedStackClear() {
 #define UNUSED __attribute__((unused))
 int main(UNUSED int argc, UNUSED char **argv) {
 
-    if (CUE_SUCCESS != CU_initialize_registry())
+    if (CU_initialize_registry() != CUE_SUCCESS) {
         return CU_get_error();
+    }
 
-    CU_pSuite suite = CU_add_suite("BoundedStack Tests", NULL, NULL);
+    CU_pSuite suite = CU_add_suite("ArrayList Tests", NULL, NULL);
     if (suite == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
 
-    CU_add_test(suite, "Empty stack", testEmptyBoundedStack);
-    CU_add_test(suite, "Single item", testSingleItem);
-    CU_add_test(suite, "Push & pop", testPushPop);
-    CU_add_test(suite, "BoundedStack toArray", testBoundedStackToArray);
-    CU_add_test(suite, "BoundedStack iterator", testBoundedStackIterator);
-    CU_add_test(suite, "BoundedStack clear", testBoundedStackClear);
-    
+    CU_add_test(suite, "BoundedStack - Empty Stack", testEmptyBoundedStack);
+    CU_add_test(suite, "BoundedStack - Single Item", testSingleItem);
+    CU_add_test(suite, "BoundedStack - Push & Pop", testPushPop);
+    CU_add_test(suite, "BoundedStack - Array", testBoundedStackToArray);
+    CU_add_test(suite, "BoundedStack - Iterator", testBoundedStackIterator);
+    CU_add_test(suite, "BoundedStack - Clear", testBoundedStackClear);
+
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();

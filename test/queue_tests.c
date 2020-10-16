@@ -26,51 +26,58 @@
 #include <CUnit/Basic.h>
 #include "queue.h"
 
+/* Single item used for testing */
+static char *singleItem = "Test";
+
+/* Collection of items used for testing */
+#define LEN 6
+static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple"};
+
 static void validateEmptyQueue(Queue *queue) {
 
+    Iterator *iter;
     Status stat;
-    int *element;
-    
+    Boolean isEmpty;
+    char *element, **array;
+    long size, len;
+
     stat = queue_peek(queue, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
     stat = queue_dequeue(queue, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
-    long size = queue_size(queue);
+    size = queue_size(queue);
     CU_ASSERT_EQUAL(size, 0L);
-
-    Boolean isEmpty = queue_isEmpty(queue);
+    isEmpty = queue_isEmpty(queue);
     CU_ASSERT_EQUAL(isEmpty, TRUE);
-    
-    Iterator *iter;
     stat = queue_iterator(queue, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
-    int **array;
-    long len;
     stat = queue_toArray(queue, (void ***)&array, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
-void testEmptyQueue() {
+static void testEmptyQueue() {
 
-    Queue *queue = NULL;
+    Queue *queue;
     Status stat;
 
     stat = queue_new(&queue);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEmptyQueue() - allocation failure");
-    
+
     validateEmptyQueue(queue);
     queue_destroy(queue, NULL);
+
     CU_PASS("testEmptyQueue() - Test Passed");
 }
 
-static char *singleItem = "Test";
-void testSingleItem() {
-    
+static void testSingleItem() {
+
     Queue *queue;
     Status stat;
+    Boolean isEmpty;
+    char *element;
+    long size;
 
     stat = queue_new(&queue);
     if (stat != STAT_SUCCESS)
@@ -79,12 +86,11 @@ void testSingleItem() {
     stat = queue_enqueue(queue, singleItem);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 
-    long size = queue_size(queue);
-    Boolean isEmpty = queue_isEmpty(queue);
+    size = queue_size(queue);
+    isEmpty = queue_isEmpty(queue);
     CU_ASSERT_EQUAL(size, 1L);
     CU_ASSERT_EQUAL(isEmpty, FALSE);
 
-    char *element;
     stat = queue_peek(queue, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
@@ -92,7 +98,6 @@ void testSingleItem() {
     stat = queue_dequeue(queue, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-
     stat = queue_dequeue(queue, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
@@ -102,22 +107,19 @@ void testSingleItem() {
     CU_PASS("testSingleItem() - Test Passed");
 }
 
-#define LEN 6
-static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple"};
+static void testEnqueueDequeue() {
 
-void testEnqueueDequeue() {
-    
     Queue *queue;
     Status stat;
+    Boolean isEmpty;
+    char *element;
+    int i;
+    long size;
 
     stat = queue_new(&queue);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEnqueueDequeue() - allocation failure");
 
-    int i;
-    long size;
-    Boolean isEmpty;
-    char *element;
     for (i = 0; i < LEN; i++) {
         stat = queue_enqueue(queue, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
@@ -141,26 +143,27 @@ void testEnqueueDequeue() {
     }
 
     queue_destroy(queue, NULL);
+
     CU_PASS("testEnqueueDequeue() - Test Passed");
 }
 
-void testQueueToArray() {
+static void testQueueToArray() {
 
     Queue *queue;
     Status stat;
+    int i;
+    long len;
+    char **items;
 
     stat = queue_new(&queue);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testQueueToArray() - allocation failure");
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = queue_enqueue(queue, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    char **items;
-    long len;
     stat = queue_toArray(queue, (void ***)&items, &len);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_EQUAL(len, LEN);
@@ -170,29 +173,30 @@ void testQueueToArray() {
 
     free(items);
     queue_destroy(queue, NULL);
+
     CU_PASS("testQueueToArray() - Test Passed");
 }
 
-void testQueueIterator() {
+static void testQueueIterator() {
 
     Queue *queue;
+    Iterator *iter;
     Status stat;
+    int i;
+    char *element;
 
     stat = queue_new(&queue);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testQueueIterator() - allocation failure");
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = queue_enqueue(queue, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    Iterator *iter;
     stat = queue_iterator(queue, &iter);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 
-    char *element;
     i = 0;
     while (iterator_hasNext(iter) == TRUE) {
         stat = iterator_next(iter, (void **)&element);
@@ -202,19 +206,20 @@ void testQueueIterator() {
 
     iterator_destroy(iter);
     queue_destroy(queue, NULL);
+
     CU_PASS("testQueueIterator() - Test Passed");
 }
 
-void testQueueClear() {
-    
+static void testQueueClear() {
+
     Queue *queue;
     Status stat;
+    int i;
 
     stat = queue_new(&queue);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testQueueClear() - allocation failure");
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = queue_enqueue(queue, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
@@ -230,22 +235,23 @@ void testQueueClear() {
 #define UNUSED __attribute__((unused))
 int main(UNUSED int argc, UNUSED char **argv) {
 
-    if (CUE_SUCCESS != CU_initialize_registry())
+    if (CU_initialize_registry() != CUE_SUCCESS) {
         return CU_get_error();
+    }
 
-    CU_pSuite suite = CU_add_suite("Queue Tests", NULL, NULL);
+    CU_pSuite suite = CU_add_suite("ArrayList Tests", NULL, NULL);
     if (suite == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
 
-    CU_add_test(suite, "Empty queue", testEmptyQueue);
-    CU_add_test(suite, "Single item", testSingleItem);
-    CU_add_test(suite, "Enqueue & dequeue", testEnqueueDequeue);
-    CU_add_test(suite, "Queue toArray", testQueueToArray);
-    CU_add_test(suite, "Queue iterator", testQueueIterator);
-    CU_add_test(suite, "Queue clear", testQueueClear);
-    
+    CU_add_test(suite, "Queue - Empty", testEmptyQueue);
+    CU_add_test(suite, "Queue - Single Item", testSingleItem);
+    CU_add_test(suite, "Queue - Enqueue & Dequeue", testEnqueueDequeue);
+    CU_add_test(suite, "Queue - Array", testQueueToArray);
+    CU_add_test(suite, "Queue - Iterator", testQueueIterator);
+    CU_add_test(suite, "Queue - Clear", testQueueClear);
+
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();

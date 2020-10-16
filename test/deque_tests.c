@@ -40,7 +40,7 @@ static void validateEmptyDeque(Deque *deque) {
     Boolean isEmpty;
     long size, len;
     char *element, **array;
-    
+
     stat = deque_first(deque, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
     stat = deque_last(deque, (void **)&element);
@@ -52,13 +52,10 @@ static void validateEmptyDeque(Deque *deque) {
 
     size = deque_size(deque);
     CU_ASSERT_EQUAL(size, 0L);
-
     isEmpty = deque_isEmpty(deque);
     CU_ASSERT_EQUAL(isEmpty, TRUE);
-    
     stat = deque_iterator(deque, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
     stat = deque_toArray(deque, (void ***)&array, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
@@ -71,9 +68,10 @@ void testEmptyDeque() {
     stat = deque_new(&deque);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEmptyDeque() - allocation failure");
-    
+
     validateEmptyDeque(deque);
     deque_destroy(deque, NULL);
+
     CU_PASS("testEmptyDeque() - Test Passed");
 }
 
@@ -98,7 +96,7 @@ static void validateSingleItem(Deque *deque) {
 }
 
 void testSingleItemFromFirst() {
-    
+
     Deque *deque;
     Status stat;
     char *element;
@@ -124,7 +122,7 @@ void testSingleItemFromFirst() {
 }
 
 void testSingleItemFromLast() {
-    
+
     Deque *deque;
     Status stat;
     char *element;
@@ -150,7 +148,7 @@ void testSingleItemFromLast() {
 }
 
 void testEndequeDedequeFromFirst() {
-    
+
     Deque *deque;
     Status stat;
     Boolean isEmpty;
@@ -195,7 +193,7 @@ void testEndequeDedequeFromFirst() {
 }
 
 void testEndequeDedequeFromLast() {
-    
+
     Deque *deque;
     Status stat;
     Boolean isEmpty;
@@ -265,6 +263,7 @@ void testDequeToArray() {
 
     free(items);
     deque_destroy(deque, NULL);
+
     CU_PASS("testDequeToArray() - Test Passed");
 }
 
@@ -297,11 +296,12 @@ void testDequeIterator() {
 
     iterator_destroy(iter);
     deque_destroy(deque, NULL);
+
     CU_PASS("testDequeIterator() - Test Passed");
 }
 
 void testDequeClear() {
-    
+
     Deque *deque;
     Status stat;
     int i;
@@ -325,24 +325,25 @@ void testDequeClear() {
 #define UNUSED __attribute__((unused))
 int main(UNUSED int argc, UNUSED char **argv) {
 
-    if (CUE_SUCCESS != CU_initialize_registry())
+    if (CU_initialize_registry() != CUE_SUCCESS) {
         return CU_get_error();
+    }
 
-    CU_pSuite suite = CU_add_suite("Deque Tests", NULL, NULL);
+    CU_pSuite suite = CU_add_suite("ArrayList Tests", NULL, NULL);
     if (suite == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
 
-    CU_add_test(suite, "Empty deque", testEmptyDeque);
-    CU_add_test(suite, "Single item from first", testSingleItemFromFirst);
-    CU_add_test(suite, "Single item from last", testSingleItemFromLast);
-    CU_add_test(suite, "Deque insert & delete from head", testEndequeDedequeFromFirst);
-    CU_add_test(suite, "Deque insert & delete from tail", testEndequeDedequeFromLast);
-    CU_add_test(suite, "Deque toArray", testDequeToArray);
-    CU_add_test(suite, "Deque iterator", testDequeIterator);
-    CU_add_test(suite, "Deque clear", testDequeClear);
-    
+    CU_add_test(suite, "Deque - Empty Deque", testEmptyDeque);
+    CU_add_test(suite, "Deque - Single First Item", testSingleItemFromFirst);
+    CU_add_test(suite, "Deque - Single Last Item", testSingleItemFromLast);
+    CU_add_test(suite, "Deque - Head Insert & Delete", testEndequeDedequeFromFirst);
+    CU_add_test(suite, "Deque - Tail Insert & Delete", testEndequeDedequeFromLast);
+    CU_add_test(suite, "Deque - Array", testDequeToArray);
+    CU_add_test(suite, "Deque - Iterator", testDequeIterator);
+    CU_add_test(suite, "Deque - Clear", testDequeClear);
+
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();

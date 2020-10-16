@@ -36,7 +36,6 @@ static char *singleItem = "Test";
 #define LEN 9
 static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple", "gray", "white", "black"};
 
-
 static void validateEmptyArrayList(ArrayList *list) {
 
     Iterator *iter;
@@ -44,7 +43,7 @@ static void validateEmptyArrayList(ArrayList *list) {
     Boolean isEmpty;
     char *element, **array;
     long size, len;
-    
+
     stat = arraylist_get(list, 0L, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
     stat = arraylist_set(list, 0L, singleItem, (void **)&element);
@@ -54,18 +53,15 @@ static void validateEmptyArrayList(ArrayList *list) {
 
     size = arraylist_size(list);
     CU_ASSERT_EQUAL(size, 0L);
-
     isEmpty = arraylist_isEmpty(list);
     CU_ASSERT_EQUAL(isEmpty, TRUE);
-    
     stat = arraylist_iterator(list, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
     stat = arraylist_toArray(list, (void ***)&array, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
-void testEmptyArrayList() {
+static void testEmptyArrayList() {
 
     ArrayList *list;
     Status stat;
@@ -73,14 +69,14 @@ void testEmptyArrayList() {
     stat = arraylist_new(&list, CAPACITY);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEmptyArrayList() - allocation failure");
-    
+
     validateEmptyArrayList(list);
     arraylist_destroy(list, NULL);
     CU_PASS("testEmptyArrayList() - Test Passed");
 }
 
-void testSingleItem() {
-    
+static void testSingleItem() {
+
     ArrayList *list;
     Boolean isEmpty;
     Status stat;
@@ -107,11 +103,9 @@ void testSingleItem() {
 
     stat = arraylist_remove(list, 99L, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
-
     stat = arraylist_remove(list, 0L, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-
     stat = arraylist_remove(list, 0L, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
@@ -121,7 +115,7 @@ void testSingleItem() {
     CU_PASS("testSingleItem() - Test Passed");
 }
 
-void testInsertions() {
+static void testInsertions() {
 
     ArrayList *list;
     Status stat;
@@ -161,7 +155,7 @@ void testInsertions() {
     CU_PASS("testAdditions() - Test Passed");
 }
 
-void testSetItem() {
+static void testSetItem() {
 
     ArrayList *list;
     Status stat;
@@ -202,7 +196,7 @@ void testSetItem() {
     CU_PASS("testSetItem() - Test Passed");
 }
 
-void testSequentialDelete() {
+static void testSequentialDelete() {
 
     ArrayList *list;
     Status stat;
@@ -229,7 +223,7 @@ void testSequentialDelete() {
     CU_PASS("testSequentialDelete() - Test Passed");
 }
 
-void testRandomDelete() {
+static void testRandomDelete() {
 
     ArrayList *list;
     Status stat;
@@ -260,7 +254,7 @@ void testRandomDelete() {
     CU_PASS("testRandomDelete() - Test Passed");
 }
 
-void testEnsureCapacity() {
+static void testEnsureCapacity() {
 
     ArrayList *list;
     Status stat;
@@ -284,10 +278,11 @@ void testEnsureCapacity() {
     CU_ASSERT_EQUAL(capacity, CAPACITY + 20L);
 
     arraylist_destroy(list, NULL);
+
     CU_PASS("testEnsureCapacity() - Test Passed");
 }
 
-void testTrimToSize() {
+static void testTrimToSize() {
 
     ArrayList *list;
     Status stat;
@@ -307,7 +302,7 @@ void testTrimToSize() {
     CU_PASS("testEnsureCapacity() - Test Passed");
 }
 
-void testInvalidIndexAccess() {
+static void testInvalidIndexAccess() {
 
     ArrayList *list;
     Status stat;
@@ -329,7 +324,7 @@ void testInvalidIndexAccess() {
     CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
     stat = arraylist_insert(list, LEN + 10L, singleItem);
     CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
-    
+
     stat = arraylist_get(list, -1, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
     stat = arraylist_get(list, LEN + 1L, (void **)&element);
@@ -352,10 +347,11 @@ void testInvalidIndexAccess() {
     CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
 
     arraylist_destroy(list, NULL);
+
     CU_PASS("testInvalidIndexAccess() - Test Passed");
 }
 
-void testArrayListToArray() {
+static void testArrayListToArray() {
 
     ArrayList *list;
     Status stat;
@@ -381,10 +377,11 @@ void testArrayListToArray() {
 
     free(items);
     arraylist_destroy(list, NULL);
+
     CU_PASS("testArrayListToArray() - Test Passed");
 }
 
-void testArrayListIterator() {
+static void testArrayListIterator() {
 
     ArrayList *list;
     Iterator *iter;
@@ -413,11 +410,12 @@ void testArrayListIterator() {
 
     iterator_destroy(iter);
     arraylist_destroy(list, NULL);
+
     CU_PASS("testArrayListIterator() - Test Passed");
 }
 
-void testArrayListClear() {
-    
+static void testArrayListClear() {
+
     ArrayList *list;
     Status stat;
     int i;
@@ -441,8 +439,9 @@ void testArrayListClear() {
 #define UNUSED __attribute__((unused))
 int main(UNUSED int argc, UNUSED char **argv) {
 
-    if (CUE_SUCCESS != CU_initialize_registry())
+    if (CU_initialize_registry() != CUE_SUCCESS) {
         return CU_get_error();
+    }
 
     CU_pSuite suite = CU_add_suite("ArrayList Tests", NULL, NULL);
     if (suite == NULL) {
@@ -450,18 +449,18 @@ int main(UNUSED int argc, UNUSED char **argv) {
         return CU_get_error();
     }
 
-    CU_add_test(suite, "Empty arraylist", testEmptyArrayList);
-    CU_add_test(suite, "Single item", testSingleItem);
-    CU_add_test(suite, "Invalid Index Access", testInvalidIndexAccess);
-    CU_add_test(suite, "ArrayList additions", testInsertions);
-    CU_add_test(suite, "ArrayList set", testSetItem);
-    CU_add_test(suite, "ArrayList sequential delete", testSequentialDelete);
-    CU_add_test(suite, "ArrayList random delete", testRandomDelete);
-    CU_add_test(suite, "ArrayList ensure", testEnsureCapacity);
-    CU_add_test(suite, "ArrayList trimToSize", testTrimToSize);
-    CU_add_test(suite, "ArrayList toArray", testArrayListToArray);
-    CU_add_test(suite, "ArrayList iterator", testArrayListIterator);
-    CU_add_test(suite, "ArrayList clear", testArrayListClear);
+    CU_add_test(suite, "ArrayList - Empty", testEmptyArrayList);
+    CU_add_test(suite, "ArrayList - Single Item", testSingleItem);
+    CU_add_test(suite, "ArrayList - Invalid Index Access", testInvalidIndexAccess);
+    CU_add_test(suite, "ArrayList - Additions", testInsertions);
+    CU_add_test(suite, "ArrayList - Set", testSetItem);
+    CU_add_test(suite, "ArrayList - Sequential Delete", testSequentialDelete);
+    CU_add_test(suite, "ArrayList - Random Delete", testRandomDelete);
+    CU_add_test(suite, "ArrayList - Ensure", testEnsureCapacity);
+    CU_add_test(suite, "ArrayList - Trim to Size", testTrimToSize);
+    CU_add_test(suite, "ArrayList - Array", testArrayListToArray);
+    CU_add_test(suite, "ArrayList - Iterator", testArrayListIterator);
+    CU_add_test(suite, "ArrayList - Clear", testArrayListClear);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();

@@ -62,7 +62,7 @@ static void validateEmptyHashMap(HashMap *map) {
     HmEntry **entryArray;
     char *value, **keyArray;
     long size, len;
-    
+
     stat = hashmap_containsKey(map, singleKey);
     CU_ASSERT_EQUAL(stat, FALSE);
     stat = hashmap_remove(map, singleKey, (void **)&value);
@@ -70,20 +70,17 @@ static void validateEmptyHashMap(HashMap *map) {
 
     size = hashmap_size(map);
     CU_ASSERT_EQUAL(size, 0L);
-
     isEmpty = hashmap_isEmpty(map);
     CU_ASSERT_EQUAL(isEmpty, TRUE);
-    
     stat = hashmap_iterator(map, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
     stat = hashmap_keyArray(map, &keyArray, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
     stat = hashmap_entryArray(map, &entryArray, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
-void testEmptyHashMap() {
+static void testEmptyHashMap() {
 
     HashMap *map;
     Status stat;
@@ -91,14 +88,15 @@ void testEmptyHashMap() {
     stat = hashmap_new(&map, CAPACITY, LOAD_FACTOR);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEmptyHashMap() - allocation failure");
-    
+
     validateEmptyHashMap(map);
     hashmap_destroy(map, NULL);
+
     CU_PASS("testEmptyHashMap() - Test Passed");
 }
 
-void testSingleItem() {
-    
+static void testSingleItem() {
+
     HashMap *map;
     Status stat;
     Boolean isEmpty, exists;
@@ -142,8 +140,8 @@ void testSingleItem() {
     CU_PASS("testSingleItem() - Test Passed");
 }
 
-void testHashMapInsertions() {
-    
+static void testHashMapInsertions() {
+
     HashMap *map;
     Status stat;
     Boolean exists;
@@ -171,14 +169,13 @@ void testHashMapInsertions() {
     CU_ASSERT_EQUAL(exists, FALSE);
     stat = hashmap_get(map, singleKey, (void **)&prev);
     CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
-
     hashmap_destroy(map, NULL);
 
     CU_PASS("testHashMapInsertions() - Test Passed");
 }
 
-void testHashMapReplacements() {
-    
+static void testHashMapReplacements() {
+
     HashMap *map;
     Status stat;
     int i, j;
@@ -204,8 +201,8 @@ void testHashMapReplacements() {
     CU_PASS("testHashMapReplacements() - Test Passed");
 }
 
-void testHashMapClear() {
-    
+static void testHashMapClear() {
+
     HashMap *map;
     Status stat;
     int i;
@@ -227,7 +224,7 @@ void testHashMapClear() {
     CU_PASS("testHashMapClear() - Test Passed");
 }
 
-void testHashMapToArray() {
+static void testHashMapToArray() {
 
     HashMap *map;
     HmEntry **entryArray;
@@ -255,10 +252,11 @@ void testHashMapToArray() {
     free(keyArray);
     free(entryArray);
     hashmap_destroy(map, NULL);
+
     CU_PASS("testHashMapToArray() - Test Passed");
 }
 
-void testHashMapIterator() {
+static void testHashMapIterator() {
 
     HashMap *map;
     Iterator *iter;
@@ -280,28 +278,30 @@ void testHashMapIterator() {
 
     iterator_destroy(iter);
     hashmap_destroy(map, NULL);
+
     CU_PASS("testHashMapIterator() - Test Passed");
 }
 
 #define UNUSED __attribute__((unused))
 int main(UNUSED int argc, UNUSED char **argv) {
 
-    if (CUE_SUCCESS != CU_initialize_registry())
+    if (CU_initialize_registry() != CUE_SUCCESS) {
         return CU_get_error();
+    }
 
-    CU_pSuite suite = CU_add_suite("HashMap Tests", NULL, NULL);
+    CU_pSuite suite = CU_add_suite("ArrayList Tests", NULL, NULL);
     if (suite == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
 
-    CU_add_test(suite, "Empty hashMap", testEmptyHashMap);
-    CU_add_test(suite, "Single item", testSingleItem);
-    CU_add_test(suite, "Insertions", testHashMapInsertions);
-    CU_add_test(suite, "Replacements", testHashMapReplacements);
-    CU_add_test(suite, "HashMap clear", testHashMapClear);
-    CU_add_test(suite, "HashMap toArray", testHashMapToArray);
-    CU_add_test(suite, "HashMap iterator", testHashMapIterator);
+    CU_add_test(suite, "HashMap - Empty HashMap", testEmptyHashMap);
+    CU_add_test(suite, "HashMap - Single Item", testSingleItem);
+    CU_add_test(suite, "HashMap - Insertions", testHashMapInsertions);
+    CU_add_test(suite, "HashMap - Replacements", testHashMapReplacements);
+    CU_add_test(suite, "HashMap - Clear", testHashMapClear);
+    CU_add_test(suite, "HashMap - Array", testHashMapToArray);
+    CU_add_test(suite, "HashMap - Iterator", testHashMapIterator);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();

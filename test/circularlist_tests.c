@@ -50,18 +50,15 @@ static void validateEmptyCircularList(CircularList *list) {
 
     size = circularlist_size(list);
     CU_ASSERT_EQUAL(size, 0L);
-
     isEmpty = circularlist_isEmpty(list);
     CU_ASSERT_EQUAL(isEmpty, TRUE);
-    
     stat = circularlist_iterator(list, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
     stat = circularlist_toArray(list, (void ***)&array, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
-void testEmptyCircularList() {
+static void testEmptyCircularList() {
 
     CircularList *list;
     Status stat;
@@ -69,9 +66,10 @@ void testEmptyCircularList() {
     stat = circularlist_new(&list);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEmptyCircularList() - allocation failure");
-    
+
     validateEmptyCircularList(list);
     circularlist_destroy(list, NULL);
+
     CU_PASS("testEmptyCircularList() - Test Passed");
 }
 
@@ -99,7 +97,7 @@ static void validateSingleItem(CircularList *list) {
     CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
 }
 
-void testSingleItemAtHead() {
+static void testSingleItemAtHead() {
 
     CircularList *list;
     Status stat;
@@ -121,8 +119,8 @@ void testSingleItemAtHead() {
     CU_PASS("testSingleItemAtHead() - Test Passed");
 }
 
-void testSingleItemAtTail() {
-    
+static void testSingleItemAtTail() {
+
     CircularList *list;
     Status stat;
     char *element;
@@ -143,7 +141,7 @@ void testSingleItemAtTail() {
     CU_PASS("testSingleItemAtTail() - Test Passed");
 }
 
-void testHeadOperations() {
+static void testHeadOperations() {
 
     CircularList *list;
     Status stat;
@@ -169,7 +167,7 @@ void testHeadOperations() {
     CU_PASS("testHeadOperations() - Test Passed");
 }
 
-void testTailOperations() {
+static void testTailOperations() {
 
     CircularList *list;
     Status stat;
@@ -195,8 +193,8 @@ void testTailOperations() {
     CU_PASS("testTailOperations() - Test Passed");
 }
 
-void testRotations() {
-    
+static void testRotations() {
+
     CircularList *list;
     Status stat;
     int i;
@@ -230,7 +228,7 @@ void testRotations() {
     CU_PASS("testRotations() - Test Passed");
 }
 
-void testCircularListToArray() {
+static void testCircularListToArray() {
 
     CircularList *list;
     Status stat;
@@ -256,10 +254,11 @@ void testCircularListToArray() {
 
     free(items);
     circularlist_destroy(list, NULL);
+
     CU_PASS("testCircularListToArray() - Test Passed");
 }
 
-void testCircularListIterator() {
+static void testCircularListIterator() {
 
     CircularList *list;
     Iterator *iter;
@@ -288,11 +287,12 @@ void testCircularListIterator() {
 
     iterator_destroy(iter);
     circularlist_destroy(list, NULL);
+
     CU_PASS("testCircularListIterator() - Test Passed");
 }
 
-void testCircularListClear() {
-    
+static void testCircularListClear() {
+
     CircularList *list;
     Status stat;
     int i;
@@ -316,25 +316,26 @@ void testCircularListClear() {
 #define UNUSED __attribute__((unused))
 int main(UNUSED int argc, UNUSED char **argv) {
 
-    if (CUE_SUCCESS != CU_initialize_registry())
+    if (CU_initialize_registry() != CUE_SUCCESS) {
         return CU_get_error();
+    }
 
-    CU_pSuite suite = CU_add_suite("CircularList Tests", NULL, NULL);
+    CU_pSuite suite = CU_add_suite("ArrayList Tests", NULL, NULL);
     if (suite == NULL) {
         CU_cleanup_registry();
         return CU_get_error();
     }
 
-    CU_add_test(suite, "Empty circular list", testEmptyCircularList);
-    CU_add_test(suite, "Single item at head", testSingleItemAtHead);
-    CU_add_test(suite, "Single item at head", testSingleItemAtTail);
-    CU_add_test(suite, "Head insert then delete", testHeadOperations);
-    CU_add_test(suite, "Tail insert then delete", testTailOperations);
-    CU_add_test(suite, "List Rotations", testRotations);
-    CU_add_test(suite, "CircularList toArray", testCircularListToArray);
-    CU_add_test(suite, "CircularList iterator", testCircularListIterator);
-    CU_add_test(suite, "CircularList clear", testCircularListClear);
-    
+    CU_add_test(suite, "CircularList - Empty List", testEmptyCircularList);
+    CU_add_test(suite, "CircularList - Single Head Item", testSingleItemAtHead);
+    CU_add_test(suite, "CircularList - Single Tail Item", testSingleItemAtTail);
+    CU_add_test(suite, "CircularList - Head Insert & Delete", testHeadOperations);
+    CU_add_test(suite, "CircularList - Tail insert & Delete", testTailOperations);
+    CU_add_test(suite, "CircularList - Rotations", testRotations);
+    CU_add_test(suite, "CircularList - Array", testCircularListToArray);
+    CU_add_test(suite, "CircularList - Iterator", testCircularListIterator);
+    CU_add_test(suite, "CircularList - Clear", testCircularListClear);
+
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();

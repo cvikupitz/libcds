@@ -10,11 +10,11 @@ CUNIT=-lcunit
 OBJS=arraylist_tests.o boundedqueue_tests.o boundedstack_tests.o circularlist_tests.o \
      deque_tests.o hashmap_tests.o hashset_tests.o heap_tests.o iterator_tests.o \
      linkedlist_tests.o queue_tests.o stack_tests.o treeset_tests.o
-EXECS=arraylist_tests boundedqueue_tests boundedstack_tests circularlist_tests deque_tests \
-      hashmap_tests hashset_tests heap_tests iterator_tests linkedlist_tests queue_tests \
-      stack_tests treeset_tests
+EXECS=arraylist_tests boundedqueue_tests boundedstack_tests circularlist_tests \
+     deque_tests hashmap_tests hashset_tests heap_tests iterator_tests linkedlist_tests \
+     queue_tests stack_tests treeset_tests
 
-# Builds executable for all tests
+# Builds executable for all individual tests
 all: $(EXECS)
 
 # Builds executables to separately run ADT tests
