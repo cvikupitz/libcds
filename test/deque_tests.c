@@ -26,10 +26,20 @@
 #include <CUnit/Basic.h>
 #include "deque.h"
 
+/* Single item used for testing */
+static char *singleItem = "Test";
+
+/* Collection of items used for testing */
+#define LEN 6
+static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple"};
+
 static void validateEmptyDeque(Deque *deque) {
 
+    Iterator *iter;
     Status stat;
-    char *element;
+    Boolean isEmpty;
+    long size, len;
+    char *element, **array;
     
     stat = deque_first(deque, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
@@ -40,25 +50,22 @@ static void validateEmptyDeque(Deque *deque) {
     stat = deque_removeLast(deque, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
-    long size = deque_size(deque);
+    size = deque_size(deque);
     CU_ASSERT_EQUAL(size, 0L);
 
-    Boolean isEmpty = deque_isEmpty(deque);
+    isEmpty = deque_isEmpty(deque);
     CU_ASSERT_EQUAL(isEmpty, TRUE);
     
-    Iterator *iter;
     stat = deque_iterator(deque, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
-    int **array;
-    long len;
     stat = deque_toArray(deque, (void ***)&array, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
 void testEmptyDeque() {
 
-    Deque *deque = NULL;
+    Deque *deque;
     Status stat;
 
     stat = deque_new(&deque);
@@ -70,20 +77,18 @@ void testEmptyDeque() {
     CU_PASS("testEmptyDeque() - Test Passed");
 }
 
-static char *singleItem = "Test";
-#define LEN 6
-static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple"};
-
 static void validateSingleItem(Deque *deque) {
 
     Status stat;
+    Boolean isEmpty;
+    long size;
+    char *element;
 
-    long size = deque_size(deque);
-    Boolean isEmpty = deque_isEmpty(deque);
+    size = deque_size(deque);
+    isEmpty = deque_isEmpty(deque);
     CU_ASSERT_EQUAL(size, 1L);
     CU_ASSERT_EQUAL(isEmpty, FALSE);
 
-    char *element;
     stat = deque_first(deque, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
@@ -148,15 +153,15 @@ void testEndequeDedequeFromFirst() {
     
     Deque *deque;
     Status stat;
+    Boolean isEmpty;
+    int i;
+    long size;
+    char *element;
 
     stat = deque_new(&deque);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEndequeDedequeFromFirst() - allocation failure");
 
-    int i;
-    long size;
-    Boolean isEmpty;
-    char *element;
     for (i = 0; i < LEN; i++) {
         stat = deque_addFirst(deque, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
@@ -193,15 +198,15 @@ void testEndequeDedequeFromLast() {
     
     Deque *deque;
     Status stat;
+    Boolean isEmpty;
+    int i;
+    long size;
+    char *element;
 
     stat = deque_new(&deque);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEndequeDedequeFromLast() - allocation failure");
 
-    int i;
-    long size;
-    Boolean isEmpty;
-    char *element;
     for (i = 0; i < LEN; i++) {
         stat = deque_addLast(deque, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
@@ -238,19 +243,19 @@ void testDequeToArray() {
 
     Deque *deque;
     Status stat;
+    int i;
+    char **items;
+    long len;
 
     stat = deque_new(&deque);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testDequeToArray() - allocation failure");
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = deque_addLast(deque, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    char **items;
-    long len;
     stat = deque_toArray(deque, (void ***)&items, &len);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_EQUAL(len, LEN);
@@ -266,23 +271,23 @@ void testDequeToArray() {
 void testDequeIterator() {
 
     Deque *deque;
+    Iterator *iter;
     Status stat;
+    int i;
+    char *element;
 
     stat = deque_new(&deque);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testDequeIterator() - allocation failure");
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = deque_addLast(deque, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    Iterator *iter;
     stat = deque_iterator(deque, &iter);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 
-    char *element;
     i = 0;
     while (iterator_hasNext(iter) == TRUE) {
         stat = iterator_next(iter, (void **)&element);
@@ -299,12 +304,12 @@ void testDequeClear() {
     
     Deque *deque;
     Status stat;
+    int i;
 
     stat = deque_new(&deque);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testDequeClear() - allocation failure");
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = deque_addFirst(deque, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);

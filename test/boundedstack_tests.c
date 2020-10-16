@@ -26,39 +26,47 @@
 #include <CUnit/Basic.h>
 #include "boundedstack.h"
 
+/* Default capacity to assign for the bounded stack */
 #define CAPACITY 5L
+
+/* Single item used for testing */
+static char *singleItem = "Test";
+
+/* A collection of items used for testing */
+#define LEN 9
+static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple", "gray", "white", "black"};
 
 static void validateEmptyBoundedStack(BoundedStack *stack) {
 
+    Iterator *iter;
     Status stat;
-    int *element;
+    Boolean isEmpty, isFull;
+    long size, len;
+    char *element, **array;
     
     stat = boundedstack_peek(stack, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
     stat = boundedstack_pop(stack, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
-    long size = boundedstack_size(stack);
+    size = boundedstack_size(stack);
     CU_ASSERT_EQUAL(size, 0L);
 
-    Boolean isEmpty = boundedstack_isEmpty(stack);
+    isEmpty = boundedstack_isEmpty(stack);
     CU_ASSERT_EQUAL(isEmpty, TRUE);
-    Boolean isFull = boundedstack_isFull(stack);
+    isFull = boundedstack_isFull(stack);
     CU_ASSERT_EQUAL(isFull, FALSE);
     
-    Iterator *iter;
     stat = boundedstack_iterator(stack, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
-    int **array;
-    long len;
     stat = boundedstack_toArray(stack, (void ***)&array, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
 void testEmptyBoundedStack() {
 
-    BoundedStack *stack = NULL;
+    BoundedStack *stack;
     Status stat;
 
     stat = boundedstack_new(&stack, CAPACITY);
@@ -70,11 +78,13 @@ void testEmptyBoundedStack() {
     CU_PASS("testEmptyBoundedStack() - Test Passed");
 }
 
-static char *singleItem = "Test";
 void testSingleItem() {
     
     BoundedStack *stack;
     Status stat;
+    Boolean isEmpty, isFull;
+    char *element;
+    long size, capacity;
 
     stat = boundedstack_new(&stack, CAPACITY);
     if (stat != STAT_SUCCESS)
@@ -83,16 +93,15 @@ void testSingleItem() {
     stat = boundedstack_push(stack, singleItem);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 
-    long size = boundedstack_size(stack);
-    long capacity = boundedstack_capacity(stack);
-    Boolean isEmpty = boundedstack_isEmpty(stack);
-    Boolean isFull = boundedstack_isFull(stack);
+    size = boundedstack_size(stack);
+    capacity = boundedstack_capacity(stack);
+    isEmpty = boundedstack_isEmpty(stack);
+    isFull = boundedstack_isFull(stack);
     CU_ASSERT_EQUAL(size, 1L);
     CU_ASSERT_EQUAL(capacity, CAPACITY);
     CU_ASSERT_EQUAL(isEmpty, FALSE);
     CU_ASSERT_EQUAL(isFull, FALSE);
 
-    char *element;
     stat = boundedstack_peek(stack, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
@@ -110,22 +119,19 @@ void testSingleItem() {
     CU_PASS("testSingleItem() - Test Passed");
 }
 
-#define LEN 9
-static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple", "gray", "white", "black"};
-
 void testPushPop() {
     
     BoundedStack *stack;
     Status stat;
+    Boolean isEmpty, isFull;
+    int i;
+    long size;
+    char *element;
 
     stat = boundedstack_new(&stack, CAPACITY);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testPushPop() - allocation failure");
 
-    int i;
-    long size;
-    Boolean isEmpty, isFull;
-    char *element;
     for (i = 0; i < CAPACITY; i++) {
         stat = boundedstack_push(stack, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
@@ -171,19 +177,19 @@ void testBoundedStackToArray() {
 
     BoundedStack *stack;
     Status stat;
+    int i, j;
+    char **items;
+    long len;
 
     stat = boundedstack_new(&stack, LEN);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testBoundedStackToArray() - allocation failure");
 
-    int i, j;
     for (i = 0; i < LEN; i++) {
         stat = boundedstack_push(stack, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    char **items;
-    long len;
     stat = boundedstack_toArray(stack, (void ***)&items, &len);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_EQUAL(len, LEN);
@@ -199,23 +205,23 @@ void testBoundedStackToArray() {
 void testBoundedStackIterator() {
 
     BoundedStack *stack;
+    Iterator *iter;
     Status stat;
+    int i;
+    char *element;
 
     stat = boundedstack_new(&stack, LEN);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testBoundedStackIterator() - allocation failure");
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = boundedstack_push(stack, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    Iterator *iter;
     stat = boundedstack_iterator(stack, &iter);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 
-    char *element;
     i = LEN - 1;
     while (iterator_hasNext(iter) == TRUE) {
         stat = iterator_next(iter, (void **)&element);
@@ -232,12 +238,12 @@ void testBoundedStackClear() {
     
     BoundedStack *stack;
     Status stat;
+    int i;
 
     stat = boundedstack_new(&stack, LEN);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testBoundedStackClear() - allocation failure");
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = boundedstack_push(stack, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);

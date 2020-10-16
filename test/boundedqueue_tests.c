@@ -26,37 +26,45 @@
 #include <CUnit/Basic.h>
 #include "boundedqueue.h"
 
+/* Default capacity for the bounded queues */
 #define CAPACITY 5L
+
+/* Single item used for testing */
+static char *singleItem = "Test";
+
+/* Collection of items used for testing */
+#define LEN 9
+static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple", "gray", "white", "black"};
 
 static void validateEmptyBoundedQueue(BoundedQueue *queue) {
 
     Status stat;
-    int *element;
+    Boolean isEmpty;
+    Iterator *iter;
+    char *element, **array;
+    long size, len;
     
     stat = boundedqueue_peek(queue, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
     stat = boundedqueue_dequeue(queue, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
-    long size = boundedqueue_size(queue);
+    size = boundedqueue_size(queue);
     CU_ASSERT_EQUAL(size, 0L);
 
-    Boolean isEmpty = boundedqueue_isEmpty(queue);
+    isEmpty = boundedqueue_isEmpty(queue);
     CU_ASSERT_EQUAL(isEmpty, TRUE);
     
-    Iterator *iter;
     stat = boundedqueue_iterator(queue, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
-    int **array;
-    long len;
     stat = boundedqueue_toArray(queue, (void ***)&array, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
 void testEmptyBoundedQueue() {
 
-    BoundedQueue *queue = NULL;
+    BoundedQueue *queue;
     Status stat;
 
     stat = boundedqueue_new(&queue, CAPACITY);
@@ -68,11 +76,13 @@ void testEmptyBoundedQueue() {
     CU_PASS("testEmptyBoundedQueue() - Test Passed");
 }
 
-static char *singleItem = "Test";
 void testSingleItem() {
     
     BoundedQueue *queue;
     Status stat;
+    Boolean isEmpty;
+    long size;
+    char *element;
 
     stat = boundedqueue_new(&queue, CAPACITY);
     if (stat != STAT_SUCCESS)
@@ -81,12 +91,11 @@ void testSingleItem() {
     stat = boundedqueue_enqueue(queue, singleItem);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 
-    long size = boundedqueue_size(queue);
-    Boolean isEmpty = boundedqueue_isEmpty(queue);
+    size = boundedqueue_size(queue);
+    isEmpty = boundedqueue_isEmpty(queue);
     CU_ASSERT_EQUAL(size, 1L);
     CU_ASSERT_EQUAL(isEmpty, FALSE);
 
-    char *element;
     stat = boundedqueue_peek(queue, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
@@ -104,22 +113,19 @@ void testSingleItem() {
     CU_PASS("testSingleItem() - Test Passed");
 }
 
-#define LEN 9
-static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple", "gray", "white", "black"};
-
 void testEnqueueDequeue() {
     
     BoundedQueue *queue;
     Status stat;
+    Boolean isEmpty, isFull;
+    int i;
+    long size;
+    char *element;
 
     stat = boundedqueue_new(&queue, CAPACITY);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEnqueueDequeue() - allocation failure");
 
-    int i;
-    long size;
-    Boolean isEmpty, isFull;
-    char *element;
     for (i = 0; i < CAPACITY; i++) {
         stat = boundedqueue_enqueue(queue, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
@@ -163,19 +169,19 @@ void testBoundedQueueToArray() {
 
     BoundedQueue *queue;
     Status stat;
+    int i;
+    long len;
+    char **items;
 
     stat = boundedqueue_new(&queue, LEN);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testBoundedQueueToArray() - allocation failure");
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = boundedqueue_enqueue(queue, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    char **items;
-    long len;
     stat = boundedqueue_toArray(queue, (void ***)&items, &len);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_EQUAL(len, LEN);
@@ -191,23 +197,23 @@ void testBoundedQueueToArray() {
 void testBoundedQueueIterator() {
 
     BoundedQueue *queue;
+    Iterator *iter;
     Status stat;
+    int i;
+    char *element;
 
     stat = boundedqueue_new(&queue, LEN);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testBoundedQueueIterator() - allocation failure");
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = boundedqueue_enqueue(queue, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    Iterator *iter;
     stat = boundedqueue_iterator(queue, &iter);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 
-    char *element;
     i = 0;
     while (iterator_hasNext(iter) == TRUE) {
         stat = iterator_next(iter, (void **)&element);
@@ -224,12 +230,12 @@ void testBoundedQueueClear() {
     
     BoundedQueue *queue;
     Status stat;
+    int i;
 
     stat = boundedqueue_new(&queue, LEN);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testBoundedQueueClear() - allocation failure");
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = boundedqueue_enqueue(queue, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
