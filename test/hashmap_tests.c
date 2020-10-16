@@ -26,13 +26,17 @@
 #include <CUnit/Basic.h>
 #include "hashmap.h"
 
+/* Assigned default capacity for hashmap */
 #define CAPACITY 4L
+/* Assigned default load factor for hashmap */
 #define LOAD_FACTOR 0.75f
 
+/* Single key/value itemms used for testing */
 static char *singleKey = "Single-Key";
 static char *singleValue = "Single-Value";
 static char *otherValue = "Other-Value";
 
+/* Collection of keys used for testing */
 #define LEN 24
 static char *keys[] = {
     "red", "orange", "yellow", "green", "blue", "purple",
@@ -41,6 +45,8 @@ static char *keys[] = {
     "lavender", "indigo", "olive", "tomato", "peach", "maroon"
 };
 
+/* Collection of values used for testing */
+/* The elements are meant to be matched by index with the list of key test items */
 static char *entries[] = {
     "#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000FF", "#800080",
     "#808080", "#A52A2A", "#000000", "#FFFFFF", "#FFC0CB", "#00FF00",
@@ -50,27 +56,26 @@ static char *entries[] = {
 
 static void validateEmptyHashMap(HashMap *map) {
 
+    Iterator *iter;
     Status stat;
-    char *value;
+    Boolean isEmpty;
+    HmEntry **entryArray;
+    char *value, **keyArray;
+    long size, len;
     
     stat = hashmap_containsKey(map, singleKey);
     CU_ASSERT_EQUAL(stat, FALSE);
     stat = hashmap_remove(map, singleKey, (void **)&value);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
-    long size = hashmap_size(map);
+    size = hashmap_size(map);
     CU_ASSERT_EQUAL(size, 0L);
 
-    Boolean isEmpty = hashmap_isEmpty(map);
+    isEmpty = hashmap_isEmpty(map);
     CU_ASSERT_EQUAL(isEmpty, TRUE);
     
-    Iterator *iter;
     stat = hashmap_iterator(map, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
-    char **keyArray;
-    HmEntry **entryArray;
-    long len;
 
     stat = hashmap_keyArray(map, &keyArray, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
@@ -80,7 +85,7 @@ static void validateEmptyHashMap(HashMap *map) {
 
 void testEmptyHashMap() {
 
-    HashMap *map = NULL;
+    HashMap *map;
     Status stat;
 
     stat = hashmap_new(&map, CAPACITY, LOAD_FACTOR);
@@ -96,6 +101,8 @@ void testSingleItem() {
     
     HashMap *map;
     Status stat;
+    Boolean isEmpty, exists;
+    long size;
     char *prev;
 
     stat = hashmap_new(&map, CAPACITY, LOAD_FACTOR);
@@ -108,12 +115,12 @@ void testSingleItem() {
     CU_ASSERT_EQUAL(stat, STAT_ENTRY_REPLACED);
     CU_ASSERT_TRUE( strcmp(singleValue, prev) == 0 );
 
-    long size = hashmap_size(map);
-    Boolean isEmpty = hashmap_isEmpty(map);
+    size = hashmap_size(map);
+    isEmpty = hashmap_isEmpty(map);
     CU_ASSERT_EQUAL(size, 1L);
     CU_ASSERT_EQUAL(isEmpty, FALSE);
 
-    Boolean exists = hashmap_containsKey(map, singleKey);
+    exists = hashmap_containsKey(map, singleKey);
     CU_ASSERT_EQUAL(exists, TRUE);
     stat = hashmap_get(map, singleKey, (void **)&prev);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
@@ -140,13 +147,13 @@ void testHashMapInsertions() {
     HashMap *map;
     Status stat;
     Boolean exists;
+    int i;
+    char *prev;
 
     stat = hashmap_new(&map, CAPACITY, LOAD_FACTOR);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testHashMapInsertions() - allocation failure");
 
-    int i;
-    char *prev;
     for (i = 0; i < LEN; i++) {
         stat = hashmap_put(map, keys[i], entries[i], (void **)&prev);
         CU_ASSERT_EQUAL(stat, STAT_ENTRY_INSERTED);
@@ -174,13 +181,13 @@ void testHashMapReplacements() {
     
     HashMap *map;
     Status stat;
+    int i, j;
+    char *prev;
 
     stat = hashmap_new(&map, CAPACITY, LOAD_FACTOR);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testHashMapReplacements() - allocation failure");
 
-    int i, j;
-    char *prev;
     for (i = 0; i < LEN; i++) {
         stat = hashmap_put(map, keys[i], entries[i], (void **)&prev);
         CU_ASSERT_EQUAL(stat, STAT_ENTRY_INSERTED);
@@ -201,13 +208,13 @@ void testHashMapClear() {
     
     HashMap *map;
     Status stat;
+    int i;
+    char *prev;
 
     stat = hashmap_new(&map, CAPACITY, LOAD_FACTOR);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testHashMapClear() - allocation failure");
 
-    int i;
-    char *prev;
     for (i = 0; i < LEN; i++) {
         stat = hashmap_put(map, keys[i], entries[i], (void **)&prev);
         CU_ASSERT_EQUAL(stat, STAT_ENTRY_INSERTED);
@@ -223,22 +230,20 @@ void testHashMapClear() {
 void testHashMapToArray() {
 
     HashMap *map;
+    HmEntry **entryArray;
     Status stat;
+    int i;
+    long len;
+    char *prev, **keyArray;
 
     stat = hashmap_new(&map, CAPACITY, LOAD_FACTOR);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testHashMapToArray() - allocation failure");
 
-    int i;
-    char *prev;
     for (i = 0; i < LEN; i++) {
         stat = hashmap_put(map, keys[i], entries[i], (void **)&prev);
         CU_ASSERT_EQUAL(stat, STAT_ENTRY_INSERTED);
     }
-
-    char **keyArray;
-    HmEntry **entryArray;
-    long len;
 
     stat = hashmap_keyArray(map, &keyArray, &len);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
@@ -256,20 +261,20 @@ void testHashMapToArray() {
 void testHashMapIterator() {
 
     HashMap *map;
+    Iterator *iter;
     Status stat;
+    int i;
+    char *prev;
 
     stat = hashmap_new(&map, CAPACITY, LOAD_FACTOR);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testHashMapIterator() - allocation failure");
 
-    int i;
-    char *prev;
     for (i = 0; i < LEN; i++) {
         stat = hashmap_put(map, keys[i], entries[i], (void **)&prev);
         CU_ASSERT_EQUAL(stat, STAT_ENTRY_INSERTED);
     }
 
-    Iterator *iter;
     stat = hashmap_iterator(map, &iter);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 

@@ -26,13 +26,17 @@
 #include <CUnit/Basic.h>
 #include "hashset.h"
 
+/* Default capacity for the hashset */
 #define CAPACITY 4L
+/* Default load factor for the hashset */
 #define LOAD_FACTOR 0.75f
 
+/* Comparator function used by the hashset */
 static int strCmp(void *a, void *b) {
     return strcmp((char *)a, (char *)b);
 }
 
+/* Hashing function used by the hashset */
 #define PRIME 7L    /* Prime used in algorithm */
 static long hash(void *item, long N) {
 
@@ -45,8 +49,10 @@ static long hash(void *item, long N) {
     return val;
 }
 
+/* Single item used for testing */
 static char *singleItem = "Test";
 
+/* Collection of items used for testing */
 #define LEN 24
 static char *array[] = {
     "red", "orange", "yellow", "green", "blue", "purple",
@@ -57,32 +63,33 @@ static char *array[] = {
 
 static void validateEmptyHashSet(HashSet *set) {
 
+    Iterator *iter;
     Status stat;
+    Boolean isEmpty;
+    char **array;
+    long size, len;
     
     stat = hashset_contains(set, singleItem);
     CU_ASSERT_EQUAL(stat, FALSE);
     stat = hashset_remove(set, singleItem, NULL);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
-    long size = hashset_size(set);
+    size = hashset_size(set);
     CU_ASSERT_EQUAL(size, 0L);
 
-    Boolean isEmpty = hashset_isEmpty(set);
+    isEmpty = hashset_isEmpty(set);
     CU_ASSERT_EQUAL(isEmpty, TRUE);
     
-    Iterator *iter;
     stat = hashset_iterator(set, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
-    int **array;
-    long len;
     stat = hashset_toArray(set, (void ***)&array, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
 void testEmptyHashSet() {
 
-    HashSet *set = NULL;
+    HashSet *set;
     Status stat;
 
     stat = hashset_new(&set, hash, strCmp, CAPACITY, LOAD_FACTOR);
@@ -98,6 +105,8 @@ void testSingleItem() {
     
     HashSet *set;
     Status stat;
+    Boolean isEmpty, exists;
+    long size;
 
     stat = hashset_new(&set, hash, strCmp, CAPACITY, LOAD_FACTOR);
     if (stat != STAT_SUCCESS)
@@ -108,12 +117,12 @@ void testSingleItem() {
     stat = hashset_add(set, singleItem);
     CU_ASSERT_EQUAL(stat, STAT_KEY_ALREADY_EXISTS);
 
-    long size = hashset_size(set);
-    Boolean isEmpty = hashset_isEmpty(set);
+    size = hashset_size(set);
+    isEmpty = hashset_isEmpty(set);
     CU_ASSERT_EQUAL(size, 1L);
     CU_ASSERT_EQUAL(isEmpty, FALSE);
 
-    Boolean exists = hashset_contains(set, singleItem);
+    exists = hashset_contains(set, singleItem);
     CU_ASSERT_EQUAL(exists, TRUE);
 
     stat = hashset_remove(set, "Non-present key", NULL);
@@ -134,6 +143,7 @@ void testCompleteSet() {
     HashSet *set;
     Status stat;
     Boolean exists;
+    int i;
 
     stat = hashset_new(&set, hash, strCmp, CAPACITY, LOAD_FACTOR);
     if (stat != STAT_SUCCESS)
@@ -142,7 +152,6 @@ void testCompleteSet() {
     stat = hashset_add(set, singleItem);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = hashset_add(set, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
@@ -168,12 +177,12 @@ void testHashSetClear() {
     
     HashSet *set;
     Status stat;
+    int i;
 
     stat = hashset_new(&set, hash, strCmp, CAPACITY, LOAD_FACTOR);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testHashSetClear() - allocation failure");
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = hashset_add(set, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
@@ -190,19 +199,19 @@ void testHashSetToArray() {
 
     HashSet *set;
     Status stat;
+    char **items;
+    int i;
+    long len;
 
     stat = hashset_new(&set, hash, strCmp, CAPACITY, LOAD_FACTOR);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testHashSetToArray() - allocation failure");
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = hashset_add(set, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    char **items;
-    long len;
     stat = hashset_toArray(set, (void ***)&items, &len);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_EQUAL(len, LEN);
@@ -215,19 +224,19 @@ void testHashSetToArray() {
 void testHashSetIterator() {
 
     HashSet *set;
+    Iterator *iter;
     Status stat;
+    int i;
 
     stat = hashset_new(&set, hash, strCmp, CAPACITY, LOAD_FACTOR);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testHashSetIterator() - allocation failure");
 
-    int i;
     for (i = 0; i < LEN; i++) {
         stat = hashset_add(set, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    Iterator *iter;
     stat = hashset_iterator(set, &iter);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 
