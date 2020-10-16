@@ -39,9 +39,9 @@ typedef struct node {
  * The struct for the treeset ADT.
  */
 struct treeset {
-    int (*cmp)(void *, void *); /* Comparator used for comparing items in tree */
-    Node *root;                 /* Root node of the tree */
-    long size;                  /* The treeset's size */
+    int (*cmp)(void *, void *);  /* Comparator used for comparing items in tree */
+    Node *root;                  /* Root node of the tree */
+    long size;                   /* The treeset's size */
 };
 
 /*
@@ -85,15 +85,10 @@ static Node *fetchNode(TreeSet *tree, void *data) {
     return temp;
 }
 
+/* Returns the maximum of the two specified values */
+#define MAXIMUM(a,b)  ( ( (a) > (b) ) ? a : b )
 /* Returns the height of the given node */
-#define HEIGHT(x) (x != NULL) ? x->height : 0
-
-/*
- * Returns the maximum of the two specified values.
- */
-static int maximum(unsigned int a, unsigned int b) {
-    return (a > b) ? a : b;
-}
+#define HEIGHT(x)     ( ( (x) != NULL ) ? x->height : 0 )
 
 /*
  * Performs a rotation to the left on the specified node, updates the new
@@ -104,8 +99,8 @@ static Node *rotateWithRightChild(Node *node) {
     Node *temp = node->right;
     node->right = temp->left;
     temp->left = node;
-    node->height = maximum( HEIGHT(node->left), HEIGHT(node->right) ) + 1;
-    temp->height = maximum( HEIGHT(node), HEIGHT(temp->right) ) + 1;
+    node->height = MAXIMUM( HEIGHT(node->left), HEIGHT(node->right) ) + 1;
+    temp->height = MAXIMUM( HEIGHT(node), HEIGHT(temp->right) ) + 1;
 
     return temp;
 }
@@ -119,8 +114,8 @@ static Node *rotateWithLeftChild(Node *node) {
     Node *temp = node->left;
     node->left = temp->right;
     temp->right = node;
-    node->height = maximum( HEIGHT(node->left), HEIGHT(node->right) ) + 1;
-    temp->height = maximum( HEIGHT(temp->left), HEIGHT(node) ) + 1;
+    node->height = MAXIMUM( HEIGHT(node->left), HEIGHT(node->right) ) + 1;
+    temp->height = MAXIMUM( HEIGHT(temp->left), HEIGHT(node) ) + 1;
 
     return temp;
 }
@@ -176,7 +171,7 @@ static Node *insertNode(Node *node, Node *temp, int (*cmp)(void *, void *)) {
          */
     }
 
-    temp->height = maximum( HEIGHT(temp->left), HEIGHT(temp->right) ) + 1;
+    temp->height = MAXIMUM( HEIGHT(temp->left), HEIGHT(temp->right) ) + 1;
     return temp;
 }
 
