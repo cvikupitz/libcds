@@ -29,6 +29,21 @@
 /* Single item used for testing */
 static char *singleItem = "Test";
 
+/* Ordered set used for testing */
+#define LEN 50
+static char *orderedSet[] = {
+    "00", "01", "02", "03", "04", "05", "06", "07", "08", "09",
+    "10", "11", "12", "13", "14", "15", "16", "17", "18", "19",
+    "20", "21", "22", "23", "24", "25", "26", "27", "28", "29",
+    "30", "31", "32", "33", "34", "35", "36", "37", "38", "39",
+    "40", "41", "42", "43", "44", "45", "46", "47", "48", "49"
+};
+
+/* Comparator function used by the hashset */
+static int strCmp(void *a, void *b) {
+    return strcmp((char *)a, (char *)b);
+}
+
 static void validateEmptyTreeSet(TreeSet *tree) {
 
     Iterator *iter;
@@ -37,9 +52,24 @@ static void validateEmptyTreeSet(TreeSet *tree) {
     char *element, **array;
     long size, len;
 
-    stat = treeset_peek(tree, (void **)&element);
+    stat = treeset_first(tree, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = treeset_pop(tree, (void **)&element);
+    stat = treeset_last(tree, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    stat = treeset_floor(tree, singleItem, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    stat = treeset_floor(tree, singleItem, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    stat = treeset_lower(tree, singleItem, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    stat = treeset_higher(tree, singleItem, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+
+    stat = treeset_pollFirst(tree, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    stat = treeset_pollLast(tree, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    stat = treeset_remove(tree, singleItem, NULL);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
     size = treeset_size(tree);
@@ -57,7 +87,7 @@ static void testEmptyTreeSet() {
     TreeSet *tree;
     Status stat;
 
-    stat = treeset_new(&tree);
+    stat = treeset_new(&tree, strCmp);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEmptyTreeSet() - allocation failure");
 
@@ -65,42 +95,6 @@ static void testEmptyTreeSet() {
     treeset_destroy(tree, NULL);
 
     CU_PASS("testEmptyTreeSet() - Test Passed");
-}
-
-static void testSingleItem() {
-
-    TreeSet *tree;
-    Status stat;
-    Boolean isEmpty;
-    long size;
-    char *element;
-
-    stat = treeset_new(&tree);
-    if (stat != STAT_SUCCESS)
-        CU_FAIL_FATAL("ERROR: testSingleItem() - allocation failure");
-
-    stat = treeset_push(tree, singleItem);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-
-    size = treeset_size(tree);
-    isEmpty = treeset_isEmpty(tree);
-    CU_ASSERT_EQUAL(size, 1L);
-    CU_ASSERT_EQUAL(isEmpty, FALSE);
-
-    stat = treeset_peek(tree, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-
-    stat = treeset_pop(tree, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-    stat = treeset_pop(tree, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
-    validateEmptyTreeSet(tree);
-    treeset_destroy(tree, NULL);
-
-    CU_PASS("testSingleItem() - Test Passed");
 }
 
 #define UNUSED __attribute__((unused))
@@ -117,10 +111,10 @@ int main(UNUSED int argc, UNUSED char **argv) {
     }
 
     CU_add_test(suite, "TreeSet - Empty TreeSet", testEmptyTreeSet);
-    CU_add_test(suite, "TreeSet - Single Item", testSingleItem);
-    CU_add_test(suite, "TreeSet - Array", testTreeSetToArray);
-    CU_add_test(suite, "TreeSet - Iterator", testTreeSetIterator);
-    CU_add_test(suite, "TreeSet - Clear", testTreeSetClear);
+    //CU_add_test(suite, "TreeSet - Single Item", testSingleItem);
+    //CU_add_test(suite, "TreeSet - Array", testTreeSetToArray);
+    //CU_add_test(suite, "TreeSet - Iterator", testTreeSetIterator);
+    //CU_add_test(suite, "TreeSet - Clear", testTreeSetClear);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();

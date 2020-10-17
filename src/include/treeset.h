@@ -31,7 +31,7 @@
 /**
  * Declaration for the TreeSet ADT.
  *
- * A tree-like map storing elements based on their natural ordering defined through
+ * A tree-like set storing elements based on their natural ordering defined through
  * a comparator provided at construction time. Provides self-balancing capabilities
  * for even distribution.
  *

@@ -47,7 +47,7 @@ struct treeset {
 /*
  * Makeshift iterator for populating tree elements via tree traversal.
  */
-typedef struct tree_iter {
+typedef struct {
     void **items;       /* Array of treeset items */
     long next;          /* Next index in iteration */
 } TreeIter;
@@ -380,9 +380,9 @@ static Node *deleteNode(Node *node, void *item, int (*cmp)(void *, void *), void
 Status treeset_pollFirst(TreeSet *tree, void **first) {
 
     /* Fetches the minimum node from the tree */
-    Node *node = getMin(tree->root);
-    if (node == NULL)
+    if (treeset_isEmpty(tree))
         return STAT_STRUCT_EMPTY;
+    Node *node = getMin(tree->root);
 
     /* Removes the node from the tree */
     *first = node->data;
@@ -395,9 +395,9 @@ Status treeset_pollFirst(TreeSet *tree, void **first) {
 Status treeset_pollLast(TreeSet *tree, void **last) {
 
     /* Fetches the maximum node from the tree */
-    Node *node = getMax(tree->root);
-    if (node == NULL)
+    if (treeset_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
+    Node *node = getMax(tree->root);
 
     /* Removes the node from the tree */
     *last = node->data;
@@ -435,6 +435,7 @@ static void clearTree(Node *node, void (*destructor)(void *)) {
     clearTree(node->left, destructor);
     clearTree(node->right, destructor);
 
+    /* Free the allocated node */
     if (destructor != NULL)
         (*destructor)(node->data);
     free(node);
