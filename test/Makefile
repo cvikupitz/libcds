@@ -9,10 +9,10 @@ LFLAGS=-L. -lcds
 CUNIT=-lcunit
 OBJS=arraylist_tests.o boundedqueue_tests.o boundedstack_tests.o circularlist_tests.o \
      deque_tests.o hashmap_tests.o hashset_tests.o heap_tests.o iterator_tests.o \
-     linkedlist_tests.o queue_tests.o stack_tests.o treeset_tests.o
+     linkedlist_tests.o queue_tests.o stack_tests.o
 EXECS=arraylist_tests boundedqueue_tests boundedstack_tests circularlist_tests \
      deque_tests hashmap_tests hashset_tests heap_tests iterator_tests linkedlist_tests \
-     queue_tests stack_tests treeset_tests
+     queue_tests stack_tests
 
 # Builds executable for all individual tests
 all: $(EXECS)
@@ -42,8 +42,6 @@ queue_tests: queue_tests.o
 	$(CC) $(CFLAGS) $(IFLAG) queue_tests.o -o queue_tests $(LFLAGS) $(CUNIT)
 stack_tests: stack_tests.o
 	$(CC) $(CFLAGS) $(IFLAG) stack_tests.o -o stack_tests $(LFLAGS) $(CUNIT)
-treeset_tests: treeset_tests.o
-	$(CC) $(CFLAGS) $(IFLAG) treeset_tests.o -o treeset_tests $(LFLAGS) $(CUNIT)
 
 # Cleans up files
 clean:
@@ -74,5 +72,3 @@ queue_tests.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c queue_tests.c
 stack_tests.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c stack_tests.c
-treeset_tests.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c treeset_tests.c

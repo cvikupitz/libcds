@@ -11,6 +11,7 @@
 - [x] Heap
 - [x] HashMap
 - [x] HashSet
+- [ ] TreeMap
 - [ ] TreeSet
 
 ### Testing
@@ -26,6 +27,7 @@
 - [x] Heap
 - [x] HashMap
 - [x] HashSet
+- [ ] TreeMap
 - [ ] TreeSet
 
 ### Misc.
