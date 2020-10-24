@@ -5,9 +5,8 @@
 CC=gcc
 CFLAGS=-W -Wall -g
 IFLAG=-Iinclude
-OBJS=arraylist.o boundedqueue.o boundedstack.o circularlist.o \
-     deque.o hashmap.o hashset.o heap.o iterator.o linkedlist.o \
-     queue.o stack.o
+OBJS=arraylist.o circularlist.o deque.o hashmap.o hashset.o heap.o \
+     iterator.o linkedlist.o queue.o stack.o
 LIB=libcds.a
 
 # Compiles and builds the static library

@@ -1,9 +1,7 @@
 ### Implementations
 - [x] Iterator
-- [x] Bounded Stack
-- [x] Unbounded Stack
-- [x] Bounded Queue
-- [x] Unbounded Queue
+- [x] Stack
+- [x] Queue
 - [x] Deque
 - [x] Circular List
 - [x] ArrayList
@@ -12,14 +10,20 @@
 - [x] HashMap
 - [x] HashSet
 - [ ] TreeMap
+  - [ ] add()
+  - [ ] remove()
+  - [ ] iterative clear()
+  - [ ] iterative iterator/toArray
 - [ ] TreeSet
+  - [ ] add()
+  - [ ] remove()
+  - [ ] iterative clear()
+  - [ ] iterative iterator/toArray
 
 ### Testing
 - [x] Iterator
-- [x] Bounded Stack
-- [x] Unbounded Stack
-- [x] Bounded Queue
-- [x] Unbounded Queue
+- [x] Stack
+- [x] Queue
 - [x] Deque
 - [x] Circular List
 - [x] ArrayList
