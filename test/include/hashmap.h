@@ -216,7 +216,7 @@ void hashmap_destroy(HashMap *map, void (*destructor)(void *));
  * Returns the hashmap entry's stored key.
  *
  * Params:
- *    map - The HmEntry ADT to operate on.
+ *    entry - The HmEntry ADT to operate on.
  * Returns:
  *    The entry's key.
  */
@@ -226,7 +226,7 @@ char *hmentry_getKey(HmEntry *entry);
  * Returns the hashmap entry's stored value.
  *
  * Params:
- *    map - The HmEntry ADT to operate on.
+ *    entry - The HmEntry ADT to operate on.
  * Returns:
  *    The entry's value.
  */
