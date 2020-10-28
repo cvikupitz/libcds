@@ -39,3 +39,7 @@ linkedlist.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c linkedlist.c
 stack.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c stack.c
+treemap.o:
+	$(CC) $(CFLAGS) $(IFLAG) -c treemap.c
+treeset.o:
+	$(CC) $(CFLAGS) $(IFLAG) -c treeset.c
