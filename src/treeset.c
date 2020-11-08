@@ -25,14 +25,15 @@
 #include <stdlib.h>
 #include "treeset.h"
 
-typedef enum {RED,BLACK} Color;
+#define RED 0
+#define BLACK 1
 
 typedef struct node {
     struct node *parent;
     struct node *left;
     struct node *right;
+    char color;
     void *data;
-    Color color;
 } Node;
 
 struct treeset {
@@ -92,16 +93,132 @@ static Node *findNode(TreeSet *tree, void *item) {
     return temp;
 }
 
+#define COLOR(x) ( (x != NULL) ? x->color : BLACK )
+
 #define UNUSED __attribute__((unused))   /// TODO - remove later
+
+/*
+ * Performs a left rotation on the specified node in place.
+ */
+static void rotateLeft(Node *node) {
+
+    Node *temp = node->right;
+    node->right = temp->left;
+    if (temp->left != NULL)
+        temp->left->parent = node;
+    temp->parent = node->parent;
+    if (node->parent != NULL) {
+        if (node->parent->left == node)
+            node->parent->left = temp;
+        else
+            node->parent->right = temp;
+    }
+
+    temp->left = node;
+    node->parent = temp;
+}
+
+/*
+ * Performs a right rotation on the specified node in place.
+ */
+static void rotateRight(Node *node) {
+
+    Node *temp = node->left;
+    node->left = temp->right;
+    if (temp->right != NULL)
+        temp->right->parent = node;
+    temp->parent = node->parent;
+    if (node->parent != NULL) {
+        if (node->parent->left == node)
+            node->parent->left = temp;
+        else
+            node->parent->right = temp;
+    }
+
+    temp->right = node;
+    node->parent = temp;
+}
+
+static void insertFixup(TreeSet *tree, Node *node) {
+
+    while ( (COLOR(node->parent) == RED) && (node->parent->parent != NULL) ) {
+        if (node->parent == node->parent->parent->left) {
+            Node *uncle = node->parent->parent->right;
+            if ( COLOR(uncle) == RED ) {
+                uncle->color = BLACK;
+                uncle->parent->color = RED;
+                node->parent->color = BLACK;
+                node = uncle->parent;
+            } else {
+                if (node == node->parent->right) {
+                    node = node->parent;
+                    rotateLeft(node);
+                }
+                node->parent->color = BLACK;
+                node->parent->parent->color = RED;
+                rotateRight(node->parent->parent);
+            }
+        } else {
+            Node *uncle = node->parent->parent->right;
+            if ( COLOR(uncle) == RED ) {
+                uncle->color = BLACK;
+                uncle->parent->color = RED;
+                node->parent->color = BLACK;
+                node = uncle->parent;
+            } else {
+                if (node == node->parent->left) {
+                    node = node->parent;
+                    rotateRight(node);
+                }
+                node->parent->color = BLACK;
+                node->parent->parent->color = RED;
+                rotateLeft(node->parent->parent);
+            }
+        }
+    }
+
+    tree->root->color = BLACK;
+}
+
+static void insertNode(TreeSet *tree, Node *node) {
+
+    Node *temp = tree->root;
+    Node *parent = NULL;
+    int cmp = 0;
+
+    while (temp != NULL) {
+        parent = temp;
+        cmp = (*tree->cmp)(node->data, temp->data);
+        if (cmp < 0)
+            temp = temp->left;
+        else
+            temp = temp->right;
+    }
+
+    temp = node;
+    node->parent = parent;
+
+    if (parent == NULL) {
+        tree->root = node;
+    } else {
+        if (cmp < 0)
+            parent->left = node;
+        else
+            parent->right = node;
+    }
+
+    insertFixup(tree, node);
+}
 
 Status treeset_add(TreeSet *tree, void *item) {
 
     if (findNode(tree, item) != NULL)
         return STAT_KEY_ALREADY_EXISTS;
-    UNUSED Node *node = allocNode(item);
+    Node *node = allocNode(item);
     if (node == NULL)
         return STAT_ALLOC_FAILURE;
-    //TODO - insert node
+    insertNode(tree, node);
+    tree->size++;
 
     return STAT_SUCCESS;
 }

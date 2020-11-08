@@ -25,7 +25,8 @@
 #include <stdlib.h>
 #include "treemap.h"
 
-typedef enum {RED,BLACK} Color;
+#define RED 0
+#define BLACK 1
 
 struct tm_entry {
     void *key;
@@ -36,8 +37,8 @@ typedef struct node {
     struct node *parent;
     struct node *left;
     struct node *right;
+    char color;
     TmEntry *entry;
-    Color color;
 } Node;
 
 struct treemap {
@@ -111,7 +112,7 @@ static Node *getMax(Node *node) {
 
 Status treemap_firstKey(TreeMap *tree, void **firstKey) {
 
-    if (treemap_isEmpty(tree))
+    if (treemap_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
     Node *node = getMin(tree->root);
     *firstKey = node->entry->key;
@@ -121,7 +122,7 @@ Status treemap_firstKey(TreeMap *tree, void **firstKey) {
 
 Status treemap_first(TreeMap *tree, TmEntry **first) {
 
-    if (treemap_isEmpty(tree))
+    if (treemap_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
     Node *node = getMin(tree->root);
     *first = node->entry;
@@ -131,7 +132,7 @@ Status treemap_first(TreeMap *tree, TmEntry **first) {
 
 Status treemap_lastKey(TreeMap *tree, void **lastKey) {
 
-    if (treemap_isEmpty(tree))
+    if (treemap_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
     Node *node = getMax(tree->root);
     *lastKey = node->entry->key;
@@ -141,7 +142,7 @@ Status treemap_lastKey(TreeMap *tree, void **lastKey) {
 
 Status treemap_last(TreeMap *tree, TmEntry **last) {
 
-    if (treemap_isEmpty(tree))
+    if (treemap_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
     Node *node = getMax(tree->root);
     *last = node->entry;
@@ -382,11 +383,11 @@ Boolean treemap_isEmpty(TreeMap *tree) {
     return ( tree->size == 0L ) ? TRUE : FALSE;
 }
 
-Status treemap_keyArray(TreeMap *tree, void ***keys, long *len);
+Status treemap_keyArray(TreeMap *tree, void ***keys, long *len);//FIXME
 
-Status treemap_entryArray(TreeMap *tree, TmEntry ***entries, long *len);
+Status treemap_entryArray(TreeMap *tree, TmEntry ***entries, long *len); //FIXME
 
-Status treemap_iterator(TreeMap *tree, Iterator **iter);
+Status treemap_iterator(TreeMap *tree, Iterator **iter); //FIXME
 
 void treemap_destroy(TreeMap *tree, void (*valueDestructor)(void *)) {
     clearTree(tree->root, tree->keyDxn, valueDestructor);
