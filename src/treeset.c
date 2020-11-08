@@ -95,8 +95,6 @@ static Node *findNode(TreeSet *tree, void *item) {
 
 #define COLOR(x) ( (x != NULL) ? x->color : BLACK )
 
-#define UNUSED __attribute__((unused))   /// TODO - remove later
-
 /*
  * Performs a left rotation on the specified node in place.
  */
@@ -139,7 +137,7 @@ static void rotateRight(Node *node) {
     node->parent = temp;
 }
 
-static void insertFixup(TreeSet *tree, Node *node) {
+static void insertRebalance(TreeSet *tree, Node *node) {
 
     while ( (COLOR(node->parent) == RED) && (node->parent->parent != NULL) ) {
         if (node->parent == node->parent->parent->left) {
@@ -178,6 +176,7 @@ static void insertFixup(TreeSet *tree, Node *node) {
     }
 
     tree->root->color = BLACK;
+    tree->size++;
 }
 
 static void insertNode(TreeSet *tree, Node *node) {
@@ -207,7 +206,7 @@ static void insertNode(TreeSet *tree, Node *node) {
             parent->right = node;
     }
 
-    insertFixup(tree, node);
+    insertRebalance(tree, node);
 }
 
 Status treeset_add(TreeSet *tree, void *item) {
@@ -218,7 +217,6 @@ Status treeset_add(TreeSet *tree, void *item) {
     if (node == NULL)
         return STAT_ALLOC_FAILURE;
     insertNode(tree, node);
-    tree->size++;
 
     return STAT_SUCCESS;
 }
@@ -380,6 +378,8 @@ Status treeset_higher(TreeSet *tree, void *item, void **higher) {
 
     return STAT_SUCCESS;
 }
+
+#define UNUSED __attribute__((unused))
 
 Status treeset_pollFirst(TreeSet *tree, void **first) {
 
