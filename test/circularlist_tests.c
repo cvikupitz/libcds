@@ -35,11 +35,12 @@ static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple"};
 
 static void validateEmptyCircularList(CircularList *list) {
 
+    Array *arr;
     Iterator *iter;
     Status stat;
     Boolean isEmpty;
-    char *element, **array;
-    long size, len;
+    char *element;
+    long size;
 
     stat = circularlist_first(list, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
@@ -54,7 +55,7 @@ static void validateEmptyCircularList(CircularList *list) {
     CU_ASSERT_EQUAL(isEmpty, TRUE);
     stat = circularlist_iterator(list, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = circularlist_toArray(list, (void ***)&array, &len);
+    stat = circularlist_toArray(list, &arr);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
@@ -230,11 +231,10 @@ static void testRotations() {
 
 static void testCircularListToArray() {
 
+    Array *arr;
     CircularList *list;
     Status stat;
     int i;
-    char **items;
-    long len;
 
     stat = circularlist_new(&list);
     if (stat != STAT_SUCCESS)
@@ -245,14 +245,14 @@ static void testCircularListToArray() {
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    stat = circularlist_toArray(list, (void ***)&items, &len);
+    stat = circularlist_toArray(list, &arr);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_EQUAL(len, LEN);
+    CU_ASSERT_EQUAL(arr->len, LEN);
 
-    for (i = 0; i < len; i++)
-        CU_ASSERT_TRUE( strcmp(items[i], array[i]) == 0 );
+    for (i = 0; i < arr->len; i++)
+        CU_ASSERT_TRUE( strcmp(arr->items[i], array[i]) == 0 );
 
-    free(items);
+    FREE_ARRAY(arr)
     circularlist_destroy(list, NULL);
 
     CU_PASS("testCircularListToArray() - Test Passed");

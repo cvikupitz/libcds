@@ -35,11 +35,12 @@ static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple"};
 
 static void validateEmptyDeque(Deque *deque) {
 
+    Array *arr;
     Iterator *iter;
     Status stat;
     Boolean isEmpty;
-    long size, len;
-    char *element, **array;
+    long size;
+    char *element;
 
     stat = deque_first(deque, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
@@ -56,7 +57,7 @@ static void validateEmptyDeque(Deque *deque) {
     CU_ASSERT_EQUAL(isEmpty, TRUE);
     stat = deque_iterator(deque, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = deque_toArray(deque, (void ***)&array, &len);
+    stat = deque_toArray(deque, &arr);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
@@ -239,11 +240,10 @@ void testEndequeDedequeFromLast() {
 
 void testDequeToArray() {
 
+    Array *arr;
     Deque *deque;
     Status stat;
     int i;
-    char **items;
-    long len;
 
     stat = deque_new(&deque);
     if (stat != STAT_SUCCESS)
@@ -254,14 +254,14 @@ void testDequeToArray() {
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    stat = deque_toArray(deque, (void ***)&items, &len);
+    stat = deque_toArray(deque, &arr);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_EQUAL(len, LEN);
+    CU_ASSERT_EQUAL(arr->len, LEN);
 
-    for (i = 0; i < len; i++)
-        CU_ASSERT_TRUE( strcmp(items[i], array[i]) == 0 );
+    for (i = 0; i < arr->len; i++)
+        CU_ASSERT_TRUE( strcmp(arr->items[i], array[i]) == 0 );
 
-    free(items);
+    FREE_ARRAY(arr)
     deque_destroy(deque, NULL);
 
     CU_PASS("testDequeToArray() - Test Passed");
