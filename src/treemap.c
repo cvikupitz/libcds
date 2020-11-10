@@ -765,3 +765,46 @@ void *tmentry_getKey(TmEntry *entry) {
 void *tmentry_getValue(TmEntry *entry) {
     return entry->value;
 }
+
+#include <stdio.h>
+
+static void printNode(Node *node) {
+    char color = (node->color == RED) ? 'R' : 'B';
+    fprintf(stdout, "(%d %c)", *((int *)node->entry->key), color);
+}
+
+static void preOrder(Node *node) {
+    if (node == NULL)
+        return;
+
+    printNode(node);
+    preOrder(node->left);
+    preOrder(node->right);
+}
+
+static void inOrder(Node *node) {
+    if (node == NULL)
+        return;
+
+    inOrder(node->left);
+    printNode(node);
+    inOrder(node->right);
+}
+
+static void postOrder(Node *node) {
+    if (node == NULL)
+        return;
+
+    postOrder(node->left);
+    postOrder(node->right);
+    printNode(node);
+}
+
+void printTree(TreeMap *ts) {
+    fprintf(stdout, "Root: %d, Size: %ld\n", *((int *)ts->root->entry->key), ts->size);
+
+    fprintf(stdout, "Pre-Order: ") ;preOrder(ts->root);
+    fprintf(stdout, "\nIn-Order: ") ;inOrder(ts->root);
+    fprintf(stdout, "\nPost-Order: ") ;postOrder(ts->root);
+    fprintf(stdout, "\n");
+}
