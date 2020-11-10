@@ -6,7 +6,7 @@ CC=gcc
 CFLAGS=-W -Wall -g
 IFLAG=-Iinclude
 OBJS=arraylist.o circularlist.o deque.o hashmap.o hashset.o heap.o \
-     iterator.o linkedlist.o stack.o treeset.o
+     iterator.o linkedlist.o stack.o treeset.o test.o test
 LIB=libcds.a
 
 # Compiles and builds the static library
@@ -43,3 +43,9 @@ treemap.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c treemap.c
 treeset.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c treeset.c
+
+
+test.o:
+	gcc -c test.c -Iinclude
+test: iterator.o treeset.o test.o
+	gcc test.o iterator.o treeset.o -o test

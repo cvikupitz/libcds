@@ -25,9 +25,6 @@
 #include <stdlib.h>
 #include "treeset.h"
 
-#define RED 0
-#define BLACK 1
-
 typedef struct node {
     struct node *parent;
     struct node *left;
@@ -49,6 +46,10 @@ typedef struct {
     void **items;       /* Array of treeset items */
     long next;          /* Next index in iteration */
 } TreeIter;
+
+#define RED 0
+#define BLACK 1
+#define COLOR(x) ( ( (x) != NULL ) ? x->color : BLACK )
 
 Status treeset_new(TreeSet **tree, int (*comparator)(void *, void *)) {
 
@@ -73,8 +74,8 @@ static Node *allocNode(void *item) {
         node->parent = NULL;
         node->left = NULL;
         node->right = NULL;
-        node->data = item;
         node->color = RED;
+        node->data = item;
     }
 
     return node;
@@ -93,19 +94,17 @@ static Node *findNode(TreeSet *tree, void *item) {
     return temp;
 }
 
-#define COLOR(x) ( (x != NULL) ? x->color : BLACK )
-
-/*
- * Performs a left rotation on the specified node in place.
- */
-static void rotateLeft(Node *node) {
+static void rotateLeft(TreeSet *tree, Node *node) {
 
     Node *temp = node->right;
     node->right = temp->left;
     if (temp->left != NULL)
         temp->left->parent = node;
+
     temp->parent = node->parent;
-    if (node->parent != NULL) {
+    if (node->parent == NULL) {
+        tree->root = temp;
+    } else {
         if (node->parent->left == node)
             node->parent->left = temp;
         else
@@ -116,17 +115,17 @@ static void rotateLeft(Node *node) {
     node->parent = temp;
 }
 
-/*
- * Performs a right rotation on the specified node in place.
- */
-static void rotateRight(Node *node) {
+static void rotateRight(TreeSet *tree, Node *node) {
 
     Node *temp = node->left;
     node->left = temp->right;
     if (temp->right != NULL)
         temp->right->parent = node;
+
     temp->parent = node->parent;
-    if (node->parent != NULL) {
+    if (node->parent == NULL) {
+        tree->root = temp;
+    } else {
         if (node->parent->left == node)
             node->parent->left = temp;
         else
@@ -137,66 +136,60 @@ static void rotateRight(Node *node) {
     node->parent = temp;
 }
 
-static void insertRebalance(TreeSet *tree, Node *node) {
+static void insertFixup(TreeSet *tree, Node *node) {
 
-    while ( (COLOR(node->parent) == RED) && (node->parent->parent != NULL) ) {
+    while (COLOR(node->parent) == RED) {
         if (node->parent == node->parent->parent->left) {
             Node *uncle = node->parent->parent->right;
-            if ( COLOR(uncle) == RED ) {
+            if (COLOR(uncle) == RED) {
+                node->parent->color = BLACK;
                 uncle->color = BLACK;
                 uncle->parent->color = RED;
-                node->parent->color = BLACK;
                 node = uncle->parent;
             } else {
                 if (node == node->parent->right) {
                     node = node->parent;
-                    rotateLeft(node);
+                    rotateLeft(tree, node);
                 }
                 node->parent->color = BLACK;
                 node->parent->parent->color = RED;
-                rotateRight(node->parent->parent);
+                rotateRight(tree, node->parent->parent);
             }
         } else {
-            Node *uncle = node->parent->parent->right;
-            if ( COLOR(uncle) == RED ) {
+            Node *uncle = node->parent->parent->left;
+            if (COLOR(uncle) == RED) {
+                node->parent->color = BLACK;
                 uncle->color = BLACK;
                 uncle->parent->color = RED;
-                node->parent->color = BLACK;
                 node = uncle->parent;
             } else {
                 if (node == node->parent->left) {
                     node = node->parent;
-                    rotateRight(node);
+                    rotateRight(tree, node);
                 }
                 node->parent->color = BLACK;
                 node->parent->parent->color = RED;
-                rotateLeft(node->parent->parent);
+                rotateLeft(tree, node->parent->parent);
             }
         }
     }
 
     tree->root->color = BLACK;
-    tree->size++;
 }
 
 static void insertNode(TreeSet *tree, Node *node) {
 
-    Node *temp = tree->root;
-    Node *parent = NULL;
+    Node *temp = tree->root, *parent = NULL;
     int cmp = 0;
+    tree->size++;
 
     while (temp != NULL) {
         parent = temp;
         cmp = (*tree->cmp)(node->data, temp->data);
-        if (cmp < 0)
-            temp = temp->left;
-        else
-            temp = temp->right;
+        temp = (cmp < 0) ? temp->left : temp->right;
     }
 
-    temp = node;
     node->parent = parent;
-
     if (parent == NULL) {
         tree->root = node;
     } else {
@@ -205,18 +198,19 @@ static void insertNode(TreeSet *tree, Node *node) {
         else
             parent->right = node;
     }
-
-    insertRebalance(tree, node);
 }
 
 Status treeset_add(TreeSet *tree, void *item) {
 
     if (findNode(tree, item) != NULL)
         return STAT_KEY_ALREADY_EXISTS;
+
     Node *node = allocNode(item);
     if (node == NULL)
         return STAT_ALLOC_FAILURE;
+
     insertNode(tree, node);
+    insertFixup(tree, node);
 
     return STAT_SUCCESS;
 }
@@ -381,13 +375,110 @@ Status treeset_higher(TreeSet *tree, void *item, void **higher) {
 
 #define UNUSED __attribute__((unused))
 
+static void deleteFixup(TreeSet *tree, Node *node, Node *parent) {
+
+    while (node != tree->root && COLOR(node) == BLACK) {
+
+        if (node == parent->left) {
+            Node *sibling = parent->right;
+            if (COLOR(sibling) == RED) {
+                sibling->color = BLACK;
+                parent->color = RED;
+                rotateLeft(tree, parent);
+                sibling = parent->right;
+            }
+
+            if (COLOR(sibling->left) == BLACK && COLOR(sibling->right) == BLACK) {
+                sibling->color = RED;
+                node = parent;
+                parent = parent->parent;
+            } else {
+                if (COLOR(sibling->right) == BLACK) {
+                    sibling->left->color = BLACK;
+                    sibling->color = RED;
+                    rotateRight(tree, sibling);
+                    sibling = parent->right;
+                }
+                sibling->color = parent->color;
+                parent->color = BLACK;
+                sibling->right->color = BLACK;
+                rotateLeft(tree, parent);
+                node = tree->root;
+            }
+        } else {
+            Node *sibling = parent->left;
+            if (COLOR(sibling) == RED) {
+                sibling->color = BLACK;
+                parent->color = RED;
+                rotateRight(tree, parent);
+                sibling = parent->left;
+            }
+            if (COLOR(sibling->right) == BLACK && COLOR(sibling->left) == BLACK) {
+                sibling->color = RED;
+                node = parent;
+                parent = parent->parent;
+            } else {
+                if (COLOR(sibling->left) == BLACK) {
+                    sibling->right->color = BLACK;
+                    sibling->color = RED;
+                    rotateLeft(tree, sibling);
+                    sibling = parent->left;
+                }
+                sibling->color = parent->color;
+                parent->color = BLACK;
+                sibling->left->color = BLACK;
+                rotateRight(tree, parent);
+                node = tree->root;
+            }
+        }
+    }
+
+    node->color = BLACK;
+}
+
+static void deleteNode(TreeSet *tree, Node *node, UNUSED void (*destructor)(void *)) {
+
+    Node *splice, *child;
+    tree->size--;
+
+    if (node->left == NULL) {
+        splice = node;
+        child = node->right;
+    } else if (node->right == NULL) {
+        splice = node;
+        child = node->left;
+    } else {
+        splice = node->left;
+        while (splice->right != NULL)
+            splice = splice->right;
+        child = splice->left;
+        node->data = splice->data;
+    }
+
+    Node *parent = splice->parent;
+    if (child != NULL)
+        child->parent = parent;
+    if (parent == NULL) {
+        tree->root = child;
+        return;
+    }
+
+    if (splice == parent->left)
+        parent->left = child;
+    else
+        parent->right = child;
+
+    if (splice->color == BLACK)
+        deleteFixup(tree, child, parent);
+} //FIXME destruction
+
 Status treeset_pollFirst(TreeSet *tree, void **first) {
 
     if (treeset_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
-    UNUSED Node *node = getMin(tree->root);
+    Node *node = getMin(tree->root);
     *first = node->data;
-    // TODO - delete node
+    deleteNode(tree, node, NULL);
 
     return STAT_SUCCESS;
 }
@@ -396,21 +487,21 @@ Status treeset_pollLast(TreeSet *tree, void **last) {
 
     if (treeset_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
-    UNUSED Node *node = getMax(tree->root);
+    Node *node = getMax(tree->root);
     *last = node->data;
-    // TODO - delete node
+    deleteNode(tree, node, NULL);
 
     return STAT_SUCCESS;
 }
 
-Status treeset_remove(TreeSet *tree, void *item, UNUSED void (*destructor)(void *)) {
+Status treeset_remove(TreeSet *tree, void *item, void (*destructor)(void *)) {
 
     if (treeset_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
-    UNUSED Node *node = findNode(tree, item);
+    Node *node = findNode(tree, item);
     if (node == NULL)
         return STAT_NOT_FOUND;
-    // TODO - delete node
+    deleteNode(tree, node, destructor);
 
     return STAT_SUCCESS;
 }
@@ -509,4 +600,48 @@ Status treeset_iterator(TreeSet *tree, Iterator **iter) {
 void treeset_destroy(TreeSet *tree, void (*destructor)(void *)) {
     clearTree(tree->root, destructor);
     free(tree);
+}
+
+
+#include <stdio.h>
+
+static void printNode(Node *node) {
+    char color = (node->color == RED) ? 'R' : 'B';
+    fprintf(stdout, "(%d %c)", *((int *)node->data), color);
+}
+
+static void preOrder(Node *node) {
+    if (node == NULL)
+        return;
+
+    printNode(node);
+    preOrder(node->left);
+    preOrder(node->right);
+}
+
+static void inOrder(Node *node) {
+    if (node == NULL)
+        return;
+
+    inOrder(node->left);
+    printNode(node);
+    inOrder(node->right);
+}
+
+static void postOrder(Node *node) {
+    if (node == NULL)
+        return;
+
+    postOrder(node->left);
+    postOrder(node->right);
+    printNode(node);
+}
+
+void printTree(TreeSet *ts) {
+    fprintf(stdout, "Root: %d, Size: %ld\n", *((int *)ts->root->data), ts->size);
+
+    fprintf(stdout, "Pre-Order: ") ;preOrder(ts->root);
+    fprintf(stdout, "\nIn-Order: ") ;inOrder(ts->root);
+    fprintf(stdout, "\nPost-Order: ") ;postOrder(ts->root);
+    fprintf(stdout, "\n");
 }

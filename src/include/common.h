@@ -22,15 +22,15 @@
  * SOFTWARE.
  */
 
-#ifndef _COMMON_H__
-#define _COMMON_H__
+#ifndef _CDS_COMMON_H__
+#define _CDS_COMMON_H__
 
 /**
  * An enumeration representing a simple boolean type.
  *
  * Reserved as the return type for operations where only 2 outcomes can exist, or
- * the result of some operation can be either true or false (i.e. isEmpty(), isFull(),
- * containsKey(), containsValue(), etc.).
+ * the result of some operation can be either true or false (i.e. isEmpty(), containsKey(),
+ * containsValue(), etc.).
  *
  * Only used for readability. The returning Boolean enumeration can still function in
  * C code where 0 is treated false and !0 is true.
@@ -57,15 +57,15 @@ typedef enum {
     STAT_SUCCESS = 0,
 
     /**
-     * Status reserved for HashMap's put() method. Indicates that the key-value insertion
-     * was successful.
+     * Status reserved for the put() method for HashMap and TreeMap. Indicates that the
+     * key-value insertion was successful.
      */
     STAT_ENTRY_INSERTED = 1,
 
     /**
-     * Status reserved for HashMap's put() method. Indicates that the key-value insertion
-     * was successful, but that the map already contains the key and the previous value
-     * has been replaced with the new value.
+     * Status reserved for the put() method for HashMap and TreeMap. Indicates that the
+     * key-value insertion was successful, but that the map already contains the key and
+     * the previous value has been replaced with the new value.
      */
     STAT_ENTRY_REPLACED = 2,
 
@@ -90,9 +90,9 @@ typedef enum {
     STAT_ITERATION_END = 5,
 
     /**
-     * Operation could not be completed due to an invalid or out-of-bounds index specified. This
-     * is for data structures whose elements may be accessed via a specified array index. The index a
-     * caller may specify could fall outside the valid range (i.e. the value is below 0 or greater than
+     * Operation could not be completed due to an invalid index specified. This is for data
+     * structures whose elements may be accessed via a specified array index. The index a caller
+     * may specify could fall outside the valid range (i.e. the value is below 0 or greater than
      * the largest index allowed).
      */
     STAT_INVALID_INDEX = 6,
@@ -106,11 +106,11 @@ typedef enum {
 
     /**
      * A call to any of the dynamic memory allocator methods (i.e. malloc(), realloc(), etc.)
-     * has failed during instantiation, additions, resizing, or any other operation that
-     * requires allocating heap memory.
+     * has failed during instantiation, additions, resizing, or any other operation that requires
+     * allocating heap memory.
      */
     STAT_ALLOC_FAILURE = 8
 
 } Status;
 
-#endif  /* _COMMON_H__ */
+#endif  /* _CDS_COMMON_H__ */

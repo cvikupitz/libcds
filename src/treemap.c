@@ -25,9 +25,6 @@
 #include <stdlib.h>
 #include "treemap.h"
 
-#define RED 0
-#define BLACK 1
-
 struct tm_entry {
     void *key;
     void *value;
@@ -56,6 +53,10 @@ typedef struct {
     long next;          /* Next index in iteration */
 } TreeIter;
 
+#define RED 0
+#define BLACK 1
+#define COLOR(x) ( ( (x) != NULL ) ? x->color : BLACK )
+
 Status treemap_new(TreeMap **tree, int (*keyComparator)(void *, void *), void (*keyDestructor)(void *)) {
 
     /* Allocate the struct, check for allocation failures */
@@ -73,6 +74,28 @@ Status treemap_new(TreeMap **tree, int (*keyComparator)(void *, void *), void (*
     return STAT_SUCCESS;
 }
 
+static Node *allocNode(void *key, void *value) {
+
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node != NULL) {
+        TmEntry *entry = (TmEntry *)malloc(sizeof(TmEntry));
+        if (entry != NULL) {
+            node->parent = NULL;
+            node->left = NULL;
+            node->right = NULL;
+            node->color = RED;
+            entry->key = key;
+            entry->value = value;
+            node->entry = entry;
+        } else {
+            free(node);
+            node = NULL;
+        }
+    }
+
+    return node;
+}
+
 static Node *findNode(TreeMap *tree, void *item) {
 
     Node *temp = tree->root;
@@ -86,10 +109,129 @@ static Node *findNode(TreeMap *tree, void *item) {
     return temp;
 }
 
-#define UNUSED __attribute__((unused))
+static void rotateLeft(TreeMap *tree, Node *node) {
 
-Status treemap_put(UNUSED TreeMap **tree, UNUSED void *key, UNUSED void *value, UNUSED void **previous) {
-    return STAT_SUCCESS;
+    Node *temp = node->right;
+    node->right = temp->left;
+    if (temp->left != NULL)
+        temp->left->parent = node;
+
+    temp->parent = node->parent;
+    if (node->parent == NULL) {
+        tree->root = temp;
+    } else {
+        if (node->parent->left == node)
+            node->parent->left = temp;
+        else
+            node->parent->right = temp;
+    }
+
+    temp->left = node;
+    node->parent = temp;
+}
+
+static void rotateRight(TreeMap *tree, Node *node) {
+
+    Node *temp = node->left;
+    node->left = temp->right;
+    if (temp->right != NULL)
+        temp->right->parent = node;
+
+    temp->parent = node->parent;
+    if (node->parent == NULL) {
+        tree->root = temp;
+    } else {
+        if (node->parent->left == node)
+            node->parent->left = temp;
+        else
+            node->parent->right = temp;
+    }
+
+    temp->right = node;
+    node->parent = temp;
+}
+
+static void insertFix(TreeMap *tree, Node *node) {
+
+    while (COLOR(node->parent) == RED) {
+        if (node->parent == node->parent->parent->left) {
+            Node *uncle = node->parent->parent->right;
+            if (COLOR(uncle) == RED) {
+                node->parent->color = BLACK;
+                uncle->color = BLACK;
+                uncle->parent->color = RED;
+                node = uncle->parent;
+            } else {
+                if (node == node->parent->right) {
+                    node = node->parent;
+                    rotateLeft(tree, node);
+                }
+                node->parent->color = BLACK;
+                node->parent->parent->color = RED;
+                rotateRight(tree, node->parent->parent);
+            }
+        } else {
+            Node *uncle = node->parent->parent->left;
+            if (COLOR(uncle) == RED) {
+                node->parent->color = BLACK;
+                uncle->color = BLACK;
+                uncle->parent->color = RED;
+                node = uncle->parent;
+            } else {
+                if (node == node->parent->left) {
+                    node = node->parent;
+                    rotateRight(tree, node);
+                }
+                node->parent->color = BLACK;
+                node->parent->parent->color = RED;
+                rotateLeft(tree, node->parent->parent);
+            }
+        }
+    }
+
+    tree->root->color = BLACK;
+}
+
+static void insertNode(TreeMap *tree, Node *node) {
+
+    Node *temp = tree->root, *parent = NULL;
+    int cmp = 0;
+
+    while (temp != NULL) {
+        parent = temp;
+        cmp = (*tree->keyCmp)(node->data, temp->data);
+        temp = (cmp < 0) ? temp->left : temp->right;
+    }
+
+    node->parent = parent;
+    if (parent == NULL) {
+        tree->root = node;
+    } else {
+        if (cmp < 0)
+            parent->left = node;
+        else
+            parent->right = node;
+    }
+}
+
+Status treemap_put(TreeMap **tree, void *key, void *value, void **previous) {
+
+    Node *node = fetchNode(tree, key);
+    if (node != NULL) {
+        *previous = node->entry->value;
+        node->entry->value = value;
+        return STAT_ENTRY_REPLACED;
+    }
+
+    Node *temp = allocNode(key, value);
+    if (temp == NULL)
+        return STAT_ALLOC_FAILURE;
+
+    insertNode(tree, node);
+    insertFix(tree, node);
+    tree->size++;
+
+    return STAT_ENTRY_INSERTED;
 }
 
 /*
@@ -341,6 +483,8 @@ Status treemap_get(TreeMap *tree, void *key, void **value) {
 
     return STAT_SUCCESS;
 }
+
+#define UNUSED __attribute__((unused))
 
 Status treemap_pollFirst(UNUSED TreeMap *tree, UNUSED void **firstKey, UNUSED void **firstValue) {
     return STAT_SUCCESS;

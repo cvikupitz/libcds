@@ -10,15 +10,20 @@
 - [x] HashMap
 - [x] HashSet
 - [ ] TreeMap
-  - [ ] add()
+  - [x] add()
   - [ ] remove()
   - [ ] iterative clear()
   - [ ] iterative iterator/toArray
 - [ ] TreeSet
-  - [ ] add()
+  - [x] add()
   - [ ] remove()
   - [ ] iterative clear()
   - [ ] iterative iterator/toArray
+
+### Refinements
+- [ ] Code Cleanup
+- [ ] Comments
+- [ ] Triple Pointers to Array Object
 
 ### Testing
 - [x] Iterator
