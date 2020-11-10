@@ -25,14 +25,12 @@
 #include <stdlib.h>
 #include "treeset.h"
 
-typedef enum {RED,BLACK} Color;
-
 typedef struct node {
     struct node *parent;
     struct node *left;
     struct node *right;
+    char color;
     void *data;
-    Color color;
 } Node;
 
 struct treeset {
@@ -48,6 +46,10 @@ typedef struct {
     void **items;       /* Array of treeset items */
     long next;          /* Next index in iteration */
 } TreeIter;
+
+#define RED 0
+#define BLACK 1
+#define COLOR(x) ( ( (x) != NULL ) ? x->color : BLACK )
 
 Status treeset_new(TreeSet **tree, int (*comparator)(void *, void *)) {
 
@@ -72,8 +74,8 @@ static Node *allocNode(void *item) {
         node->parent = NULL;
         node->left = NULL;
         node->right = NULL;
-        node->data = item;
         node->color = RED;
+        node->data = item;
     }
 
     return node;
@@ -92,16 +94,123 @@ static Node *findNode(TreeSet *tree, void *item) {
     return temp;
 }
 
-#define UNUSED __attribute__((unused))   /// TODO - remove later
+static void rotateLeft(TreeSet *tree, Node *node) {
+
+    Node *temp = node->right;
+    node->right = temp->left;
+    if (temp->left != NULL)
+        temp->left->parent = node;
+
+    temp->parent = node->parent;
+    if (node->parent == NULL) {
+        tree->root = temp;
+    } else {
+        if (node->parent->left == node)
+            node->parent->left = temp;
+        else
+            node->parent->right = temp;
+    }
+
+    temp->left = node;
+    node->parent = temp;
+}
+
+static void rotateRight(TreeSet *tree, Node *node) {
+
+    Node *temp = node->left;
+    node->left = temp->right;
+    if (temp->right != NULL)
+        temp->right->parent = node;
+
+    temp->parent = node->parent;
+    if (node->parent == NULL) {
+        tree->root = temp;
+    } else {
+        if (node->parent->left == node)
+            node->parent->left = temp;
+        else
+            node->parent->right = temp;
+    }
+
+    temp->right = node;
+    node->parent = temp;
+}
+
+static void insertFixup(TreeSet *tree, Node *node) {
+
+    while (COLOR(node->parent) == RED) {
+        if (node->parent == node->parent->parent->left) {
+            Node *uncle = node->parent->parent->right;
+            if (COLOR(uncle) == RED) {
+                node->parent->color = BLACK;
+                uncle->color = BLACK;
+                uncle->parent->color = RED;
+                node = uncle->parent;
+            } else {
+                if (node == node->parent->right) {
+                    node = node->parent;
+                    rotateLeft(tree, node);
+                }
+                node->parent->color = BLACK;
+                node->parent->parent->color = RED;
+                rotateRight(tree, node->parent->parent);
+            }
+        } else {
+            Node *uncle = node->parent->parent->left;
+            if (COLOR(uncle) == RED) {
+                node->parent->color = BLACK;
+                uncle->color = BLACK;
+                uncle->parent->color = RED;
+                node = uncle->parent;
+            } else {
+                if (node == node->parent->left) {
+                    node = node->parent;
+                    rotateRight(tree, node);
+                }
+                node->parent->color = BLACK;
+                node->parent->parent->color = RED;
+                rotateLeft(tree, node->parent->parent);
+            }
+        }
+    }
+
+    tree->root->color = BLACK;
+}
+
+static void insertNode(TreeSet *tree, Node *node) {
+
+    Node *temp = tree->root, *parent = NULL;
+    int cmp = 0;
+    tree->size++;
+
+    while (temp != NULL) {
+        parent = temp;
+        cmp = (*tree->cmp)(node->data, temp->data);
+        temp = (cmp < 0) ? temp->left : temp->right;
+    }
+
+    node->parent = parent;
+    if (parent == NULL) {
+        tree->root = node;
+    } else {
+        if (cmp < 0)
+            parent->left = node;
+        else
+            parent->right = node;
+    }
+}
 
 Status treeset_add(TreeSet *tree, void *item) {
 
     if (findNode(tree, item) != NULL)
         return STAT_KEY_ALREADY_EXISTS;
-    UNUSED Node *node = allocNode(item);
+
+    Node *node = allocNode(item);
     if (node == NULL)
         return STAT_ALLOC_FAILURE;
-    //TODO - insert node
+
+    insertNode(tree, node);
+    insertFixup(tree, node);
 
     return STAT_SUCCESS;
 }
@@ -168,10 +277,10 @@ Status treeset_floor(TreeSet *tree, void *item, void **floor) {
             break;
         }
         if (cmp < 0) {
+            current = current->left;
+        } else {
             temp = current;
             current = current->right;
-        } else {
-            current = current->left;
         }
     }
 
@@ -197,7 +306,7 @@ Status treeset_ceiling(TreeSet *tree, void *item, void **ceiling) {
             temp = current;
             break;
         }
-        if (cmp < 0) {
+        if (cmp > 0) {
             current = current->right;
         } else {
             temp = current;
@@ -223,7 +332,7 @@ Status treeset_lower(TreeSet *tree, void *item, void **lower) {
 
     while (current != NULL) {
         int cmp = (*tree->cmp)(item, current->data);
-        if (cmp >= 0) {
+        if (cmp <= 0) {
             current = current->left;
         } else {
             temp = current;
@@ -250,9 +359,9 @@ Status treeset_higher(TreeSet *tree, void *item, void **higher) {
     while (current != NULL) {
         int cmp = (*tree->cmp)(item, current->data);
         if (cmp >= 0) {
-            temp = current;
             current = current->right;
         } else {
+            temp = current;
             current = current->left;
         }
     }
@@ -264,13 +373,115 @@ Status treeset_higher(TreeSet *tree, void *item, void **higher) {
     return STAT_SUCCESS;
 }
 
+static void deleteFixup(TreeSet *tree, Node *node, Node *parent) {
+
+    while (node != tree->root && COLOR(node) == BLACK) {
+
+        if (node == parent->left) {
+            Node *sibling = parent->right;
+            if (COLOR(sibling) == RED) {
+                sibling->color = BLACK;
+                parent->color = RED;
+                rotateLeft(tree, parent);
+                sibling = parent->right;
+            }
+
+            if (COLOR(sibling->left) == BLACK && COLOR(sibling->right) == BLACK) {
+                sibling->color = RED;
+                node = parent;
+                parent = parent->parent;
+            } else {
+                if (COLOR(sibling->right) == BLACK) {
+                    sibling->left->color = BLACK;
+                    sibling->color = RED;
+                    rotateRight(tree, sibling);
+                    sibling = parent->right;
+                }
+                sibling->color = parent->color;
+                parent->color = BLACK;
+                sibling->right->color = BLACK;
+                rotateLeft(tree, parent);
+                node = tree->root;
+            }
+        } else {
+            Node *sibling = parent->left;
+            if (COLOR(sibling) == RED) {
+                sibling->color = BLACK;
+                parent->color = RED;
+                rotateRight(tree, parent);
+                sibling = parent->left;
+            }
+            if (COLOR(sibling->right) == BLACK && COLOR(sibling->left) == BLACK) {
+                sibling->color = RED;
+                node = parent;
+                parent = parent->parent;
+            } else {
+                if (COLOR(sibling->left) == BLACK) {
+                    sibling->right->color = BLACK;
+                    sibling->color = RED;
+                    rotateLeft(tree, sibling);
+                    sibling = parent->left;
+                }
+                sibling->color = parent->color;
+                parent->color = BLACK;
+                sibling->left->color = BLACK;
+                rotateRight(tree, parent);
+                node = tree->root;
+            }
+        }
+    }
+
+    node->color = BLACK;
+}
+
+static void deleteNode(TreeSet *tree, Node *node, Node **src) {
+
+    Node *splice, *child;
+    tree->size--;
+
+    if (node->left == NULL) {
+        splice = node;
+        child = node->right;
+    } else if (node->right == NULL) {
+        splice = node;
+        child = node->left;
+    } else {
+        splice = node->left;
+        while (splice->right != NULL)
+            splice = splice->right;
+        child = splice->left;
+        node->data = splice->data;
+    }
+
+    Node *parent = splice->parent;
+    if (child != NULL)
+        child->parent = parent;
+    if (parent == NULL) {
+        tree->root = child;
+        *src = splice;
+        return;
+    }
+
+    if (splice == parent->left)
+        parent->left = child;
+    else
+        parent->right = child;
+
+    if (splice->color == BLACK)
+        deleteFixup(tree, child, parent);
+    *src = splice;
+}
+
 Status treeset_pollFirst(TreeSet *tree, void **first) {
 
     if (treeset_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
-    UNUSED Node *node = getMin(tree->root);
+    Node *node = getMin(tree->root);
     *first = node->data;
-    // TODO - delete node
+
+    Node *temp;
+    deleteNode(tree, node, &temp);
+    free(temp);
 
     return STAT_SUCCESS;
 }
@@ -279,21 +490,30 @@ Status treeset_pollLast(TreeSet *tree, void **last) {
 
     if (treeset_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
-    UNUSED Node *node = getMax(tree->root);
+    Node *node = getMax(tree->root);
     *last = node->data;
-    // TODO - delete node
+
+    Node *temp;
+    deleteNode(tree, node, &temp);
+    free(temp);
 
     return STAT_SUCCESS;
 }
 
-Status treeset_remove(TreeSet *tree, void *item, UNUSED void (*destructor)(void *)) {
+Status treeset_remove(TreeSet *tree, void *item, void (*destructor)(void *)) {
 
     if (treeset_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
-    UNUSED Node *node = findNode(tree, item);
+    Node *node = findNode(tree, item);
     if (node == NULL)
         return STAT_NOT_FOUND;
-    // TODO - delete node
+
+    Node *temp;
+    void *toDelete = node->data;
+    deleteNode(tree, node, &temp);
+    if (destructor != NULL)
+        (*destructor)(toDelete);
+    free(temp);
 
     return STAT_SUCCESS;
 }

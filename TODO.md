@@ -1,7 +1,6 @@
 ### Implementations
 - [x] Iterator
 - [x] Stack
-- [x] Queue
 - [x] Deque
 - [x] Circular List
 - [x] ArrayList
@@ -10,20 +9,29 @@
 - [x] HashMap
 - [x] HashSet
 - [ ] TreeMap
-  - [ ] add()
-  - [ ] remove()
+  - [x] add()
+  - [x] remove()
+  - [x] deallocate correct key/value
   - [ ] iterative clear()
   - [ ] iterative iterator/toArray
 - [ ] TreeSet
-  - [ ] add()
-  - [ ] remove()
+  - [x] add()
+  - [x] remove()
+  - [x] deallocate correct key/value
   - [ ] iterative clear()
   - [ ] iterative iterator/toArray
+
+### Refinements
+- [ ] Code Cleanup
+- [ ] Comments
+- [ ] Sentinels
+- [ ] Triple Pointers to Array Object
+- [ ] isEmpty checks
+- [ ] Thread-Safe versions
 
 ### Testing
 - [x] Iterator
 - [x] Stack
-- [x] Queue
 - [x] Deque
 - [x] Circular List
 - [x] ArrayList
@@ -31,6 +39,19 @@
 - [x] Heap
 - [x] HashMap
 - [x] HashSet
+- [ ] TreeMap
+- [ ] TreeSet
+
+### Thread Safe Implementations
+- [ ] Iterator
+- [ ] Stack
+- [ ] Deque
+- [ ] Circular List
+- [ ] ArrayList
+- [ ] LinkedList
+- [ ] Heap
+- [ ] HashMap
+- [ ] HashSet
 - [ ] TreeMap
 - [ ] TreeSet
 

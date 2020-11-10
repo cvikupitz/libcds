@@ -6,4 +6,3 @@ make libcds.a
 mv libcds.a ../test
 cp -r include/ ../test/
 make clean
-
