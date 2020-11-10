@@ -86,7 +86,7 @@ Status treemap_new(TreeMap **tree, int (*keyComparator)(void *, void *), void (*
  *                          stored into '*previous' due to the key already existing.
  *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status treemap_put(TreeMap **tree, void *key, void *value, void **previous);
+Status treemap_put(TreeMap *tree, void *key, void *value, void **previous);
 
 /**
  * Fetches the first (least) key currently in the treemap, then stores the result

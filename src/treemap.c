@@ -200,7 +200,7 @@ static void insertNode(TreeMap *tree, Node *node) {
 
     while (temp != NULL) {
         parent = temp;
-        cmp = (*tree->keyCmp)(node->data, temp->data);
+        cmp = (*tree->keyCmp)(node->entry->key, temp->entry->key);
         temp = (cmp < 0) ? temp->left : temp->right;
     }
 
@@ -215,9 +215,9 @@ static void insertNode(TreeMap *tree, Node *node) {
     }
 }
 
-Status treemap_put(TreeMap **tree, void *key, void *value, void **previous) {
+Status treemap_put(TreeMap *tree, void *key, void *value, void **previous) {
 
-    Node *node = fetchNode(tree, key);
+    Node *node = findNode(tree, key);
     if (node != NULL) {
         *previous = node->entry->value;
         node->entry->value = value;
@@ -561,7 +561,7 @@ static void deleteNode(TreeMap *tree, Node *node, Node **src) {
         while (splice->right != NULL)
             splice = splice->right;
         child = splice->left;
-        node->data = splice->data;
+        node->entry = splice->entry;
     }
 
     Node *parent = splice->parent;
@@ -617,7 +617,7 @@ Status treemap_pollLast(TreeMap *tree, void **lastKey, void **lastValue) {
 
 Status treemap_remove(TreeMap *tree, void *key, void **value) {
 
-    if (treeset_isEmpty(tree) == TRUE)
+    if (treemap_isEmpty(tree) == TRUE)
         return STAT_STRUCT_EMPTY;
     Node *node = findNode(tree, key);
     if (node == NULL)
