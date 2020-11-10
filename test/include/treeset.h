@@ -281,6 +281,4 @@ Status treeset_iterator(TreeSet *tree, Iterator **iter);
  */
 void treeset_destroy(TreeSet *tree, void (*destructor)(void *));
 
-void printTree(TreeSet *ts);
-
 #endif  /* _TREESET_H__ */

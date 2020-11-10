@@ -27,141 +27,145 @@
 #include "treeset.h"
 
 /* Single item used for testing */
-static int singleItem = 10;
+static char *singleItem = "10";
 
 /* Collection of items used for testing */
-#define LEN 50
-static int orderedSet[] = {
-    1,  2,  3,  4,  5,  6,  7,  8,  9,  10,
-    11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-    21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-    31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
-    41, 42, 43, 44, 45, 46, 47, 48, 49, 50
+#define LEN 30
+static char *orderedSet[] = {
+    "01","02","03","04","05","06","07","08","09","10",
+    "11","12","13","14","15","16","17","18","19","20",
+    "21","22","23","24","25","26","27","28","29","30"
 };
 
-/* Comparator function used for comparing items in the treeset */
+/* Comparator function used for comparing items in the tree */
 static int treeCmp(void *x, void *y) {
-    return *((int *)x) - *((int *)y);
+    return strcmp((char *)x, (char *)y);
 }
 
-static void validateEmptyTreeSet(TreeSet *treeset) {
+static void validateEmptyTreeSet(TreeSet *tree) {
 
     Iterator *iter;
     Status stat;
     Boolean boolean;
-    int *element, **array;
+    char *element, **array;
     long size, len;
 
-    boolean = treeset_contains(treeset, &singleItem);
+    boolean = treeset_contains(tree, &singleItem);
     CU_ASSERT_EQUAL(boolean, FALSE);
-    stat = treeset_first(treeset, (void **)&element);
+    stat = treeset_first(tree, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = treeset_last(treeset, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
-    stat = treeset_floor(treeset, &singleItem, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = treeset_ceiling(treeset, &singleItem, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = treeset_lower(treeset, &singleItem, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = treeset_higher(treeset, &singleItem, (void **)&element);
+    stat = treeset_last(tree, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
-    stat = treeset_pollFirst(treeset, (void **)&element);
+    stat = treeset_floor(tree, singleItem, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = treeset_pollLast(treeset, (void **)&element);
+    stat = treeset_ceiling(tree, singleItem, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = treeset_remove(treeset, &singleItem, NULL);
+    stat = treeset_lower(tree, singleItem, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    stat = treeset_higher(tree, singleItem, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 
-    size = treeset_size(treeset);
+    stat = treeset_pollFirst(tree, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    stat = treeset_pollLast(tree, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    stat = treeset_remove(tree, &singleItem, NULL);
+    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+
+    size = treeset_size(tree);
     CU_ASSERT_EQUAL(size, 0L);
-    boolean = treeset_isEmpty(treeset);
+    boolean = treeset_isEmpty(tree);
     CU_ASSERT_EQUAL(boolean, TRUE);
-    stat = treeset_iterator(treeset, &iter);
+    stat = treeset_iterator(tree, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = treeset_toArray(treeset, (void ***)&array, &len);
+    stat = treeset_toArray(tree, (void ***)&array, &len);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
 static void testEmptyTreeSet() {
 
-    TreeSet *treeset;
+    TreeSet *tree;
     Status stat;
 
-    stat = treeset_new(&treeset, treeCmp);
+    stat = treeset_new(&tree, treeCmp);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testEmptyTreeSet() - allocation failure");
 
-    validateEmptyTreeSet(treeset);
-    treeset_destroy(treeset, NULL);
+    validateEmptyTreeSet(tree);
+    treeset_destroy(tree, NULL);
 
     CU_PASS("testEmptyTreeSet() - Test Passed");
 }
 
-/*static void testSingleItem() {
+static void testSingleItem() {
 
-    TreeSet *treeset;
+    TreeSet *tree;
     Status stat;
-    Boolean isEmpty;
+    Boolean boolean;
     long size;
     char *element;
 
-    stat = treeset_new(&treeset);
+    stat = treeset_new(&tree, treeCmp);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testSingleItem() - allocation failure");
 
-    stat = treeset_push(treeset, singleItem);
+    stat = treeset_add(tree, singleItem);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    boolean = treeset_contains(tree, singleItem);
+    CU_ASSERT_EQUAL(boolean, TRUE);
 
-    size = treeset_size(treeset);
-    isEmpty = treeset_isEmpty(treeset);
+    size = treeset_size(tree);
+    boolean = treeset_isEmpty(tree);
     CU_ASSERT_EQUAL(size, 1L);
-    CU_ASSERT_EQUAL(isEmpty, FALSE);
+    CU_ASSERT_EQUAL(boolean, FALSE);
 
-    stat = treeset_peek(treeset, (void **)&element);
+    stat = treeset_first(tree, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
+    stat = treeset_last(tree, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
 
-    stat = treeset_pop(treeset, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-    stat = treeset_pop(treeset, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    stat = treeset_lower(tree, singleItem, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
+    stat = treeset_higher(tree, singleItem, (void **)&element);
+    CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
 
-    validateEmptyTreeSet(treeset);
-    treeset_destroy(treeset, NULL);
+    stat = treeset_remove(tree, singleItem, NULL);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    validateEmptyTreeSet(tree);
+    treeset_destroy(tree, NULL);
 
     CU_PASS("testSingleItem() - Test Passed");
-}*/
+}
 
 static void testTreeSetToArray() {
 
-    TreeSet *treeset;
+    TreeSet *tree;
     Status stat;
-    int **items;
+    char **items;
     int i;
     long len;
 
-    stat = treeset_new(&treeset, treeCmp);
+    stat = treeset_new(&tree, treeCmp);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testTreeSetToArray() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        stat = treeset_add(treeset, &(orderedSet[i]));
+        stat = treeset_add(tree, orderedSet[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    stat = treeset_toArray(treeset, (void ***)&items, &len);
+    stat = treeset_toArray(tree, (void ***)&items, &len);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_EQUAL(len, LEN);
 
     for (i = 0; i < len; i++)
-        CU_ASSERT_TRUE( orderedSet[i] == *(items[i]) );
+        CU_ASSERT_TRUE( orderedSet[i] == items[i] );
 
     free(items);
-    treeset_destroy(treeset, NULL);
+    treeset_destroy(tree, NULL);
 
     CU_PASS("testTreeSetToArray() - Test Passed");
 }
@@ -169,54 +173,54 @@ static void testTreeSetToArray() {
 static void testTreeSetIterator() {
 
     Iterator *iter;
-    TreeSet *treeset;
+    TreeSet *tree;
     Status stat;
     int i;
-    int *element;
+    char *element;
 
-    stat = treeset_new(&treeset, treeCmp);
+    stat = treeset_new(&tree, treeCmp);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testTreeSetIterator() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        stat = treeset_add(treeset, &(orderedSet[i]));
+        stat = treeset_add(tree, orderedSet[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    stat = treeset_iterator(treeset, &iter);
+    stat = treeset_iterator(tree, &iter);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 
     i = 0;
     while (iterator_hasNext(iter) == TRUE) {
         stat = iterator_next(iter, (void **)&element);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( *element == orderedSet[i++] );
+        CU_ASSERT_TRUE( element == orderedSet[i++] );
     }
 
     iterator_destroy(iter);
-    treeset_destroy(treeset, NULL);
+    treeset_destroy(tree, NULL);
 
     CU_PASS("testTreeSetIterator() - Test Passed");
 }
 
 static void testTreeSetClear() {
 
-    TreeSet *treeset;
+    TreeSet *tree;
     Status stat;
     int i;
 
-    stat = treeset_new(&treeset, treeCmp);
+    stat = treeset_new(&tree, treeCmp);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testTreeSetClear() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        stat = treeset_add(treeset, &(orderedSet[i]));
+        stat = treeset_add(tree, &(orderedSet[i]));
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    treeset_clear(treeset, NULL);
-    validateEmptyTreeSet(treeset);
-    treeset_destroy(treeset, NULL);
+    treeset_clear(tree, NULL);
+    validateEmptyTreeSet(tree);
+    treeset_destroy(tree, NULL);
 
     CU_PASS("testTreeSetClear() - Test Passed");
 }
@@ -235,7 +239,7 @@ int main(UNUSED int argc, UNUSED char **argv) {
     }
 
     CU_add_test(suite, "TreeSet - Empty TreeSet", testEmptyTreeSet);
-    //CU_add_test(suite, "TreeSet - Single Item", testSingleItem);
+    CU_add_test(suite, "TreeSet - Single Item", testSingleItem);
     CU_add_test(suite, "TreeSet - Array", testTreeSetToArray);
     CU_add_test(suite, "TreeSet - Iterator", testTreeSetIterator);
     CU_add_test(suite, "TreeSet - Clear", testTreeSetClear);

@@ -106,11 +106,37 @@ typedef enum {
 
     /**
      * A call to any of the dynamic memory allocator methods (i.e. malloc(), realloc(), etc.)
-     * has failed during instantiation, additions, resizing, or any other operation that requires
-     * allocating heap memory.
+     * has failed during instantiation, additions, resizing, or any other operation that
+     * requires allocating heap memory.
      */
     STAT_ALLOC_FAILURE = 8
 
 } Status;
+
+/**
+ * A structure representing an array of objects that gets returned from the data collection's
+ * toArray() method. Rather than having the caller provide a (void ***) for where the array
+ * is initialized and a (long *) for the length of the array, this structure should encapsulate
+ * everything needed.
+ *
+ * Once the Array object is initialized and populated with elements from the previous toArray()
+ * invocation, callers can access the data through the structure's public members. The caller is
+ * responsible for freeing the array's item and the array struct itself once it's no longer
+ * needed.
+ */
+typedef struct {
+    void **items;       /* The array of elements */
+    long len;           /* The length of the array of elements */
+} Array;
+
+/**
+ * Macro used for deallocating the specified Array* item.
+ *
+ * Simply used to save you one extra line of code. Alternatively, you can manually free the
+ * internal array and the struct if you so choose.
+ */
+#define FREE_ARRAY(a) \
+    free(a->items); \
+    free(a);
 
 #endif  /* _CDS_COMMON_H__ */
