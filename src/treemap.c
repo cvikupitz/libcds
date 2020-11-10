@@ -304,10 +304,10 @@ static Node *getFloorNode(TreeMap *tree, void *item) {
             break;
         }
         if (cmp < 0) {
+            current = current->left;
+        } else {
             temp = current;
             current = current->right;
-        } else {
-            current = current->left;
         }
     }
 
@@ -349,7 +349,7 @@ static Node *getCeilingNode(TreeMap *tree, void *item) {
             temp = current;
             break;
         }
-        if (cmp < 0) {
+        if (cmp > 0) {
             current = current->right;
         } else {
             temp = current;
@@ -391,7 +391,7 @@ static Node *getLowerNode(TreeMap *tree, void *item) {
 
     while (current != NULL) {
         int cmp = (*tree->keyCmp)(item, current->entry->key);
-        if (cmp >= 0) {
+        if (cmp <= 0) {
             current = current->left;
         } else {
             temp = current;
@@ -434,9 +434,9 @@ static Node *getHigherNode(TreeMap *tree, void *item) {
     while (current != NULL) {
         int cmp = (*tree->keyCmp)(item, current->entry->key);
         if (cmp >= 0) {
-            temp = current;
             current = current->right;
         } else {
+            temp = current;
             current = current->left;
         }
     }
@@ -561,7 +561,8 @@ static void deleteNode(TreeMap *tree, Node *node, Node **src) {
         while (splice->right != NULL)
             splice = splice->right;
         child = splice->left;
-        node->entry = splice->entry;
+        node->entry->key = splice->entry->key;
+        node->entry->value = splice->entry->value;
     }
 
     Node *parent = splice->parent;
@@ -625,9 +626,10 @@ Status treemap_remove(TreeMap *tree, void *key, void **value) {
     *value = node->entry->value;
 
     Node *temp;
+    void *toDelete = node->entry->key;
     deleteNode(tree, node, &temp);
     if (tree->keyDxn != NULL)
-        (*tree->keyDxn)(temp->entry->key);
+        (*tree->keyDxn)(toDelete);
     free(temp->entry);
     free(temp);
 
@@ -764,47 +766,4 @@ void *tmentry_getKey(TmEntry *entry) {
 
 void *tmentry_getValue(TmEntry *entry) {
     return entry->value;
-}
-
-#include <stdio.h>
-
-static void printNode(Node *node) {
-    char color = (node->color == RED) ? 'R' : 'B';
-    fprintf(stdout, "(%d %c)", *((int *)node->entry->key), color);
-}
-
-static void preOrder(Node *node) {
-    if (node == NULL)
-        return;
-
-    printNode(node);
-    preOrder(node->left);
-    preOrder(node->right);
-}
-
-static void inOrder(Node *node) {
-    if (node == NULL)
-        return;
-
-    inOrder(node->left);
-    printNode(node);
-    inOrder(node->right);
-}
-
-static void postOrder(Node *node) {
-    if (node == NULL)
-        return;
-
-    postOrder(node->left);
-    postOrder(node->right);
-    printNode(node);
-}
-
-void printTree(TreeMap *ts) {
-    fprintf(stdout, "Root: %d, Size: %ld\n", *((int *)ts->root->entry->key), ts->size);
-
-    fprintf(stdout, "Pre-Order: ") ;preOrder(ts->root);
-    fprintf(stdout, "\nIn-Order: ") ;inOrder(ts->root);
-    fprintf(stdout, "\nPost-Order: ") ;postOrder(ts->root);
-    fprintf(stdout, "\n");
 }

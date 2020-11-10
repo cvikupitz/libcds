@@ -277,10 +277,10 @@ Status treeset_floor(TreeSet *tree, void *item, void **floor) {
             break;
         }
         if (cmp < 0) {
+            current = current->left;
+        } else {
             temp = current;
             current = current->right;
-        } else {
-            current = current->left;
         }
     }
 
@@ -306,7 +306,7 @@ Status treeset_ceiling(TreeSet *tree, void *item, void **ceiling) {
             temp = current;
             break;
         }
-        if (cmp < 0) {
+        if (cmp > 0) {
             current = current->right;
         } else {
             temp = current;
@@ -332,7 +332,7 @@ Status treeset_lower(TreeSet *tree, void *item, void **lower) {
 
     while (current != NULL) {
         int cmp = (*tree->cmp)(item, current->data);
-        if (cmp >= 0) {
+        if (cmp <= 0) {
             current = current->left;
         } else {
             temp = current;
@@ -359,9 +359,9 @@ Status treeset_higher(TreeSet *tree, void *item, void **higher) {
     while (current != NULL) {
         int cmp = (*tree->cmp)(item, current->data);
         if (cmp >= 0) {
-            temp = current;
             current = current->right;
         } else {
+            temp = current;
             current = current->left;
         }
     }
@@ -509,10 +509,11 @@ Status treeset_remove(TreeSet *tree, void *item, void (*destructor)(void *)) {
         return STAT_NOT_FOUND;
 
     Node *temp;
+    void *toDelete = node->data;
     deleteNode(tree, node, &temp);
     if (destructor != NULL)
-        (*destructor)(temp->data);
-    free(node);
+        (*destructor)(toDelete);
+    free(temp);
 
     return STAT_SUCCESS;
 }
@@ -611,48 +612,4 @@ Status treeset_iterator(TreeSet *tree, Iterator **iter) {
 void treeset_destroy(TreeSet *tree, void (*destructor)(void *)) {
     clearTree(tree->root, destructor);
     free(tree);
-}
-
-
-#include <stdio.h>
-
-static void printNode(Node *node) {
-    char color = (node->color == RED) ? 'R' : 'B';
-    fprintf(stdout, "(%d %c)", *((int *)node->data), color);
-}
-
-static void preOrder(Node *node) {
-    if (node == NULL)
-        return;
-
-    printNode(node);
-    preOrder(node->left);
-    preOrder(node->right);
-}
-
-static void inOrder(Node *node) {
-    if (node == NULL)
-        return;
-
-    inOrder(node->left);
-    printNode(node);
-    inOrder(node->right);
-}
-
-static void postOrder(Node *node) {
-    if (node == NULL)
-        return;
-
-    postOrder(node->left);
-    postOrder(node->right);
-    printNode(node);
-}
-
-void printTree(TreeSet *ts) {
-    fprintf(stdout, "Root: %d, Size: %ld\n", *((int *)ts->root->data), ts->size);
-
-    fprintf(stdout, "Pre-Order: ") ;preOrder(ts->root);
-    fprintf(stdout, "\nIn-Order: ") ;inOrder(ts->root);
-    fprintf(stdout, "\nPost-Order: ") ;postOrder(ts->root);
-    fprintf(stdout, "\n");
 }
