@@ -436,7 +436,7 @@ static void deleteFixup(TreeSet *tree, Node *node, Node *parent) {
     node->color = BLACK;
 }
 
-static void deleteNode(TreeSet *tree, Node *node, UNUSED void (*destructor)(void *)) {
+static void deleteNode(TreeSet *tree, Node *node, Node **src) {
 
     Node *splice, *child;
     tree->size--;
@@ -460,6 +460,7 @@ static void deleteNode(TreeSet *tree, Node *node, UNUSED void (*destructor)(void
         child->parent = parent;
     if (parent == NULL) {
         tree->root = child;
+        *src = splice;
         return;
     }
 
@@ -470,7 +471,8 @@ static void deleteNode(TreeSet *tree, Node *node, UNUSED void (*destructor)(void
 
     if (splice->color == BLACK)
         deleteFixup(tree, child, parent);
-} //FIXME destruction
+    *src = splice;
+}
 
 Status treeset_pollFirst(TreeSet *tree, void **first) {
 
@@ -478,7 +480,10 @@ Status treeset_pollFirst(TreeSet *tree, void **first) {
         return STAT_STRUCT_EMPTY;
     Node *node = getMin(tree->root);
     *first = node->data;
-    deleteNode(tree, node, NULL);
+
+    Node *temp;
+    deleteNode(tree, node, &temp);
+    free(temp);
 
     return STAT_SUCCESS;
 }
@@ -489,7 +494,10 @@ Status treeset_pollLast(TreeSet *tree, void **last) {
         return STAT_STRUCT_EMPTY;
     Node *node = getMax(tree->root);
     *last = node->data;
-    deleteNode(tree, node, NULL);
+
+    Node *temp;
+    deleteNode(tree, node, &temp);
+    free(temp);
 
     return STAT_SUCCESS;
 }
@@ -501,7 +509,12 @@ Status treeset_remove(TreeSet *tree, void *item, void (*destructor)(void *)) {
     Node *node = findNode(tree, item);
     if (node == NULL)
         return STAT_NOT_FOUND;
-    deleteNode(tree, node, destructor);
+
+    Node *temp;
+    deleteNode(tree, node, &temp);
+    if (destructor != NULL)
+        (*destructor)(temp->data);
+    free(node);
 
     return STAT_SUCCESS;
 }
