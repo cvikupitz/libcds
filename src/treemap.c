@@ -228,8 +228,8 @@ Status treemap_put(TreeMap *tree, void *key, void *value, void **previous) {
     if (temp == NULL)
         return STAT_ALLOC_FAILURE;
 
-    insertNode(tree, node);
-    insertFix(tree, node);
+    insertNode(tree, temp);
+    insertFix(tree, temp);
 
     return STAT_ENTRY_INSERTED;
 }
@@ -663,11 +663,95 @@ Boolean treemap_isEmpty(TreeMap *tree) {
     return ( tree->size == 0L ) ? TRUE : FALSE;
 }
 
-Status treemap_keyArray(TreeMap *tree, void ***keys, long *len);//FIXME
+static void populateKeyArray(Node *node, TreeIter *iter) {
 
-Status treemap_entryArray(TreeMap *tree, TmEntry ***entries, long *len); //FIXME
+    if (node == NULL)
+        return;
+    populateKeyArray(node->left, iter);
+    iter->items[iter->next++] = node->entry->key;
+    populateKeyArray(node->right, iter);
+}
 
-Status treemap_iterator(TreeMap *tree, Iterator **iter); //FIXME
+Status treemap_keyArray(TreeMap *tree, void ***keys, long *len) {
+
+    size_t bytes;
+    void **items = NULL;
+
+    /* Does not create array if currently empty */
+    if (treemap_isEmpty(tree) == TRUE)
+        return STAT_STRUCT_EMPTY;
+
+    /* Allocates memory for the array */
+    bytes = ( tree->size * sizeof(void *) );
+    items = (void **)malloc(bytes);
+    if (items == NULL)
+        return STAT_ALLOC_FAILURE;
+
+    TreeIter iter = {items, 0L};
+    populateKeyArray(tree->root, &iter);
+    *keys = iter.items;
+    *len = tree->size;
+
+    return STAT_SUCCESS;
+}
+
+static void populateEntryArray(Node *node, TreeIter *iter) {
+
+    if (node == NULL)
+        return;
+    populateKeyArray(node->left, iter);
+    iter->items[iter->next++] = node->entry;
+    populateKeyArray(node->right, iter);
+}
+
+static Status generateEntryArray(TreeMap *tree, TmEntry ***entries, long *len) {
+
+    size_t bytes;
+    TmEntry **items = NULL;
+
+    /* Does not create array if currently empty */
+    if (treemap_isEmpty(tree) == TRUE)
+        return STAT_STRUCT_EMPTY;
+
+    /* Allocates memory for the array */
+    bytes = ( tree->size * sizeof(TmEntry *) );
+    items = (TmEntry **)malloc(bytes);
+    if (items == NULL)
+        return STAT_ALLOC_FAILURE;
+
+    TreeIter iter = {(void **)items, 0L};
+    populateEntryArray(tree->root, &iter);
+    *entries = (TmEntry **)iter.items;
+    *len = tree->size;
+
+    return STAT_SUCCESS;
+}
+
+Status treemap_entryArray(TreeMap *tree, TmEntry ***entries, long *len) {
+    return generateEntryArray(tree, entries, len);
+}
+
+Status treemap_iterator(TreeMap *tree, Iterator **iter) {
+
+    Iterator *temp = NULL;
+    TmEntry **items = NULL;
+    long len;
+
+    /* Generates the array of entry items for iterator */
+    Status status = generateEntryArray(tree, &items, &len);
+    if (status != STAT_SUCCESS)
+        return status;
+
+    /* Creates a new iterator with the stack items */
+    status = iterator_new(&temp, (void **)items, len);
+    if (status != STAT_SUCCESS) {
+        free(items);
+        return status;
+    }
+    *iter = temp;
+
+    return STAT_SUCCESS;
+}
 
 void treemap_destroy(TreeMap *tree, void (*valueDestructor)(void *)) {
     clearTree(tree->root, tree->keyDxn, valueDestructor);
