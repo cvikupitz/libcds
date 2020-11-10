@@ -42,6 +42,18 @@
 - [ ] TreeMap
 - [ ] TreeSet
 
+### Array Struct Replacements
+- [x] Stack
+- [x] Deque
+- [x] Circular List
+- [x] ArrayList
+- [ ] LinkedList
+- [ ] Heap
+- [ ] HashMap
+- [ ] HashSet
+- [ ] TreeMap
+- [ ] TreeSet
+
 ### Thread Safe Implementations
 - [ ] Iterator
 - [ ] Stack

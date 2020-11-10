@@ -205,49 +205,64 @@ Boolean deque_isEmpty(Deque *deque) {
 /*
  * Local method to allocate and create an array representation of the deque.
  */
-static Status generateArray(Deque *deque, void ***array, long *len) {
+static void **generateArray(Deque *deque) {
 
     Node *temp = NULL;
     long i = 0L;
     size_t bytes;
     void **items = NULL;
 
-    /* Does not create the array if currently empty */
-    if (deque_isEmpty(deque) == TRUE)
-        return STAT_STRUCT_EMPTY;
-
     /* Allocates the memory for the array */
     bytes = ( deque->size * sizeof(void *) );
     items = (void **)malloc(bytes);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return NULL;
 
     /* Populates the array with deque items */
     for (temp = deque->head; temp != NULL; temp = temp->next)
         items[i++] = temp->data;
-    *array = items;
-    *len = deque->size;
 
-    return STAT_SUCCESS;
+    return items;
 }
 
-Status deque_toArray(Deque *deque, void ***array, long *len) {
-    return generateArray(deque, array, len);
+Status deque_toArray(Deque *deque, Array **array) {
+
+    /* Does not create the deque if currently empty */
+    if (deque_isEmpty(deque) == TRUE)
+        return STAT_STRUCT_EMPTY;
+
+    void **items = generateArray(deque);
+    if (items == NULL)
+        return STAT_ALLOC_FAILURE;
+
+    Array *temp = (Array *)malloc(sizeof(Array));
+    if (temp == NULL) {
+        free(items);
+        return STAT_ALLOC_FAILURE;
+    }
+
+    temp->items = items;
+    temp->len = deque->size;
+    *array = temp;
+
+    return STAT_SUCCESS;
 }
 
 Status deque_iterator(Deque *deque, Iterator **iter) {
 
     Iterator *temp = NULL;
     void **items = NULL;
-    long len;
 
-    /* Generates the array of deque items for the iterator */
-    Status status = generateArray(deque, &items, &len);
-    if (status != STAT_SUCCESS)
-        return status;
+    if (deque_isEmpty(deque) == TRUE)
+        return STAT_STRUCT_EMPTY;
 
-    /* Creates a new iterator with the deque items */
-    status = iterator_new(&temp, items, len);
+    /* Generates the array of stack items for iterator */
+    items = generateArray(deque);
+    if (items == NULL)
+        return STAT_ALLOC_FAILURE;
+
+    /* Creates a new iterator with the stack items */
+    Status status = iterator_new(&temp, items, deque->size);
     if (status != STAT_SUCCESS) {
         free(items);
         return status;

@@ -127,14 +127,13 @@ Boolean stack_isEmpty(Stack *stack);
  *
  * Params:
  *    stack - The stack to operate on.
- *    array - Address where the generated array will be stored.
- *    len - Address where the length of the generated array will be stored.
+ *    array - Address where the new array will be stored.
  * Returns:
  *    STAT_SUCCESS - Operation was successful.
  *    STAT_STRUCT_EMPTY - Stack is currently empty.
  *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stack_toArray(Stack *stack, void ***array, long *len);
+Status stack_toArray(Stack *stack, Array **array);
 
 /**
  * Creates an Iterator instance to iterate over the stack's elements in proper sequence

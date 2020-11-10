@@ -167,22 +167,18 @@ Boolean circularlist_isEmpty(CircularList *list) {
 /*
  * Local method to allocate and create an array representation of the circular list.
  */
-static Status generateArray(CircularList *list, void ***array, long *len) {
+static void **generateArray(CircularList *list) {
 
     Node *temp = NULL;
     long i = 0L;
     size_t bytes;
     void **items = NULL;
 
-    /* Does not create the array if currently empty */
-    if (circularlist_isEmpty(list) == TRUE)
-        return STAT_STRUCT_EMPTY;
-
     /* Allocates memory for the array */
     bytes = ( list->size * sizeof(void *) );
     items = (void **)malloc(bytes);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return NULL;
 
     /* Populates the array with the list items */
     temp = list->tail;
@@ -190,29 +186,49 @@ static Status generateArray(CircularList *list, void ***array, long *len) {
         temp = temp->next;
         items[i] = temp->data;
     }
-    *array = items;
-    *len = list->size;
 
-    return STAT_SUCCESS;
+    return items;
 }
 
-Status circularlist_toArray(CircularList *list, void ***array, long *len) {
-    return generateArray(list, array, len);
+Status circularlist_toArray(CircularList *list, Array **array) {
+
+    /* Does not create the array if currently empty */
+    if (circularlist_isEmpty(list) == TRUE)
+        return STAT_STRUCT_EMPTY;
+
+    void **items = generateArray(list);
+    if (items == NULL)
+        return STAT_ALLOC_FAILURE;
+
+    Array *temp = (Array *)malloc(sizeof(Array));
+    if (temp == NULL) {
+        free(items);
+        return STAT_ALLOC_FAILURE;
+    }
+
+    temp->items = items;
+    temp->len = list->size;
+    *array = temp;
+
+    return STAT_SUCCESS;
 }
 
 Status circularlist_iterator(CircularList *list, Iterator **iter) {
 
     Iterator *temp = NULL;
     void **items = NULL;
-    long len;
 
-    /* Generates the array of list items for iterator */
-    Status status = generateArray(list, &items, &len);
-    if (status != STAT_SUCCESS)
-        return status;
+    /* Does not create the array if currently empty */
+    if (circularlist_isEmpty(list) == TRUE)
+        return STAT_STRUCT_EMPTY;
 
-    /* Creates a new iterator with the list items */
-    status = iterator_new(&temp, items, len);
+    /* Generates the array of stack items for iterator */
+    items = generateArray(list);
+    if (items == NULL)
+        return STAT_ALLOC_FAILURE;
+
+    /* Creates a new iterator with the stack items */
+    Status status = iterator_new(&temp, items, list->size);
     if (status != STAT_SUCCESS) {
         free(items);
         return status;

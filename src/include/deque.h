@@ -164,14 +164,14 @@ Boolean deque_isEmpty(Deque *deque);
  *
  * Params:
  *    deque - The deque to operate on.
- *    array - Address where the generated array will be stored.
+ *    array - Address where the new array will be stored.
  *    len - Address where the length of the generated array will be stored.
  * Returns:
  *    STAT_SUCCESS - Operation was successful.
  *    STAT_STRUCT_EMPTY - Deque is currently empty.
  *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status deque_toArray(Deque *deque, void ***array, long *len);
+Status deque_toArray(Deque *deque, Array **array);
 
 /**
  * Creates an Iterator instance to iterate over the deque's elements in proper sequence
