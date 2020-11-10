@@ -441,6 +441,4 @@ void *tmentry_getKey(TmEntry *entry);
  */
 void *tmentry_getValue(TmEntry *entry);
 
-void printTree(TreeMap *ts);
-
 #endif  /* _TREEMAP_H__ */
