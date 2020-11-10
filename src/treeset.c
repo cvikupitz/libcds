@@ -373,8 +373,6 @@ Status treeset_higher(TreeSet *tree, void *item, void **higher) {
     return STAT_SUCCESS;
 }
 
-#define UNUSED __attribute__((unused))
-
 static void deleteFixup(TreeSet *tree, Node *node, Node *parent) {
 
     while (node != tree->root && COLOR(node) == BLACK) {

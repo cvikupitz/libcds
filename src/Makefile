@@ -47,5 +47,5 @@ treeset.o:
 
 test.o:
 	gcc -c test.c -Iinclude
-test: iterator.o treeset.o test.o
-	gcc test.o iterator.o treeset.o -o test
+test: iterator.o treemap.o test.o
+	gcc test.o iterator.o treemap.o -o test

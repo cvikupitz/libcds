@@ -196,6 +196,7 @@ static void insertNode(TreeMap *tree, Node *node) {
 
     Node *temp = tree->root, *parent = NULL;
     int cmp = 0;
+    tree->size++;
 
     while (temp != NULL) {
         parent = temp;
@@ -229,7 +230,6 @@ Status treemap_put(TreeMap **tree, void *key, void *value, void **previous) {
 
     insertNode(tree, node);
     insertFix(tree, node);
-    tree->size++;
 
     return STAT_ENTRY_INSERTED;
 }
@@ -484,17 +484,153 @@ Status treemap_get(TreeMap *tree, void *key, void **value) {
     return STAT_SUCCESS;
 }
 
-#define UNUSED __attribute__((unused))
+static void deleteFixup(TreeMap *tree, Node *node, Node *parent) {
 
-Status treemap_pollFirst(UNUSED TreeMap *tree, UNUSED void **firstKey, UNUSED void **firstValue) {
+    while (node != tree->root && COLOR(node) == BLACK) {
+
+        if (node == parent->left) {
+            Node *sibling = parent->right;
+            if (COLOR(sibling) == RED) {
+                sibling->color = BLACK;
+                parent->color = RED;
+                rotateLeft(tree, parent);
+                sibling = parent->right;
+            }
+
+            if (COLOR(sibling->left) == BLACK && COLOR(sibling->right) == BLACK) {
+                sibling->color = RED;
+                node = parent;
+                parent = parent->parent;
+            } else {
+                if (COLOR(sibling->right) == BLACK) {
+                    sibling->left->color = BLACK;
+                    sibling->color = RED;
+                    rotateRight(tree, sibling);
+                    sibling = parent->right;
+                }
+                sibling->color = parent->color;
+                parent->color = BLACK;
+                sibling->right->color = BLACK;
+                rotateLeft(tree, parent);
+                node = tree->root;
+            }
+        } else {
+            Node *sibling = parent->left;
+            if (COLOR(sibling) == RED) {
+                sibling->color = BLACK;
+                parent->color = RED;
+                rotateRight(tree, parent);
+                sibling = parent->left;
+            }
+            if (COLOR(sibling->right) == BLACK && COLOR(sibling->left) == BLACK) {
+                sibling->color = RED;
+                node = parent;
+                parent = parent->parent;
+            } else {
+                if (COLOR(sibling->left) == BLACK) {
+                    sibling->right->color = BLACK;
+                    sibling->color = RED;
+                    rotateLeft(tree, sibling);
+                    sibling = parent->left;
+                }
+                sibling->color = parent->color;
+                parent->color = BLACK;
+                sibling->left->color = BLACK;
+                rotateRight(tree, parent);
+                node = tree->root;
+            }
+        }
+    }
+
+    node->color = BLACK;
+}
+
+static void deleteNode(TreeMap *tree, Node *node, Node **src) {
+
+    Node *splice, *child;
+    tree->size--;
+
+    if (node->left == NULL) {
+        splice = node;
+        child = node->right;
+    } else if (node->right == NULL) {
+        splice = node;
+        child = node->left;
+    } else {
+        splice = node->left;
+        while (splice->right != NULL)
+            splice = splice->right;
+        child = splice->left;
+        node->data = splice->data;
+    }
+
+    Node *parent = splice->parent;
+    if (child != NULL)
+        child->parent = parent;
+    if (parent == NULL) {
+        tree->root = child;
+        *src = splice;
+        return;
+    }
+
+    if (splice == parent->left)
+        parent->left = child;
+    else
+        parent->right = child;
+
+    if (splice->color == BLACK)
+        deleteFixup(tree, child, parent);
+    *src = splice;
+}
+
+Status treemap_pollFirst(TreeMap *tree, void **firstKey, void **firstValue) {
+
+    if (treemap_isEmpty(tree) == TRUE)
+        return STAT_STRUCT_EMPTY;
+    Node *node = getMin(tree->root);
+    *firstKey = node->entry->key;
+    *firstValue = node->entry->value;
+
+    Node *temp;
+    deleteNode(tree, node, &temp);
+    free(temp->entry);
+    free(temp);
+
     return STAT_SUCCESS;
 }
 
-Status treemap_pollLast(UNUSED TreeMap *tree,UNUSED void **lastKey, UNUSED void **lastValue) {
+Status treemap_pollLast(TreeMap *tree, void **lastKey, void **lastValue) {
+
+    if (treemap_isEmpty(tree) == TRUE)
+        return STAT_STRUCT_EMPTY;
+    Node *node = getMax(tree->root);
+    *lastKey = node->entry->key;
+    *lastValue = node->entry->value;
+
+    Node *temp;
+    deleteNode(tree, node, &temp);
+    free(temp->entry);
+    free(temp);
+
     return STAT_SUCCESS;
 }
 
-Status treemap_remove(UNUSED TreeMap *tree,UNUSED void *key,UNUSED void **value) {
+Status treemap_remove(TreeMap *tree, void *key, void **value) {
+
+    if (treeset_isEmpty(tree) == TRUE)
+        return STAT_STRUCT_EMPTY;
+    Node *node = findNode(tree, key);
+    if (node == NULL)
+        return STAT_NOT_FOUND;
+    *value = node->entry->value;
+
+    Node *temp;
+    deleteNode(tree, node, &temp);
+    if (tree->keyDxn != NULL)
+        (*tree->keyDxn)(temp->entry->key);
+    free(temp->entry);
+    free(temp);
+
     return STAT_SUCCESS;
 }
 
