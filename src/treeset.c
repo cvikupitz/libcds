@@ -559,47 +559,63 @@ static void populateArray(TreeIter *iter, Node *node) {
 /*
  * Local method to allocate and create an array representation of the treeset.
  */
-static Status generateArray(TreeSet *tree, void ***array, long *len) {
+static void **generateArray(TreeSet *tree) {
 
     size_t bytes;
     void **items = NULL;
-
-    /* Does not create the array if empty */
-    if (treeset_isEmpty(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
 
     /* Allocates memory for the array */
     bytes = ( tree->size * sizeof(void *) );
     items = (void **)malloc(bytes);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return NULL;
 
     /* Populates the array with treeset items */
     TreeIter iter = {items, 0L};
     populateArray(&iter, tree->root);
-    *len = tree->size;
-    *array = iter.items;
 
-    return STAT_SUCCESS;
+    return iter.items;
 }
 
-Status treeset_toArray(TreeSet *tree, void ***array, long *len) {
-    return generateArray(tree, array, len);
+Status treeset_toArray(TreeSet *tree, Array **array) {
+
+    /* Does not create the array if empty */
+    if (treeset_isEmpty(tree) == TRUE)
+        return STAT_STRUCT_EMPTY;
+
+    void **items = generateArray(tree);
+    if (items == NULL)
+        return STAT_ALLOC_FAILURE;
+
+    Array *temp = (Array *)malloc(sizeof(Array));
+    if (temp == NULL) {
+        free(items);
+        return STAT_ALLOC_FAILURE;
+    }
+
+    temp->items = items;
+    temp->len = tree->size;
+    *array = temp;
+
+    return STAT_SUCCESS;
 }
 
 Status treeset_iterator(TreeSet *tree, Iterator **iter) {
 
     Iterator *temp = NULL;
     void **items = NULL;
-    long len;
 
-    /* Generates the array of treeset items for iterator */
-    Status status = generateArray(tree, &items, &len);
-    if (status != STAT_SUCCESS)
-        return status;
+    /* Does not create the array if empty */
+    if (treeset_isEmpty(tree) == TRUE)
+        return STAT_STRUCT_EMPTY;
 
-    /* Creates a new iterator with the list items */
-    status = iterator_new(&temp, items, len);
+    /* Generates the array of stack items for iterator */
+    items = generateArray(tree);
+    if (items == NULL)
+        return STAT_ALLOC_FAILURE;
+
+    /* Creates a new iterator with the stack items */
+    Status status = iterator_new(&temp, items, tree->size);
     if (status != STAT_SUCCESS) {
         free(items);
         return status;

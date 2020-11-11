@@ -137,19 +137,18 @@ Boolean hashset_isEmpty(HashSet *set);
 
 /**
  * Allocates and generates an array containing all of the hashset's elements in no
- * particular order, then stores the array into '*'. Caller is responsible for freeing
- * the array when finished.
+ * particular order, then stores the array into '*array'. Caller is responsible for
+ * freeing the array when finished.
  *
  * Params:
  *    set - The hashset to operate on.
- *    array - Address where the generated array will be stored.
- *    len - Address where the length of the generated array will be stored.
+ *    array - Address where the new array will be stored.
  * Returns:
  *    STAT_SUCCESS - Operation was successful.
  *    STAT_STRUCT_EMPTY - HashSet is currently empty.
  *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status hashset_toArray(HashSet *set, void ***array, long *len);
+Status hashset_toArray(HashSet *set, Array **array);
 
 /**
  * Returns an Iterator instance to iterate over the the hashset's elements in no particular

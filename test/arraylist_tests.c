@@ -38,11 +38,12 @@ static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple", "g
 
 static void validateEmptyArrayList(ArrayList *list) {
 
+    Array *arr;
     Iterator *iter;
     Status stat;
     Boolean isEmpty;
-    char *element, **array;
-    long size, len;
+    char *element;
+    long size;
 
     stat = arraylist_get(list, 0L, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
@@ -57,7 +58,7 @@ static void validateEmptyArrayList(ArrayList *list) {
     CU_ASSERT_EQUAL(isEmpty, TRUE);
     stat = arraylist_iterator(list, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = arraylist_toArray(list, (void ***)&array, &len);
+    stat = arraylist_toArray(list, &arr);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
@@ -353,11 +354,10 @@ static void testInvalidIndexAccess() {
 
 static void testArrayListToArray() {
 
+    Array *arr;
     ArrayList *list;
     Status stat;
     int i;
-    long len;
-    char **items;
 
     stat = arraylist_new(&list, LEN);
     if (stat != STAT_SUCCESS)
@@ -368,14 +368,14 @@ static void testArrayListToArray() {
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    stat = arraylist_toArray(list, (void ***)&items, &len);
+    stat = arraylist_toArray(list, &arr);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_EQUAL(len, LEN);
+    CU_ASSERT_EQUAL(arr->len, LEN);
 
-    for (i = 0; i < len; i++)
-        CU_ASSERT_TRUE( strcmp(items[i], array[i]) == 0 );
+    for (i = 0; i < arr->len; i++)
+        CU_ASSERT_TRUE( strcmp(arr->items[i], array[i]) == 0 );
 
-    free(items);
+    FREE_ARRAY(arr)
     arraylist_destroy(list, NULL);
 
     CU_PASS("testArrayListToArray() - Test Passed");

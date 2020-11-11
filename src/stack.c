@@ -127,49 +127,63 @@ Boolean stack_isEmpty(Stack *stack) {
 /*
  * Local method to allocate and create an array representation of the stack.
  */
-static Status generateArray(Stack *stack, void ***array, long *len) {
+static void **generateArray(Stack *stack) {
 
     Node *temp = NULL;
     long i = 0L;
     size_t bytes;
     void **items = NULL;
 
-    /* Does not create array if currently empty */
-    if (stack_isEmpty(stack) == TRUE)
-        return STAT_STRUCT_EMPTY;
-
     /* Allocates memory for the array */
     bytes = ( stack->size * sizeof(void *) );
     items = (void **)malloc(bytes);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return NULL;
 
     /* Populates the array with the stack items */
     for (temp = stack->top; temp != NULL; temp = temp->next)
         items[i++] = temp->data;
-    *array = items;
-    *len = stack->size;
 
-    return STAT_SUCCESS;
+    return items;
 }
 
-Status stack_toArray(Stack *stack, void ***array, long *len) {
-    return generateArray(stack, array, len);
+Status stack_toArray(Stack *stack, Array **array) {
+
+    if (stack_isEmpty(stack) == TRUE)
+        return STAT_STRUCT_EMPTY;
+
+    void **items = generateArray(stack);
+    if (items == NULL)
+        return STAT_ALLOC_FAILURE;
+
+    Array *temp = (Array *)malloc(sizeof(Array));
+    if (temp == NULL) {
+        free(items);
+        return STAT_ALLOC_FAILURE;
+    }
+
+    temp->items = items;
+    temp->len = stack->size;
+    *array = temp;
+
+    return STAT_SUCCESS;
 }
 
 Status stack_iterator(Stack *stack, Iterator **iter) {
 
     Iterator *temp = NULL;
     void **items = NULL;
-    long len;
+
+    if (stack_isEmpty(stack) == TRUE)
+        return STAT_STRUCT_EMPTY;
 
     /* Generates the array of stack items for iterator */
-    Status status = generateArray(stack, &items, &len);
-    if (status != STAT_SUCCESS)
-        return status;
+    items = generateArray(stack);
+    if (items == NULL)
+        return STAT_ALLOC_FAILURE;
 
     /* Creates a new iterator with the stack items */
-    status = iterator_new(&temp, items, len);
+    Status status = iterator_new(&temp, items, stack->size);
     if (status != STAT_SUCCESS) {
         free(items);
         return status;

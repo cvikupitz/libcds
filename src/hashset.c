@@ -278,50 +278,66 @@ Boolean hashset_isEmpty(HashSet *set) {
     return ( set->size == 0L ) ? TRUE : FALSE;
 }
 
-static Status generateArray(HashSet *set, void ***array, long *len) {
+static void **generateArray(HashSet *set) {
 
     HsEntry *temp = NULL;
     long i, j = 0L;
     size_t bytes;
     void **items = NULL;
 
-    /* Do not create the array if currently empty */
-    if (hashset_isEmpty(set) == TRUE)
-        return STAT_STRUCT_EMPTY;
-
     /* Allocate memory for the array */
     bytes = ( set->size * sizeof(void *) );
     items = (void **)malloc(bytes);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return NULL;
 
     /* Populates the array with hashset entries */
     for (i = 0L; i < set->capacity; i++)
         for (temp = set->buckets[i]; temp != NULL; temp = temp->next)
             items[j++] = temp->payload;
-    *array = items;
-    *len = set->size;
 
-    return STAT_SUCCESS;
+    return items;
 }
 
-Status hashset_toArray(HashSet *set, void ***array, long *len) {
-    return generateArray(set, array, len);
+Status hashset_toArray(HashSet *set, Array **array) {
+
+    /* Do not create the array if currently empty */
+    if (hashset_isEmpty(set) == TRUE)
+        return STAT_STRUCT_EMPTY;
+
+    void **items = generateArray(set);
+    if (items == NULL)
+        return STAT_ALLOC_FAILURE;
+
+    Array *temp = (Array *)malloc(sizeof(Array));
+    if (temp == NULL) {
+        free(items);
+        return STAT_ALLOC_FAILURE;
+    }
+
+    temp->items = items;
+    temp->len = set->size;
+    *array = temp;
+
+    return STAT_SUCCESS;
 }
 
 Status hashset_iterator(HashSet *set, Iterator **iter) {
 
     Iterator *temp = NULL;
     void **items = NULL;
-    long len;
 
-    /* Generates the array of hashset items for iterator */
-    Status status = generateArray(set, &items, &len);
-    if (status != STAT_SUCCESS)
-        return status;
+    /* Do not create the array if currently empty */
+    if (hashset_isEmpty(set) == TRUE)
+        return STAT_STRUCT_EMPTY;
 
-    /* Creates a new iterator with the hashset items */
-    status = iterator_new(&temp, items, len);
+    /* Generates the array of stack items for iterator */
+    items = generateArray(set);
+    if (items == NULL)
+        return STAT_ALLOC_FAILURE;
+
+    /* Creates a new iterator with the stack items */
+    Status status = iterator_new(&temp, items, set->size);
     if (status != STAT_SUCCESS) {
         free(items);
         return status;

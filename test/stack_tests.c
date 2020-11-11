@@ -35,11 +35,12 @@ static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple"};
 
 static void validateEmptyStack(Stack *stack) {
 
+    Array *arr;
     Iterator *iter;
     Status stat;
     Boolean isEmpty;
-    char *element, **array;
-    long size, len;
+    char *element;
+    long size;
 
     stat = stack_peek(stack, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
@@ -52,7 +53,7 @@ static void validateEmptyStack(Stack *stack) {
     CU_ASSERT_EQUAL(isEmpty, TRUE);
     stat = stack_iterator(stack, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = stack_toArray(stack, (void ***)&array, &len);
+    stat = stack_toArray(stack, &arr);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
@@ -150,10 +151,9 @@ static void testPushPop() {
 static void testStackToArray() {
 
     Stack *stack;
+    Array *arr;
     Status stat;
-    char **items;
     int i, j;
-    long len;
 
     stat = stack_new(&stack);
     if (stat != STAT_SUCCESS)
@@ -164,14 +164,14 @@ static void testStackToArray() {
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    stat = stack_toArray(stack, (void ***)&items, &len);
+    stat = stack_toArray(stack, &arr);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_EQUAL(len, LEN);
+    CU_ASSERT_EQUAL(arr->len, LEN);
 
-    for (i = 0, j = LEN - 1; i < len; i++, j--)
-        CU_ASSERT_TRUE( strcmp(items[i], array[j]) == 0 );
+    for (i = 0, j = LEN - 1; i < arr->len; i++, j--)
+        CU_ASSERT_TRUE( strcmp(arr->items[i], array[j]) == 0 );
 
-    free(items);
+    FREE_ARRAY(arr)
     stack_destroy(stack, NULL);
 
     CU_PASS("testStackToArray() - Test Passed");

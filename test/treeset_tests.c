@@ -44,11 +44,12 @@ static int treeCmp(void *x, void *y) {
 
 static void validateEmptyTreeSet(TreeSet *tree) {
 
+    Array *arr;
     Iterator *iter;
     Status stat;
     Boolean boolean;
-    char *element, **array;
-    long size, len;
+    char *element;
+    long size;
 
     boolean = treeset_contains(tree, &singleItem);
     CU_ASSERT_EQUAL(boolean, FALSE);
@@ -79,7 +80,7 @@ static void validateEmptyTreeSet(TreeSet *tree) {
     CU_ASSERT_EQUAL(boolean, TRUE);
     stat = treeset_iterator(tree, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = treeset_toArray(tree, (void ***)&array, &len);
+    stat = treeset_toArray(tree, &arr);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
@@ -143,10 +144,9 @@ static void testSingleItem() {
 static void testTreeSetToArray() {
 
     TreeSet *tree;
+    Array *arr;
     Status stat;
-    char **items;
     int i;
-    long len;
 
     stat = treeset_new(&tree, treeCmp);
     if (stat != STAT_SUCCESS)
@@ -157,14 +157,14 @@ static void testTreeSetToArray() {
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    stat = treeset_toArray(tree, (void ***)&items, &len);
+    stat = treeset_toArray(tree, &arr);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_EQUAL(len, LEN);
+    CU_ASSERT_EQUAL(arr->len, LEN);
 
-    for (i = 0; i < len; i++)
-        CU_ASSERT_TRUE( orderedSet[i] == items[i] );
+    for (i = 0; i < arr->len; i++)
+        CU_ASSERT_TRUE( orderedSet[i] == arr->items[i] );
 
-    free(items);
+    FREE_ARRAY(arr)
     treeset_destroy(tree, NULL);
 
     CU_PASS("testTreeSetToArray() - Test Passed");

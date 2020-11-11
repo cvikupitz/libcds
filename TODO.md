@@ -8,24 +8,13 @@
 - [x] Heap
 - [x] HashMap
 - [x] HashSet
-- [ ] TreeMap
-  - [x] add()
-  - [x] remove()
-  - [x] deallocate correct key/value
-  - [ ] iterative clear()
-  - [ ] iterative iterator/toArray
-- [ ] TreeSet
-  - [x] add()
-  - [x] remove()
-  - [x] deallocate correct key/value
-  - [ ] iterative clear()
-  - [ ] iterative iterator/toArray
+- [x] TreeMap
+- [x] TreeSet
 
 ### Refinements
 - [ ] Code Cleanup
 - [ ] Comments
 - [ ] Sentinels
-- [ ] Triple Pointers to Array Object
 - [ ] isEmpty checks
 - [ ] Thread-Safe versions
 

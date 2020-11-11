@@ -238,14 +238,13 @@ Boolean linkedlist_isEmpty(LinkedList *list);
  *
  * Params:
  *    list - The linked list to operate on.
- *    array - Address where the generated array will be stored.
- *    len - Address where the length of the generated array will be stored.
+ *    array - Address where the new array will be stored.
  * Returns:
  *    STAT_SUCCESS - Operation was successful.
  *    STAT_STRUCT_EMPTY - Linked list is currently empty.
  *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status linkedlist_toArray(LinkedList *list, void ***array, long *len);
+Status linkedlist_toArray(LinkedList *list, Array **array);
 
 /**
  * Createss an Iterator instance to iterate over the linked list's elements in proper

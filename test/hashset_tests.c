@@ -63,11 +63,11 @@ static char *array[] = {
 
 static void validateEmptyHashSet(HashSet *set) {
 
+    Array *arr;
     Iterator *iter;
     Status stat;
     Boolean isEmpty;
-    char **array;
-    long size, len;
+    long size;
 
     stat = hashset_contains(set, singleItem);
     CU_ASSERT_EQUAL(stat, FALSE);
@@ -80,7 +80,7 @@ static void validateEmptyHashSet(HashSet *set) {
     CU_ASSERT_EQUAL(isEmpty, TRUE);
     stat = hashset_iterator(set, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = hashset_toArray(set, (void ***)&array, &len);
+    stat = hashset_toArray(set, &arr);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
@@ -196,10 +196,9 @@ static void testHashSetClear() {
 static void testHashSetToArray() {
 
     HashSet *set;
+    Array *arr;
     Status stat;
-    char **items;
     int i;
-    long len;
 
     stat = hashset_new(&set, hash, strCmp, CAPACITY, LOAD_FACTOR);
     if (stat != STAT_SUCCESS)
@@ -210,11 +209,11 @@ static void testHashSetToArray() {
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    stat = hashset_toArray(set, (void ***)&items, &len);
+    stat = hashset_toArray(set, &arr);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_EQUAL(len, LEN);
+    CU_ASSERT_EQUAL(arr->len, LEN);
 
-    free(items);
+    FREE_ARRAY(arr)
     hashset_destroy(set, NULL);
 
     CU_PASS("testHashSetToArray() - Test Passed");

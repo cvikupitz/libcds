@@ -133,14 +133,13 @@ Boolean heap_isEmpty(Heap *heap);
  *
  * Params:
  *    heap - The heap to operate on.
- *    array - Address where the generated array will be stored.
- *    len - Address where the length of the generated array will be stored.
+ *    array - Address where the new array will be stored.
  * Returns:
  *    STAT_SUCCESS - Operation was successful.
  *    STAT_STRUCT_EMPTY - Heap is currently empty.
  *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status heap_toArray(Heap *heap, void ***array, long *len);
+Status heap_toArray(Heap *heap, Array **array);
 
 /**
  * Creates an Iterator instance to iterate over the heap's elements in proper sequence

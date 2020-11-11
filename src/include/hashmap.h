@@ -160,13 +160,12 @@ Boolean hashmap_isEmpty(HashMap *map);
  * Params:
  *    map - The hashmap to operate on.
  *    keys - Array where the keys will be stored.
- *    len - Address where the length of the generated array will be stored.
  * Returns:
  *    STAT_SUCCESS - Operation was successful.
  *    STAT_STRUCT_EMPTY - HashMap is currently empty.
  *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status hashmap_keyArray(HashMap *map, char ***keys, long *len);
+Status hashmap_keyArray(HashMap *map, Array **keys);
 
 /**
  * Allocates and generates an array containing all of the hashmap's elements in no
@@ -176,13 +175,12 @@ Status hashmap_keyArray(HashMap *map, char ***keys, long *len);
  * Params:
  *    map - The hashmap to operate on.
  *    entries - Array where the entries will be stored.
- *    len - Address where the length of the generated array will be stored.
  * Returns:
  *    STAT_SUCCESS - Operation was successful.
  *    STAT_STRUCT_EMPTY - HashMap is currently empty.
  *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status hashmap_entryArray(HashMap *map, HmEntry ***entries, long *len);
+Status hashmap_entryArray(HashMap *map, Array **entries);
 
 /**
  * Creates an Iterator instance to iterate over the the hashmap's elements in no

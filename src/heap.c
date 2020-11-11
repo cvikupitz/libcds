@@ -211,48 +211,64 @@ Boolean heap_isEmpty(Heap *heap) {
 /*
  * Local method to allocate and create an array representation of the heap.
  */
-static Status generateArray(Heap *heap, void ***array, long *len) {
+static void **generateArray(Heap *heap) {
 
     long i = 0L;
     size_t bytes;
     void **items = NULL;
 
-    /* Does not create the array if currently empty */
-    if (heap_isEmpty(heap) == TRUE)
-        return STAT_STRUCT_EMPTY;
-
     /* Allocates memory for the array */
     bytes = ( heap->size * sizeof(void *) );
     items = (void **)malloc(bytes);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return NULL;
 
     /* Populates the array with the heap items */
     for (i = 0L; i < heap->size; i++)
         items[i] = heap->data[i];
-    *array = items;
-    *len = heap->size;
 
-    return STAT_SUCCESS;
+    return items;
 }
 
-Status heap_toArray(Heap *heap, void ***array, long *len) {
-    return generateArray(heap, array, len);
+Status heap_toArray(Heap *heap, Array **array) {
+
+    /* Do not create the array if currently empty */
+    if (heap_isEmpty(heap) == TRUE)
+        return STAT_STRUCT_EMPTY;
+
+    void **items = generateArray(heap);
+    if (items == NULL)
+        return STAT_ALLOC_FAILURE;
+
+    Array *temp = (Array *)malloc(sizeof(Array));
+    if (temp == NULL) {
+        free(items);
+        return STAT_ALLOC_FAILURE;
+    }
+
+    temp->items = items;
+    temp->len = heap->size;
+    *array = temp;
+
+    return STAT_SUCCESS;
 }
 
 Status heap_iterator(Heap *heap, Iterator **iter) {
 
     Iterator *temp = NULL;
     void **items = NULL;
-    long len;
+
+    /* Does not create the array if currently empty */
+    if (heap_isEmpty(heap) == TRUE)
+        return STAT_STRUCT_EMPTY;
 
     /* Generates the array of stack items for iterator */
-    Status status = generateArray(heap, &items, &len);
-    if (status != STAT_SUCCESS)
-        return status;
+    items = generateArray(heap);
+    if (items == NULL)
+        return STAT_ALLOC_FAILURE;
 
-    /* Creates a new iterator with the heap items */
-    status = iterator_new(&temp, items, len);
+    /* Creates a new iterator with the stack items */
+    Status status = iterator_new(&temp, items, heap->size);
     if (status != STAT_SUCCESS) {
         free(items);
         return status;

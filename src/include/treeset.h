@@ -245,14 +245,13 @@ Boolean treeset_isEmpty(TreeSet *tree);
  *
  * Params:
  *    tree - The treeset to operate on.
- *    array - Address where the generated array will be stored.
- *    len - Address where the length of the generated array will be stored.
+ *    array - Address where the new array will be stored.
  * Returns:
  *    STAT_SUCCESS - Operation was successful.
  *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
  *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status treeset_toArray(TreeSet *tree, void ***array, long *len);
+Status treeset_toArray(TreeSet *tree, Array **array);
 
 /**
  * Creates an Iterator instance to iterate over the treeset's elements in proper

@@ -369,13 +369,12 @@ Boolean treemap_isEmpty(TreeMap *tree);
  * Params:
  *    tree - The treemap to operate on.
  *    keys - Array where the keys will be stored.
- *    len - Address where the length of the generated array will be stored.
  * Returns:
  *    STAT_SUCCESS - Operation was successful.
  *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
  *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status treemap_keyArray(TreeMap *tree, void ***keys, long *len);
+Status treemap_keyArray(TreeMap *tree, Array **keys);
 
 /**
  * Allocates and generates an array containing all of the treemap's entries in proper
@@ -384,14 +383,13 @@ Status treemap_keyArray(TreeMap *tree, void ***keys, long *len);
  *
  * Params:
  *    tree - The treemap to operate on.
- *    entries - Address where the generated array will be stored.
- *    len - Address where the length of the generated array will be stored.
+ *    entries - Address where the entries will be stored.
  * Returns:
  *    STAT_SUCCESS - Operation was successful.
  *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
  *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status treemap_entryArray(TreeMap *tree, TmEntry ***entries, long *len);
+Status treemap_entryArray(TreeMap *tree, Array **entries);
 
 /**
  * Creates an Iterator instance to iterate over the treemap's elements in proper
