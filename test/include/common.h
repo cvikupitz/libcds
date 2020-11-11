@@ -29,11 +29,11 @@
  * An enumeration representing a simple boolean type.
  *
  * Reserved as the return type for operations where only 2 outcomes can exist, or
- * the result of some operation can be either true or false (i.e. isEmpty(), containsKey(),
- * containsValue(), etc.).
+ * the result of some operation can be either true or false (i.e. isEmpty(),
+ * containsKey(), containsValue(), etc.).
  *
- * Only used for readability. The returning Boolean enumeration can still function in
- * C code where 0 is treated false and !0 is true.
+ * Only used for readability. The returning Boolean enumeration can still function
+ * in C code where 0 is treated false and !0 is true.
  */
 typedef enum {
     FALSE = 0,          /* false */
@@ -41,13 +41,14 @@ typedef enum {
 } Boolean;
 
 /**
- * An enumeration representing the status of some operation performed on a data structure.
+ * An enumeration representing the status of some operation performed on a data
+ * structure.
  *
- * There are some cases where a simple true/false outcome may not diagnose the exact
- * reason why an operation failed. In addition to the SUCCESS status, there are other
- * negative statuses that may be returned by the method that will further describe the
- * reason the operation failed (i.e. an allocation failure, a given parameter was not
- * valid, etc.).
+ * There are some cases where a simple true/false outcome may not diagnose the
+ * exact reason why an operation failed. In addition to the SUCCESS status, there
+ * are other negative statuses that may be returned by the method that will further
+ * describe the reason the operation failed (i.e. an allocation failure, a given
+ * parameter was not valid, etc.).
  */
 typedef enum {
 
@@ -57,50 +58,50 @@ typedef enum {
     STAT_SUCCESS = 0,
 
     /**
-     * Status reserved for the put() method for HashMap and TreeMap. Indicates that the
-     * key-value insertion was successful.
+     * Status reserved for the put() method for HashMap and TreeMap. Indicates that
+     * the key-value insertion was successful.
      */
     STAT_ENTRY_INSERTED = 1,
 
     /**
-     * Status reserved for the put() method for HashMap and TreeMap. Indicates that the
-     * key-value insertion was successful, but that the map already contains the key and
-     * the previous value has been replaced with the new value.
+     * Status reserved for the put() method for HashMap and TreeMap. Indicates that
+     * the key-value insertion was successful, but that the map already contains the
+     * key and the previous value has been replaced with the new value.
      */
     STAT_ENTRY_REPLACED = 2,
 
     /**
-     * Operation could not be completed due to an already existing entry in the structure.
-     * This is for set-like structures where only one of a kind elements are allowed, but
-     * the caller has attempted to insert an identical item.
+     * Operation could not be completed due to an already existing entry in the
+     * structure. This is for set-like structures where only one of a kind elements
+     * are allowed, but the caller has attempted to insert an identical item.
      */
     STAT_KEY_ALREADY_EXISTS = 3,
 
     /**
-     * Operation could not be completed due to an empty structure. This is most common for
-     * retrieval and removal operations on empty structures that have no elements to search,
-     * retrieve, or delete.
+     * Operation could not be completed due to an empty structure. This is most common
+     * for retrieval and removal operations on empty structures that have no elements
+     * to search, retrieve, or delete.
      */
     STAT_STRUCT_EMPTY = 4,
 
     /**
-     * The previous call to iterator_next() did not yield an item since the current iteration
-     * has ended.
+     * The previous call to iterator_next() did not yield an item since the current
+     * iteration has ended.
      */
     STAT_ITERATION_END = 5,
 
     /**
-     * Operation could not be completed due to an invalid index specified. This is for data
-     * structures whose elements may be accessed via a specified array index. The index a caller
-     * may specify could fall outside the valid range (i.e. the value is below 0 or greater than
-     * the largest index allowed).
+     * Operation could not be completed due to an invalid index specified. This is for
+     * data structures whose elements may be accessed via a specified array index. The
+     * index a caller may specify could fall outside the valid range (i.e. the value is
+     * below 0 or greater than the largest index allowed).
      */
     STAT_INVALID_INDEX = 6,
 
     /**
-     * Operation could not be completed due to a missing entry. This is for structure operations
-     * where a caller may search for a specific item that does not exist. Think of a key missing
-     * in a HashMap, an entry not found in a set, etc.
+     * Operation could not be completed due to a missing entry. This is for structure
+     * operations where a caller may search for a specific item that does not exist. Think
+     * of a key missing in a HashMap, an entry not found in a set, etc.
      */
     STAT_NOT_FOUND = 7,
 
@@ -114,15 +115,15 @@ typedef enum {
 } Status;
 
 /**
- * A structure representing an array of objects that gets returned from the data collection's
- * toArray() method. Rather than having the caller provide a (void ***) for where the array
- * is initialized and a (long *) for the length of the array, this structure should encapsulate
- * everything needed.
+ * A structure representing an array of objects that gets returned from the data
+ * collection's toArray() method. Rather than having the caller provide a (void ***)
+ * for where the array is initialized and a (long *) for the length of the array, this
+ * structure should encapsulate everything needed.
  *
- * Once the Array object is initialized and populated with elements from the previous toArray()
- * invocation, callers can access the data through the structure's public members. The caller is
- * responsible for freeing the array's item and the array struct itself once it's no longer
- * needed.
+ * Once the Array object is initialized and populated with elements from the previous
+ * toArray() invocation, callers can access the data through the structure's public
+ * members. The caller is responsible for freeing the array's item and the array struct
+ * itself once it's no longer needed.
  */
 typedef struct {
     void **items;       /* The array of elements */
@@ -132,8 +133,8 @@ typedef struct {
 /**
  * Macro used for deallocating the specified Array* item.
  *
- * Simply used to save you one extra line of code. Alternatively, you can manually free the
- * internal array and the struct if you so choose.
+ * Simply used to save you one extra line of code. Alternatively, you can manually free
+ * the internal array and the struct if you so choose.
  */
 #define FREE_ARRAY(a) \
     free(a->items); \

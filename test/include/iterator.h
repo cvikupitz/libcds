@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef _ITERATOR_H__
-#define _ITERATOR_H__
+#ifndef _CDS_ITERATOR_H__
+#define _CDS_ITERATOR_H__
 
 #include "common.h"
 
@@ -89,4 +89,4 @@ Status iterator_next(Iterator *iter, void **next);
  */
 void iterator_destroy(Iterator *iter);
 
-#endif  /* _ITERATOR_H__ */
+#endif  /* _CDS_ITERATOR_H__ */

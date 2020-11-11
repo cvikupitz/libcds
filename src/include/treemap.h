@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef _TREEMAP_H__
-#define _TREEMAP_H__
+#ifndef _CDS_TREEMAP_H__
+#define _CDS_TREEMAP_H__
 
 #include "common.h"
 #include "iterator.h"
@@ -31,8 +31,8 @@
 /**
  * Interface for the TmEntry ADT.
  *
- * This ADT stores the key-value pairings in the TreeMap ADT and are used with the
- * TreeMap's toArray() function call and iterator.
+ * This ADT stores the key-value pairings in the TreeMap ADT and are provided back
+ * to the caller from invocations to toArray() and iterator().
  */
 typedef struct tm_entry TmEntry;
 
@@ -40,8 +40,9 @@ typedef struct tm_entry TmEntry;
  * Declaration for the TreeMap ADT.
  *
  * A tree-like set storing elements based on key-value pairings. The treemap is sorted
- * by the stored keys based on their natural ordering defined through a comparator provided
- * at construction time. Provides self-balancing capabilities for even distribution.
+ * by the stored keys based on their natural ordering defined through a comparator
+ * provided at construction time. Provides self-balancing capabilities for even
+ * distribution.
  *
  * Modeled after the Java 7 TreeMap interface.
  */
@@ -68,7 +69,8 @@ typedef struct treemap TreeMap;
  *    STAT_SUCCESS - TreeMap was successfully created.
  *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status treemap_new(TreeMap **tree, int (*keyComparator)(void *, void *), void (*keyDestructor)(void *));
+Status treemap_new(TreeMap **tree, int (*keyComparator)(void *, void *),
+        void (*keyDestructor)(void *));
 
 /**
  * Associates the specified value with the specified key in the treemap. If the
@@ -379,7 +381,8 @@ Status treemap_keyArray(TreeMap *tree, Array **keys);
 /**
  * Allocates and generates an array containing all of the treemap's entries in proper
  * sequence (defined by the key comparator, from least to greatest), then stores the
- * array into '*entries'. Caller is responsible for freeing the array when finished.
+ * array into '*entries'. Note that the items provided in the array are 'TmEntry*' values.
+ * Caller is responsible for freeing the array when finished.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -408,8 +411,9 @@ Status treemap_entryArray(TreeMap *tree, Array **entries);
 Status treemap_iterator(TreeMap *tree, Iterator **iter);
 
 /**
- * Destroys the treemap instance by freeing all of its reserved memory. If 'valueDestructor'
- * is not NULL, it will be invoked on each entry's value before the treemap is destroyed.
+ * Destroys the treemap instance by freeing all of its reserved memory. If
+ * 'valueDestructor' is not NULL, it will be invoked on each entry's value before the
+ * treemap is destroyed.
  *
  * Params:
  *    tree - The treemap to destroy.
@@ -439,4 +443,4 @@ void *tmentry_getKey(TmEntry *entry);
  */
 void *tmentry_getValue(TmEntry *entry);
 
-#endif  /* _TREEMAP_H__ */
+#endif  /* _CDS_TREEMAP_H__ */

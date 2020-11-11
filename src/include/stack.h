@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef _STACK_H__
-#define _STACK_H__
+#ifndef _CDS_STACK_H__
+#define _CDS_STACK_H__
 
 #include "common.h"
 #include "iterator.h"
@@ -137,8 +137,8 @@ Status stack_toArray(Stack *stack, Array **array);
 
 /**
  * Creates an Iterator instance to iterate over the stack's elements in proper sequence
- * (from top to bottom element), then stores the iterator into '*iter'. Caller is responsible
- * for destroying the iterator instance when finished.
+ * (from top to bottom element), then stores the iterator into '*iter'. Caller is
+ * responsible for destroying the iterator instance when finished.
  *
  * Params:
  *    stack - The stack to operate on.
@@ -162,4 +162,4 @@ Status stack_iterator(Stack *stack, Iterator **iter);
  */
 void stack_destroy(Stack *stack, void (*destructor)(void *));
 
-#endif  /* _STACK_H__ */
+#endif  /* _CDS_STACK_H__ */

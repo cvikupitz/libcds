@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef _CIRCULAR_LIST_H__
-#define _CIRCULAR_LIST_H__
+#ifndef _CDS_CIRCULAR_LIST_H__
+#define _CDS_CIRCULAR_LIST_H__
 
 #include "common.h"
 #include "iterator.h"
@@ -31,8 +31,8 @@
 /**
  * Interface for the CircularList ADT.
  *
- * The CircularList is a linked list where the head and tail are linked, allowing the
- * elements in the list to be 'rotated' in place, mocking a round-robin schema.
+ * The CircularList is a linked list where the head and tail are linked, allowing
+ * the elements in the list to be 'rotated' in place, mocking a round-robin schema.
  */
 typedef struct circular_list CircularList;
 
@@ -197,4 +197,4 @@ Status circularlist_iterator(CircularList *list, Iterator **iter);
  */
 void circularlist_destroy(CircularList *list, void (*destructor)(void *));
 
-#endif  /* _CIRCULAR_LIST_H__ */
+#endif  /* _CDS_CIRCULAR_LIST_H__ */

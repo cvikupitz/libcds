@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef _HASHSET_H__
-#define _HASHSET_H__
+#ifndef _CDS_HASHSET_H__
+#define _CDS_HASHSET_H__
 
 #include "common.h"
 #include "iterator.h"
@@ -151,8 +151,9 @@ Boolean hashset_isEmpty(HashSet *set);
 Status hashset_toArray(HashSet *set, Array **array);
 
 /**
- * Returns an Iterator instance to iterate over the the hashset's elements in no particular
- * order. Caller is responsible for destroying the iterator instance when finished.
+ * Returns an Iterator instance to iterate over the the hashset's elements in no
+ * particular order. Caller is responsible for destroying the iterator instance when
+ * finished.
  *
  * Params:
  *    set - The hashset to operate on.
@@ -176,4 +177,4 @@ Status hashset_iterator(HashSet *set, Iterator **iter);
  */
 void hashset_destroy(HashSet *set, void (*destructor)(void *));
 
-#endif  /* _HASHSET_H__ */
+#endif  /* _CDS_HASHSET_H__ */
