@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef _HEAP_H__
-#define _HEAP_H__
+#ifndef _CDS_HEAP_H__
+#define _CDS_HEAP_H__
 
 #include "common.h"
 #include "iterator.h"
@@ -168,4 +168,4 @@ Status heap_iterator(Heap *heap, Iterator **iter);
  */
 void heap_destroy(Heap *heap, void (*destructor)(void *));
 
-#endif  /* _HEAP_H__ */
+#endif  /* _CDS_HEAP_H__ */

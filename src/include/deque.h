@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef _DEQUE_H__
-#define _DEQUE_H__
+#ifndef _CDS_DEQUE_H__
+#define _CDS_DEQUE_H__
 
 #include "common.h"
 #include "iterator.h"
@@ -158,9 +158,9 @@ long deque_size(Deque *deque);
 Boolean deque_isEmpty(Deque *deque);
 
 /**
- * Allocates and generates an array containing all of the deque's elements in proper
- * sequence (from head to tail element), then stores the array into '*array'. Caller is
- * responsible for freeing the array when finished.
+ * Allocates and generates an array containing all of the deque's elements in
+ * proper sequence (from head to tail element), then stores the array into '*array'.
+ * Caller is responsible for freeing the array when finished.
  *
  * Params:
  *    deque - The deque to operate on.
@@ -173,9 +173,9 @@ Boolean deque_isEmpty(Deque *deque);
 Status deque_toArray(Deque *deque, Array **array);
 
 /**
- * Creates an Iterator instance to iterate over the deque's elements in proper sequence
- * (from head to tail element), then stores the iterator into '*iter'. Caller is responsible
- * for destroying the iterator instance when finished.
+ * Creates an Iterator instance to iterate over the deque's elements in proper
+ * sequence (from head to tail element), then stores the iterator into '*iter'.
+ * Caller is responsible for destroying the iterator instance when finished.
  *
  * Params:
  *    deque - The deque to operate on.
@@ -199,4 +199,4 @@ Status deque_iterator(Deque *deque, Iterator **iter);
  */
 void deque_destroy(Deque *deque, void (*destructor)(void *));
 
-#endif  /* _DEQUE_H__ */
+#endif  /* _CDS_DEQUE_H__ */

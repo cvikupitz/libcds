@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef _LINKEDLIST_H__
-#define _LINKEDLIST_H__
+#ifndef _CDS_LINKEDLIST_H__
+#define _CDS_LINKEDLIST_H__
 
 #include "common.h"
 #include "iterator.h"
@@ -184,9 +184,9 @@ Status linkedlist_removeFirst(LinkedList *list, void **first);
 Status linkedlist_removeLast(LinkedList *list, void **last);
 
 /**
- * Removes the element at the specified position in the linked list. Shifts any subsequent
- * elements to the left (subtracts one from their indices). Stores the removed element
- * into '*item'.
+ * Removes the element at the specified position in the linked list. Shifts any
+ * subsequent elements to the left (subtracts one from their indices). Stores the
+ * removed element into '*item'.
  *
  * Params:
  *    list - The linked list to operate on.
@@ -273,4 +273,4 @@ Status linkedlist_iterator(LinkedList *list, Iterator **iter);
  */
 void linkedlist_destroy(LinkedList *list, void (*destructor)(void *));
 
-#endif  /* _LINKEDLIST_H__ */
+#endif  /* _CDS_LINKEDLIST_H__ */

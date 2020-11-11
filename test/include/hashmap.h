@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef _HASHMAP_H__
-#define _HASHMAP_H__
+#ifndef _CDS_HASHMAP_H__
+#define _CDS_HASHMAP_H__
 
 #include "common.h"
 #include "iterator.h"
@@ -31,8 +31,8 @@
 /**
  * Interface for the HmEntry ADT.
  *
- * This ADT stores the key-value pairings in the HashMap ADT and are used with the
- * HashMap's toArray() function call and iterator.
+ * This ADT stores the key-value pairings in the HashMap ADT and are provided back
+ * to the caller from invocations to toArray() and iterator().
  */
 typedef struct hm_entry HmEntry;
 
@@ -62,9 +62,9 @@ typedef struct hashmap HashMap;
 Status hashmap_new(HashMap **map, long capacity, double loadFactor);
 
 /**
- * Associates the specified value with the specified key in the hashmap. If the hashmap
- * previously contained a mapping for the key, the old value is replaced, and stored
- * into '*previous'.
+ * Associates the specified value with the specified key in the hashmap. If the
+ * hashmap previously contained a mapping for the key, the old value is replaced,
+ * and stored into '*previous'.
  *
  * Params:
  *    map - The hashmap to operate on.
@@ -153,9 +153,9 @@ long hashmap_size(HashMap *map);
 Boolean hashmap_isEmpty(HashMap *map);
 
 /**
- * Allocates and generates an array containing all of the hashmap's keys in no particular
- * order, then stores the array into '*keys'. Caller is responsible for freeing the
- * array when finished.
+ * Allocates and generates an array containing all of the hashmap's keys in no
+ * particular order, then stores the array into '*keys'. Caller is responsible for
+ * freeing the array when finished.
  *
  * Params:
  *    map - The hashmap to operate on.
@@ -169,8 +169,9 @@ Status hashmap_keyArray(HashMap *map, Array **keys);
 
 /**
  * Allocates and generates an array containing all of the hashmap's elements in no
- * particular order, then stores the array into '*entries'. Caller is responsible for
- * freeing the array when finished.
+ * particular order, then stores the array into '*entries'. Note that the items
+ * provided in the array are 'HmEntry*' values. Caller is responsible for freeing
+ * the array when finished.
  *
  * Params:
  *    map - The hashmap to operate on.
@@ -184,9 +185,9 @@ Status hashmap_entryArray(HashMap *map, Array **entries);
 
 /**
  * Creates an Iterator instance to iterate over the the hashmap's elements in no
- * particular order, then stores the iterator into '*iter'. Note that the items being
- * iterated over are 'HmEntry*' values. Caller is responsible for destroying the iterator
- * instance when finished.
+ * particular order, then stores the iterator into '*iter'. Note that the items
+ * being iterated over are 'HmEntry*' values. Caller is responsible for destroying
+ * the iterator instance when finished.
  *
  * Params:
  *    map - The hashmap to operate on.
@@ -230,4 +231,4 @@ char *hmentry_getKey(HmEntry *entry);
  */
 void *hmentry_getValue(HmEntry *entry);
 
-#endif  /* _HASHMAP_H__ */
+#endif  /* _CDS_HASHMAP_H__ */

@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef _TREESET_H__
-#define _TREESET_H__
+#ifndef _CDS_TREESET_H__
+#define _CDS_TREESET_H__
 
 #include "common.h"
 #include "iterator.h"
@@ -280,4 +280,4 @@ Status treeset_iterator(TreeSet *tree, Iterator **iter);
  */
 void treeset_destroy(TreeSet *tree, void (*destructor)(void *));
 
-#endif  /* _TREESET_H__ */
+#endif  /* _CDS_TREESET_H__ */

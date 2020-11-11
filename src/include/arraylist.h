@@ -22,8 +22,8 @@
  * SOFTWARE.
  */
 
-#ifndef _ARRAYLIST_H__
-#define _ARRAYLIST_H__
+#ifndef _CDS_ARRAYLIST_H__
+#define _CDS_ARRAYLIST_H__
 
 #include "common.h"
 #include "iterator.h"
@@ -126,8 +126,8 @@ Status arraylist_set(ArrayList *list, long i, void *item, void **previous);
 Status arraylist_remove(ArrayList *list, long i, void **item);
 
 /**
- * Increases the capacity of the array list, if necessary, to ensure that it can hold at
- * least the number of elements specified by the minimum capacity argument.
+ * Increases the capacity of the array list, if necessary, to ensure that it can hold
+ * at least the number of elements specified by the minimum capacity argument.
  *
  * Params:
  *    list - The array list to operate on.
@@ -194,9 +194,9 @@ long arraylist_capacity(ArrayList *list);
 Boolean arraylist_isEmpty(ArrayList *list);
 
 /**
- * Allocates and generates an array containing all of the array list's elements in proper
- * sequence (from first to last element), then stores the array into '*array'. Caller is
- * responsible for freeing the array when finished.
+ * Allocates and generates an array containing all of the array list's elements in
+ * proper sequence (from first to last element), then stores the array into '*array'.
+ * Caller is responsible for freeing the array when finished.
  *
  * Params:
  *    list - The array list to operate on.
@@ -209,9 +209,9 @@ Boolean arraylist_isEmpty(ArrayList *list);
 Status arraylist_toArray(ArrayList *list, Array **array);
 
 /**
- * Creates an Iterator instance to iterate over the array list's elements in proper sequence
- * (from first to last element), then stores the iterator into '*iter'. Caller is responsible
- * for destroying the iterator instance when finished.
+ * Creates an Iterator instance to iterate over the array list's elements in proper
+ * sequence (from first to last element), then stores the iterator into '*iter'. Caller
+ * is responsible for destroying the iterator instance when finished.
  *
  * Params:
  *    list - The array list to operate on.
@@ -235,4 +235,4 @@ Status arraylist_iterator(ArrayList *list, Iterator **iter);
  */
 void arraylist_destroy(ArrayList *list, void (*destructor)(void *));
 
-#endif  /* _ARRAYLIST_H__ */
+#endif  /* _CDS_ARRAYLIST_H__ */
