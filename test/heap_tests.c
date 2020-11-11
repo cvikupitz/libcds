@@ -46,11 +46,12 @@ static int heapCmp(void *x, void *y) {
 
 static void validateEmptyHeap(Heap *heap) {
 
+    Array *arr;
     Iterator *iter;
     Status stat;
     Boolean isEmpty;
-    char *element, **array;
-    long size, len;
+    char *element;
+    long size;
 
     stat = heap_peek(heap, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
@@ -63,7 +64,7 @@ static void validateEmptyHeap(Heap *heap) {
     CU_ASSERT_EQUAL(isEmpty, TRUE);
     stat = heap_iterator(heap, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = heap_toArray(heap, (void ***)&array, &len);
+    stat = heap_toArray(heap, &arr);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
@@ -203,10 +204,9 @@ static void testHeapClear() {
 static void testHeapToArray() {
 
     Heap *heap;
+    Array *arr;
     Status stat;
-    char **items;
     int i;
-    long len;
 
     stat = heap_new(&heap, CAPACITY, heapCmp);
     if (stat != STAT_SUCCESS)
@@ -217,12 +217,13 @@ static void testHeapToArray() {
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    stat = heap_toArray(heap, (void ***)&items, &len);
+    stat = heap_toArray(heap, &arr);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_EQUAL(len, LEN);
+    CU_ASSERT_EQUAL(arr->len, LEN);
 
-    free(items);
+    FREE_ARRAY(arr)
     heap_destroy(heap, NULL);
+
     CU_PASS("testHeapToArray() - Test Passed");
 }
 

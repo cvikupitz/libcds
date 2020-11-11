@@ -56,12 +56,12 @@ static char *entries[] = {
 
 static void validateEmptyHashMap(HashMap *map) {
 
+    Array *keyArray, *entryArray;
     Iterator *iter;
     Status stat;
     Boolean isEmpty;
-    HmEntry **entryArray;
-    char *value, **keyArray;
-    long size, len;
+    char *value;
+    long size;
 
     stat = hashmap_containsKey(map, singleKey);
     CU_ASSERT_EQUAL(stat, FALSE);
@@ -74,9 +74,9 @@ static void validateEmptyHashMap(HashMap *map) {
     CU_ASSERT_EQUAL(isEmpty, TRUE);
     stat = hashmap_iterator(map, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = hashmap_keyArray(map, &keyArray, &len);
+    stat = hashmap_keyArray(map, &keyArray);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = hashmap_entryArray(map, &entryArray, &len);
+    stat = hashmap_entryArray(map, &entryArray);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
@@ -227,11 +227,10 @@ static void testHashMapClear() {
 static void testHashMapToArray() {
 
     HashMap *map;
-    HmEntry **entryArray;
+    Array *keyArray, *entryArray;
     Status stat;
     int i;
-    long len;
-    char *prev, **keyArray;
+    char *prev;
 
     stat = hashmap_new(&map, CAPACITY, LOAD_FACTOR);
     if (stat != STAT_SUCCESS)
@@ -242,15 +241,15 @@ static void testHashMapToArray() {
         CU_ASSERT_EQUAL(stat, STAT_ENTRY_INSERTED);
     }
 
-    stat = hashmap_keyArray(map, &keyArray, &len);
+    stat = hashmap_keyArray(map, &keyArray);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_EQUAL(len, LEN);
-    stat = hashmap_entryArray(map, &entryArray, &len);
+    CU_ASSERT_EQUAL(keyArray->len, LEN);
+    stat = hashmap_entryArray(map, &entryArray);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_EQUAL(len, LEN);
+    CU_ASSERT_EQUAL(entryArray->len, LEN);
 
-    free(keyArray);
-    free(entryArray);
+    FREE_ARRAY(keyArray)
+    FREE_ARRAY(entryArray)
     hashmap_destroy(map, NULL);
 
     CU_PASS("testHashMapToArray() - Test Passed");

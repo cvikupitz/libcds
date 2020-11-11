@@ -374,7 +374,7 @@ static HmEntry **generateEntryArray(HashMap *map) {
         for (temp = map->buckets[i]; temp != NULL; temp = temp->next)
             array[j++] = temp;
 
-    return NULL;
+    return array;
 }
 
 Status hashmap_entryArray(HashMap *map, Array **entries) {

@@ -35,11 +35,12 @@ static char *array[] = {"red", "orange", "yellow", "green", "blue", "purple", "g
 
 static void validateEmptyLinkedList(LinkedList *list) {
 
+    Array *arr;
     Iterator *iter;
     Status stat;
     Boolean isEmpty;
-    char *element, **array;
-    long size, len;
+    char *element;
+    long size;
 
     stat = linkedlist_first(list, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
@@ -56,7 +57,7 @@ static void validateEmptyLinkedList(LinkedList *list) {
     CU_ASSERT_EQUAL(isEmpty, TRUE);
     stat = linkedlist_iterator(list, &iter);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = linkedlist_toArray(list, (void ***)&array, &len);
+    stat = linkedlist_toArray(list, &arr);
     CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
 }
 
@@ -370,10 +371,9 @@ static void testInvalidIndexAccess() {
 static void testLinkedListToArray() {
 
     LinkedList *list;
+    Array *arr;
     Status stat;
     int i;
-    char **items;
-    long len;
 
     stat = linkedlist_new(&list);
     if (stat != STAT_SUCCESS)
@@ -384,14 +384,14 @@ static void testLinkedListToArray() {
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
-    stat = linkedlist_toArray(list, (void ***)&items, &len);
+    stat = linkedlist_toArray(list, &arr);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_EQUAL(len, LEN);
+    CU_ASSERT_EQUAL(arr->len, LEN);
 
-    for (i = 0; i < len; i++)
-        CU_ASSERT_TRUE( strcmp(items[i], array[i]) == 0 );
+    for (i = 0; i < arr->len; i++)
+        CU_ASSERT_TRUE( strcmp(arr->items[i], array[i]) == 0 );
 
-    free(items);
+    FREE_ARRAY(arr)
     linkedlist_destroy(list, NULL);
 
     CU_PASS("testLinkedListToArray() - Test Passed");
