@@ -320,49 +320,65 @@ Boolean linkedlist_isEmpty(LinkedList *list) {
 /*
  * Local method to allocate and create an array representation of the linked list.
  */
-static Status generateArray(LinkedList *list, void ***array, long *len) {
+static void **generateArray(LinkedList *list) {
 
     Node *temp = NULL;
     long i = 0L;
     size_t bytes;
     void **items = NULL;
 
-    /* Does not create the array if empty */
-    if (linkedlist_isEmpty(list) == TRUE)
-        return STAT_STRUCT_EMPTY;
-
     /* Allocates memory for the array */
     bytes = ( list->size * sizeof(void *) );
     items = (void **)malloc(bytes);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return NULL;
 
     /* Populates the array with linked list items */
     for (temp = list->head; temp != NULL; temp = temp->next)
         items[i++] = temp->payload;
-    *array = items;
-    *len = list->size;
 
-    return STAT_SUCCESS;
+    return items;
 }
 
-Status linkedlist_toArray(LinkedList *list, void ***array, long *len) {
-    return generateArray(list, array, len);
+Status linkedlist_toArray(LinkedList *list, Array **array) {
+
+    /* Does not create the array if empty */
+    if (linkedlist_isEmpty(list) == TRUE)
+        return STAT_STRUCT_EMPTY;
+
+    void **items = generateArray(list);
+    if (items == NULL)
+        return STAT_ALLOC_FAILURE;
+
+    Array *temp = (Array *)malloc(sizeof(Array));
+    if (temp == NULL) {
+        free(items);
+        return STAT_ALLOC_FAILURE;
+    }
+
+    temp->items = items;
+    temp->len = list->size;
+    *array = temp;
+
+    return STAT_SUCCESS;
 }
 
 Status linkedlist_iterator(LinkedList *list, Iterator **iter) {
 
     Iterator *temp = NULL;
     void **items = NULL;
-    long len;
 
-    /* Generates the array of list items for iterator */
-    Status status = generateArray(list, &items, &len);
-    if (status != STAT_SUCCESS)
-        return status;
+    /* Does not create the array if empty */
+    if (linkedlist_isEmpty(list) == TRUE)
+        return STAT_STRUCT_EMPTY;
 
-    /* Creates a new iterator with the list items */
-    status = iterator_new(&temp, items, len);
+    /* Generates the array of stack items for iterator */
+    items = generateArray(list);
+    if (items == NULL)
+        return STAT_ALLOC_FAILURE;
+
+    /* Creates a new iterator with the stack items */
+    Status status = iterator_new(&temp, items, list->size);
     if (status != STAT_SUCCESS) {
         free(items);
         return status;

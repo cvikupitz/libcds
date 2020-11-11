@@ -47,12 +47,12 @@
 - [x] Deque
 - [x] Circular List
 - [x] ArrayList
-- [ ] LinkedList
-- [ ] Heap
-- [ ] HashMap
-- [ ] HashSet
-- [ ] TreeMap
-- [ ] TreeSet
+- [x] LinkedList
+- [x] Heap
+- [x] HashMap
+- [x] HashSet
+- [x] TreeMap
+- [x] TreeSet
 
 ### Thread Safe Implementations
 - [ ] Iterator

@@ -165,7 +165,6 @@ Boolean deque_isEmpty(Deque *deque);
  * Params:
  *    deque - The deque to operate on.
  *    array - Address where the new array will be stored.
- *    len - Address where the length of the generated array will be stored.
  * Returns:
  *    STAT_SUCCESS - Operation was successful.
  *    STAT_STRUCT_EMPTY - Deque is currently empty.
