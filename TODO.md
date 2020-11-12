@@ -1,16 +1,3 @@
-### Implementations
-- [x] Iterator
-- [x] Stack
-- [x] Deque
-- [x] Circular List
-- [x] ArrayList
-- [x] LinkedList
-- [x] Heap
-- [x] HashMap
-- [x] HashSet
-- [x] TreeMap
-- [x] TreeSet
-
 ### Refinements
 - [ ] Code Cleanup
 - [ ] Comments
@@ -21,6 +8,9 @@
 ### Testing
 - [x] Iterator
 - [x] Stack
+- [x] BoundedStack
+- [x] Queue
+- [x] BoundedQueue
 - [x] Deque
 - [x] Circular List
 - [x] ArrayList
@@ -32,13 +22,16 @@
 - [ ] TreeSet
 
 ### Thread Safe Implementations
-- [ ] Iterator
-- [ ] Stack
-- [ ] Deque
-- [ ] Circular List
+- [x] Iterator
+- [x] Stack
+- [x] BoundedStack
+- [x] Queue
+- [x] BoundedQueue
+- [x] Deque
+- [x] Circular List
 - [ ] ArrayList
 - [ ] LinkedList
-- [ ] Heap
+- [x] Heap
 - [ ] HashMap
 - [ ] HashSet
 - [ ] TreeMap
