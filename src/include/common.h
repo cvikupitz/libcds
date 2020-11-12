@@ -85,10 +85,17 @@ typedef enum {
     STAT_STRUCT_EMPTY = 4,
 
     /**
+     * Operation could not be completed due to a full structure. This is most common
+     * for insertion operatons on structures that have a capacity on the number of
+     * elements it may contain at once.
+     */
+    STAT_STRUCT_FULL = 5,
+
+    /**
      * The previous call to iterator_next() did not yield an item since the current
      * iteration has ended.
      */
-    STAT_ITERATION_END = 5,
+    STAT_ITERATION_END = 6,
 
     /**
      * Operation could not be completed due to an invalid index specified. This is for
@@ -96,21 +103,21 @@ typedef enum {
      * index a caller may specify could fall outside the valid range (i.e. the value is
      * below 0 or greater than the largest index allowed).
      */
-    STAT_INVALID_INDEX = 6,
+    STAT_INVALID_INDEX = 7,
 
     /**
      * Operation could not be completed due to a missing entry. This is for structure
      * operations where a caller may search for a specific item that does not exist. Think
      * of a key missing in a HashMap, an entry not found in a set, etc.
      */
-    STAT_NOT_FOUND = 7,
+    STAT_NOT_FOUND = 8,
 
     /**
      * A call to any of the dynamic memory allocator methods (i.e. malloc(), realloc(), etc.)
      * has failed during instantiation, additions, resizing, or any other operation that
      * requires allocating heap memory.
      */
-    STAT_ALLOC_FAILURE = 8
+    STAT_ALLOC_FAILURE = 9
 
 } Status;
 
@@ -136,8 +143,9 @@ typedef struct {
  * Simply used to save you one extra line of code. Alternatively, you can manually free
  * the internal array and the struct if you so choose.
  */
-#define FREE_ARRAY(a) \
+#define FREE_ARRAY(a) {\
     free(a->items); \
-    free(a);
+    free(a); \
+}
 
 #endif  /* _CDS_COMMON_H__ */
