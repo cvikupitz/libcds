@@ -1,0 +1,3 @@
+# Marks all .h files as C rather than C++
+*.h linguist-language=C
+
