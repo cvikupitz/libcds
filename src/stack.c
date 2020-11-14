@@ -26,19 +26,19 @@
 #include "stack.h"
 
 /*
- * The struct for a node inside the stack.
+ * Struct for a node inside the stack.
  */
 typedef struct node {
-    struct node *next;  /* Pointer to the next node */
-    void *data;         /* Pointer to hold the element */
+    struct node *next;  /* Points to the next node */
+    void *data;         /* Pointer that holds the element */
 } Node;
 
 /*
  * The struct for the stack ADT.
  */
 struct stack {
-    Node *top;          /* Points to the stack's top node */
-    long size;          /* The stack's size */
+    Node *top;          /* Pointer to the top element of the stack */
+    long size;          /* The stack's current size */
 };
 
 Status stack_new(Stack **stack) {
@@ -55,6 +55,9 @@ Status stack_new(Stack **stack) {
 
     return STAT_SUCCESS;
 }
+
+/* Macro to check if the stack is currently empty */
+#define IS_EMPTY(x)  ( ((x)->size == 0L) ? TRUE : FALSE )
 
 Status stack_push(Stack *stack, void *item) {
 
@@ -75,8 +78,9 @@ Status stack_push(Stack *stack, void *item) {
 Status stack_peek(Stack *stack, void **top) {
 
     /* Checks if the stack is empty */
-    if (stack_isEmpty(stack) == TRUE)
+    if (IS_EMPTY(stack) == TRUE)
         return STAT_STRUCT_EMPTY;
+    /* Extracts the top element, saves to pointer */
     *top = stack->top->data;
 
     return STAT_SUCCESS;
@@ -85,7 +89,7 @@ Status stack_peek(Stack *stack, void **top) {
 Status stack_pop(Stack *stack, void **top) {
 
     /* Checks if the stack is empty */
-    if (stack_isEmpty(stack) == TRUE)
+    if (IS_EMPTY(stack) == TRUE)
         return STAT_STRUCT_EMPTY;
 
     /* Unlinks the node from stack */
@@ -100,20 +104,27 @@ Status stack_pop(Stack *stack, void **top) {
 }
 
 /*
- * Local method to clear out the stack of its elements. If destructor != NULL, it is
- * invoked on each element after removal.
+ * Clears out the stack of all its elements. Frees up all reserved memory
+ * back to the heap.
  */
 static void clearStack(Stack *stack, void (*destructor)(void *)) {
 
-    void *temp;
+    Node *temp = stack->top, *next = NULL;
 
-    while (stack_pop(stack, &temp) == STAT_SUCCESS)
+    while (temp != NULL) {
+        next = temp->next;
+        /* Free all allocated memory */
         if (destructor != NULL)
-            (*destructor)(temp);
+            (*destructor)(temp->data);
+        free(temp);
+        temp = next;
+    }
 }
 
 void stack_clear(Stack *stack, void (*destructor)(void *)) {
     clearStack(stack, destructor);
+    stack->top = NULL;
+    stack->size = 0L;
 }
 
 long stack_size(Stack *stack) {
@@ -121,11 +132,11 @@ long stack_size(Stack *stack) {
 }
 
 Boolean stack_isEmpty(Stack *stack) {
-    return ( stack->size == 0L ) ? TRUE : FALSE;
+    return IS_EMPTY(stack);
 }
 
 /*
- * Local method to allocate and create an array representation of the stack.
+ * Generates and returns an array representation of the stack.
  */
 static void **generateArray(Stack *stack) {
 
@@ -149,19 +160,23 @@ static void **generateArray(Stack *stack) {
 
 Status stack_toArray(Stack *stack, Array **array) {
 
-    if (stack_isEmpty(stack) == TRUE)
+    /* Checks if the stack is empty */
+    if (IS_EMPTY(stack) == TRUE)
         return STAT_STRUCT_EMPTY;
 
+    /* Generate the array of stack items */
     void **items = generateArray(stack);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
+    /* Allocate memory for the array struct */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
         return STAT_ALLOC_FAILURE;
     }
 
+    /* Initialize the array struct members */
     temp->items = items;
     temp->len = stack->size;
     *array = temp;
@@ -172,13 +187,13 @@ Status stack_toArray(Stack *stack, Array **array) {
 Status stack_iterator(Stack *stack, Iterator **iter) {
 
     Iterator *temp = NULL;
-    void **items = NULL;
 
-    if (stack_isEmpty(stack) == TRUE)
+    /* Checks if the stack is empty */
+    if (IS_EMPTY(stack) == TRUE)
         return STAT_STRUCT_EMPTY;
 
     /* Generates the array of stack items for iterator */
-    items = generateArray(stack);
+    void **items = generateArray(stack);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
