@@ -29,7 +29,7 @@
 #include "ts_iterator.h"
 
 /**
- * Interface for the ArrayList ADT.
+ * Interface for the thread-safe ArrayList ADT.
  *
  * The ArrayList class is a collection of elements stored in a resizable array.
  *

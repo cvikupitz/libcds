@@ -29,7 +29,7 @@
 #include "common.h"
 
 /**
- * Interface for the Iterator ADT.
+ * Interface for the thread-safe Iterator ADT.
  *
  * An iterator over a collection of elements.
  *

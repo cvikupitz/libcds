@@ -29,7 +29,7 @@
 #include "ts_iterator.h"
 
 /**
- * Interface for the BoundedQueue ADT.
+ * Interface for the thread-safe BoundedQueue ADT.
  *
  * The BoundedQueue class represents a first-in-first-out (FIFO) queue of objects.
  * In addition, the queue is bounded, meaning that it can only hold a set number of

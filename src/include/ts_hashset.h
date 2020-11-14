@@ -29,7 +29,7 @@
 #include "ts_iterator.h"
 
 /**
- * Declaration for the HashSet ADT.
+ * Declaration for the thread-safe HashSet ADT.
  *
  * Set based implementation; holds a collection of elements with no duplicates.
  *

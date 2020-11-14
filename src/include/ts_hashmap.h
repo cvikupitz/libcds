@@ -30,7 +30,7 @@
 #include "ts_iterator.h"
 
 /**
- * Declaration for the HashMap ADT.
+ * Declaration for the thread-safe HashMap ADT.
  *
  * Hashmap based implementation; holds elements based on key-value pairings.
  *

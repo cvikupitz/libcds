@@ -29,7 +29,7 @@
 #include "ts_iterator.h"
 
 /**
- * Interface for the Queue ADT.
+ * Interface for the thread-safe Queue ADT.
  *
  * The Queue class represents a first-in-first-out (FIFO) queue of objects. This
  * is an unbounded version, meaning that the queue does not impose a capacity on

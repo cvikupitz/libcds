@@ -29,7 +29,7 @@
 #include "ts_iterator.h"
 
 /**
- * Interface for the BoundedStack ADT.
+ * Interface for the thread-safe BoundedStack ADT.
  *
  * The BoundedStack represents a last-in-first-out (LIFO) stack of objects. In
  * addition, the stack is bounded, meaning that it can only hold a set number of

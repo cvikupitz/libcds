@@ -29,7 +29,7 @@
 #include "ts_iterator.h"
 
 /**
- * Interface for the Stack ADT.
+ * Interface for the thread-safe Stack ADT.
  *
  * The Stack class represents a last-in-first-out (LIFO) stack of objects. This
  * is an unbounded version, meaning that the stack does not impose a capacity on

@@ -29,7 +29,7 @@
 #include "ts_iterator.h"
 
 /**
- * Interface for the Deque ADT.
+ * Interface for the thread-safe Deque ADT.
  *
  * The Deque class represents a linear collection that supports element insertion
  * and removal at both ends.

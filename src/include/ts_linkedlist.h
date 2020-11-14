@@ -29,7 +29,7 @@
 #include "ts_iterator.h"
 
 /**
- * Interface for the LinkedList ADT.
+ * Interface for the thread-safe LinkedList ADT.
  *
  * Doubly-linked list implementation. Implements all optional list operations, and
  * permits all elements (including null).

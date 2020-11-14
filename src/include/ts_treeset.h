@@ -29,7 +29,7 @@
 #include "ts_iterator.h"
 
 /**
- * Declaration for the TreeSet ADT.
+ * Declaration for the thread-safe TreeSet ADT.
  *
  * A tree-like set storing elements based on their natural ordering defined through
  * a comparator provided at construction time. Provides self-balancing capabilities

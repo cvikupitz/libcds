@@ -30,7 +30,7 @@
 #include "ts_iterator.h"
 
 /**
- * Declaration for the TreeMap ADT.
+ * Declaration for the thread-safe TreeMap ADT.
  *
  * A tree-like set storing elements based on key-value pairings. The treemap is sorted
  * by the stored keys based on their natural ordering defined through a comparator

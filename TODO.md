@@ -1,9 +1,8 @@
 ### Refinements
 - [ ] Code Cleanup
 - [ ] Comments
-- [ ] Sentinels
 - [ ] isEmpty checks
-- [ ] Thread-Safe versions
+- [ ] pthread checks
 
 ### Testing
 - [x] Iterator
@@ -22,6 +21,5 @@
 - [ ] TreeSet
 
 ### Misc.
-- [ ] Makefile Help
 - [ ] API Docs
 - [ ] README

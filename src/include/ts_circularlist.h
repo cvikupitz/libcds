@@ -29,7 +29,7 @@
 #include "ts_iterator.h"
 
 /**
- * Interface for the CircularList ADT.
+ * Interface for the thread-safe CircularList ADT.
  *
  * The CircularList is a linked list where the head and tail are linked, allowing
  * the elements in the list to be 'rotated' in place, mocking a round-robin schema.

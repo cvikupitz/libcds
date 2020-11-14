@@ -29,7 +29,7 @@
 #include "ts_iterator.h"
 
 /**
- * Interface for the Heap ADT.
+ * Interface for the thread-safe Heap ADT.
  *
  * A heap is a priority queue, where the elements of the priority queue are ordered
  * according to a comparator function provided at construction time. The head of the
