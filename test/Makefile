@@ -7,11 +7,11 @@ CFLAGS=-W -Wall -g
 IFLAG=-Iinclude
 LFLAGS=-L. -lcds
 CUNIT=-lcunit
-OBJS=arraylist_tests.o boundedqueue_tests.o boundedstack_tests.o circularlist_tests.o deque_tests.o \
-     hashmap_tests.o hashset_tests.o heap_tests.o iterator_tests.o linkedlist_tests.o queue_tests.o \
-     stack_tests.o treeset_tests.o
-EXECS=arraylist_tests boundedqueue_tests boundedstack_tests circularlist_tests deque_tests hashmap_tests \
-      hashset_tests heap_tests iterator_tests linkedlist_tests queue_tests stack_tests treeset_tests
+OBJS=arraylist_tests.o boundedqueue_tests.o boundedstack_tests.o circularlist_tests.o hashmap_tests.o \
+     hashset_tests.o heap_tests.o iterator_tests.o linkedlist_tests.o queue_tests.o stack_tests.o \
+     treeset_tests.o
+EXECS=arraylist_tests boundedqueue_tests boundedstack_tests circularlist_tests hashmap_tests hashset_tests \
+      heap_tests iterator_tests linkedlist_tests queue_tests stack_tests treeset_tests
 
 # Builds executable for all individual tests
 all: $(EXECS)
@@ -25,8 +25,6 @@ boundedstack_tests: boundedstack_tests.o
 	$(CC) $(CFLAGS) $(IFLAG) boundedstack_tests.o -o boundedstack_tests $(LFLAGS) $(CUNIT)
 circularlist_tests: circularlist_tests.o
 	$(CC) $(CFLAGS) $(IFLAG) circularlist_tests.o -o circularlist_tests $(LFLAGS) $(CUNIT)
-deque_tests: deque_tests.o
-	$(CC) $(CFLAGS) $(IFLAG) deque_tests.o -o deque_tests $(LFLAGS) $(CUNIT)
 hashmap_tests: hashmap_tests.o
 	$(CC) $(CFLAGS) $(IFLAG) hashmap_tests.o -o hashmap_tests $(LFLAGS) $(CUNIT)
 hashset_tests: hashset_tests.o
@@ -57,8 +55,6 @@ boundedstack_tests.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c boundedstack_tests.c
 circularlist_tests.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c circularlist_tests.c
-deque_tests.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c deque_tests.c
 hashmap_tests.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c hashmap_tests.c
 hashset_tests.o:
