@@ -143,8 +143,9 @@ typedef struct {
  * Simply used to save you one extra line of code. Alternatively, you can manually free
  * the internal array and the struct if you so choose.
  */
-#define FREE_ARRAY(a) \
+#define FREE_ARRAY(a) {\
     free(a->items); \
-    free(a);
+    free(a); \
+}
 
 #endif  /* _CDS_COMMON_H__ */

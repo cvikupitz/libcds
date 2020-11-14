@@ -31,17 +31,20 @@
 typedef struct node {
     struct node *next;  /* Pointer to the next node */
     struct node *prev;  /* Pointer to the previous node */
-    void *payload;      /* Pointer to hold the element */
+    void *data;         /* Pointer to hold the element */
 } Node;
 
 /*
  * The struct for the linked list ADT.
  */
 struct linkedlist {
-    Node *head;       /* Pointer to the list's head */
-    Node *tail;       /* Pointer to the list's tail */
-    long size;        /* The linked list's size */
+    Node head;          /* Pointer to the list's head */
+    Node tail;          /* Pointer to the list's tail */
+    long size;          /* The linked list's size */
 };
+
+#define HEADER(x)  (&((x)->head))
+#define TRAILER(x) (&((x)->tail))
 
 Status linkedlist_new(LinkedList **list) {
 
@@ -51,8 +54,12 @@ Status linkedlist_new(LinkedList **list) {
         return STAT_ALLOC_FAILURE;
 
     /* Initializes the remaining struct members */
-    temp->head = NULL;
-    temp->tail = NULL;
+    HEADER(temp)->data = NULL;
+    HEADER(temp)->next = TRAILER(temp);
+    HEADER(temp)->prev = NULL;
+    TRAILER(temp)->data = NULL;
+    TRAILER(temp)->next = NULL;
+    TRAILER(temp)->prev = HEADER(temp);
     temp->size = 0L;
     *list = temp;
 
@@ -73,12 +80,12 @@ static Node *fetchNode(LinkedList *list, long index) {
 
     if (index <= mid) {
         /* Traverses forward from the head to the node */
-        temp = list->head;
+        temp = HEADER(list)->next;
         for (i = 0L; i < index; i++)
             temp = temp->next;
     } else {
         /* Traverses backwards from the tail to node */
-        temp = list->tail;
+        temp = TRAILER(list)->prev;
         for (i = list->size - 1; i > index; i--)
             temp = temp->prev;
     }
@@ -86,36 +93,28 @@ static Node *fetchNode(LinkedList *list, long index) {
     return temp;
 }
 
-/*
- * Local method to allocate node for the linked list. Links up the new node with the
- * specified 'next' and 'prev' nodes.
- */
-static Node *mallocNode(void *item, Node *next, Node *prev) {
+static void linkNodes(Node *node, Node *prev, Node *next) {
+    node->prev = prev;
+    node->next = next;
+    next->prev = node;
+    prev->next = node;
+}
 
-    Node *node = (Node *)malloc(sizeof(Node));
-    if (node != NULL) {
-        node->payload = item;
-        node->next = next;
-        node->prev = prev;
-    }
-
-    return node;
+static void unlinkNode(Node *node) {
+    Node *next = node->next;
+    Node *prev = node->prev;
+    next->prev = prev;
+    prev->next = next;
 }
 
 Status linkedlist_addFirst(LinkedList *list, void *item) {
 
-    /* Allocates the node for insertion */
-    Node *node = mallocNode(item, list->head, NULL);
+    Node *node = (Node *)malloc(sizeof(Node));
     if (node == NULL)
         return STAT_ALLOC_FAILURE;
 
-    /* Edge case: list is empty, link node as head and tail */
-    if (list->size == 0L)
-        list->tail = node;
-    /* Otherwise, link node to head */
-    else
-        list->head->prev = node;
-    list->head = node;
+    node->data = item;
+    linkNodes(node, HEADER(list), HEADER(list)->next);
     list->size++;
 
     return STAT_SUCCESS;
@@ -123,18 +122,12 @@ Status linkedlist_addFirst(LinkedList *list, void *item) {
 
 Status linkedlist_addLast(LinkedList *list, void *item) {
 
-    /* Allocates the node for insertion */
-    Node *node = mallocNode(item, NULL, list->tail);
+    Node *node = (Node *)malloc(sizeof(Node));
     if (node == NULL)
         return STAT_ALLOC_FAILURE;
 
-    /* Edge case: list is empty, link node as head and tail */
-    if (list->size == 0L)
-        list->head = node;
-    /* Otherwise, link node to tail */
-    else
-        list->tail->next = node;
-    list->tail = node;
+    node->data = item;
+    linkNodes(node, TRAILER(list)->prev, TRAILER(list));
     list->size++;
 
     return STAT_SUCCESS;
@@ -155,15 +148,13 @@ Status linkedlist_insert(LinkedList *list, long i, void *item) {
     if (i == list->size)        /* Same operation as addLast() */
         return linkedlist_addLast(list, item);
 
-    /* Allocate the node for insertion */
-    Node *temp = fetchNode(list, i);
-    Node *node = mallocNode(item, temp, temp->prev);
+    Node *node = (Node *)malloc(sizeof(Node));
     if (node == NULL)
         return STAT_ALLOC_FAILURE;
 
-    /* Links the new node to middle of list */
-    temp->prev->next = node;
-    temp->prev = node;
+    node->data = item;
+    Node *temp = fetchNode(list, i);
+    linkNodes(node, temp->prev, temp);
     list->size++;
 
     return STAT_SUCCESS;
@@ -174,7 +165,7 @@ Status linkedlist_first(LinkedList *list, void **first) {
     /* Checks if the list is empty */
     if (linkedlist_isEmpty(list) == TRUE)
         return STAT_STRUCT_EMPTY;
-    *first = list->head->payload;
+    *first = HEADER(list)->next->data;
 
     return STAT_SUCCESS;
 }
@@ -184,7 +175,7 @@ Status linkedlist_last(LinkedList *list, void **last) {
     /* Checks if the list is empty */
     if (linkedlist_isEmpty(list) == TRUE)
         return STAT_STRUCT_EMPTY;
-    *last = list->tail->payload;
+    *last = TRAILER(list)->prev->data;
 
     return STAT_SUCCESS;
 }
@@ -200,7 +191,7 @@ Status linkedlist_get(LinkedList *list, long i, void **item) {
         return STAT_INVALID_INDEX;
 
     Node *temp = fetchNode(list, i);
-    *item = temp->payload;
+    *item = temp->data;
 
     return STAT_SUCCESS;
 }
@@ -217,8 +208,8 @@ Status linkedlist_set(LinkedList *list, long i, void *item, void **previous) {
 
     /* Retrieve the node, swap with new element */
     Node *temp = fetchNode(list, i);
-    *previous = temp->payload;
-    temp->payload = item;
+    *previous = temp->data;
+    temp->data = item;
 
     return STAT_SUCCESS;
 }
@@ -229,15 +220,9 @@ Status linkedlist_removeFirst(LinkedList *list, void **first) {
     if (linkedlist_isEmpty(list) == TRUE)
         return STAT_STRUCT_EMPTY;
 
-    Node *temp = list->head;
-    *first = temp->payload;
-    list->head = temp->next;
-    /* Edge case: size is 1, nullify both end nodes */
-    if (list->size == 1L)
-        list->tail = NULL;
-    /* Otherwise, remove link to head node */
-    else
-        list->head->prev = NULL;
+    Node *temp = HEADER(list)->next;
+    *first = temp->data;
+    unlinkNode(temp);
     free(temp);
     list->size--;
 
@@ -250,15 +235,9 @@ Status linkedlist_removeLast(LinkedList *list, void **last) {
     if (linkedlist_isEmpty(list) == TRUE)
         return STAT_STRUCT_EMPTY;
 
-    Node *temp = list->tail;
-    *last = temp->payload;
-    list->tail = temp->prev;
-    /* Edge case: size if 1, nullify both end nodes */
-    if (list->size == 1L)
-        list->head = NULL;
-    /* Otherwise, remove link to tail node */
-    else
-        list->tail->next = NULL;
+    Node *temp = TRAILER(list)->prev;
+    *last = temp->data;
+    unlinkNode(temp);
     free(temp);
     list->size--;
 
@@ -282,10 +261,8 @@ Status linkedlist_remove(LinkedList *list, long i, void **item) {
 
     /* Fetch the node to be removed */
     Node *temp = fetchNode(list, i);
-    *item = temp->payload;
-    /* Unlinks the node from linked list */
-    temp->next->prev = temp->prev;
-    temp->prev->next = temp->next;
+    *item = temp->data;
+    unlinkNode(temp);
     free(temp);
     list->size--;
 
@@ -334,8 +311,8 @@ static void **generateArray(LinkedList *list) {
         return NULL;
 
     /* Populates the array with linked list items */
-    for (temp = list->head; temp != NULL; temp = temp->next)
-        items[i++] = temp->payload;
+    for (temp = HEADER(list)->next; temp != TRAILER(list); temp = temp->next)
+        items[i++] = temp->data;
 
     return items;
 }
