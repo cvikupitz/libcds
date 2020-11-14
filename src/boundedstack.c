@@ -30,7 +30,7 @@
  */
 struct bounded_stack {
     void **data;        /* Array of the stack's elements */
-    long top;           /* Index of the stack's top element */
+    long size;          /* Index of the stack's top element */
     long capacity;      /* The stack's capacity */
 };
 
@@ -55,7 +55,7 @@ Status boundedstack_new(BoundedStack **stack, long capacity) {
     }
 
     temp->data = array;
-    temp->top = -1L;
+    temp->size = 0L;
     temp->capacity = cap;
     *stack = temp;
 
@@ -67,7 +67,7 @@ Status boundedstack_push(BoundedStack *stack, void *item) {
     /* Checks if the stack is full */
     if (boundedstack_isFull(stack) == TRUE)
         return STAT_STRUCT_FULL;
-    stack->data[++stack->top] = item;
+    stack->data[stack->size++] = item;
 
     return STAT_SUCCESS;
 }
@@ -77,7 +77,7 @@ Status boundedstack_peek(BoundedStack *stack, void **top) {
     /* Checks if the stack is empty */
     if (boundedstack_isEmpty(stack) == TRUE)
         return STAT_STRUCT_EMPTY;
-    *top = stack->data[stack->top];
+    *top = stack->data[stack->size - 1];
 
     return STAT_SUCCESS;
 }
@@ -87,7 +87,7 @@ Status boundedstack_pop(BoundedStack *stack, void **top) {
     /* Checks if the stack is empty */
     if (boundedstack_isEmpty(stack) == TRUE)
         return STAT_STRUCT_EMPTY;
-    *top = stack->data[stack->top--];
+    *top = stack->data[--stack->size];
 
     return STAT_SUCCESS;
 }
@@ -110,7 +110,7 @@ void boundedstack_clear(BoundedStack *stack, void (*destructor)(void *)) {
 }
 
 long boundedstack_size(BoundedStack *stack) {
-    return ( stack->top + 1 );
+    return ( stack->size );
 }
 
 long boundedstack_capacity(BoundedStack *stack) {
@@ -118,11 +118,11 @@ long boundedstack_capacity(BoundedStack *stack) {
 }
 
 Boolean boundedstack_isEmpty(BoundedStack *stack) {
-    return ( stack->top == -1L ) ? TRUE : FALSE;
+    return ( stack->size == 0L ) ? TRUE : FALSE;
 }
 
 Boolean boundedstack_isFull(BoundedStack *stack) {
-    return ( (stack->top + 1) == stack->capacity ) ? TRUE : FALSE;
+    return ( stack->size == stack->capacity ) ? TRUE : FALSE;
 }
 
 /*
@@ -135,13 +135,13 @@ static void **generateArray(BoundedStack *stack) {
     void **items = NULL;
 
     /* Allocates memory for the array */
-    bytes = ( (stack->top + 1) * sizeof(void *) );
+    bytes = (stack->size * sizeof(void *) );
     items = (void **)malloc(bytes);
     if (items == NULL)
         return NULL;
 
     /* Populates the array with the stack items */
-    for (i = 0L, j = stack->top; j >= 0L; i++, j--)
+    for (i = 0L, j = stack->size - 1; j >= 0L; i++, j--)
         items[i] = stack->data[j];
 
     return items;
@@ -164,7 +164,7 @@ Status boundedstack_toArray(BoundedStack *stack, Array **array) {
     }
 
     temp->items = items;
-    temp->len = (stack->top + 1);
+    temp->len = stack->size;
     *array = temp;
 
     return STAT_SUCCESS;
@@ -185,7 +185,7 @@ Status boundedstack_iterator(BoundedStack *stack, Iterator **iter) {
         return STAT_ALLOC_FAILURE;
 
     /* Creates a new iterator with the stack items */
-    Status status = iterator_new(&temp, items, (stack->top + 1));
+    Status status = iterator_new(&temp, items, stack->size);
     if (status != STAT_SUCCESS) {
         free(items);
         return status;
