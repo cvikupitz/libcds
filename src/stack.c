@@ -104,8 +104,7 @@ Status stack_pop(Stack *stack, void **top) {
 }
 
 /*
- * Clears out the stack of all its elements. Frees up all reserved memory
- * back to the heap.
+ * Clears out the stack of all its elements.
  */
 static void clearStack(Stack *stack, void (*destructor)(void *)) {
 
