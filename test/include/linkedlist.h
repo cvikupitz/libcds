@@ -74,18 +74,6 @@ Status linkedlist_addFirst(LinkedList *list, void *item);
 Status linkedlist_addLast(LinkedList *list, void *item);
 
 /**
- * Appends the specified element to the end of the linked list (same as addLast()).
- *
- * Params:
- *    list - The linked list to operate on.
- *    item - The element to add.
- * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
- */
-Status linkedlist_add(LinkedList *list, void *item);
-
-/**
  * Inserts the specified element at the specified position in this list. Shifts the
  * element currently at that position (if any) and any subsequent elements to the
  * right (adds one to their indices).
