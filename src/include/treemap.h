@@ -39,10 +39,10 @@ typedef struct tm_entry TmEntry;
 /**
  * Declaration for the TreeMap ADT.
  *
- * A tree-like set storing elements based on key-value pairings. The treemap is sorted
- * by the stored keys based on their natural ordering defined through a comparator
- * provided at construction time. Provides self-balancing capabilities for even
- * distribution.
+ * A red-black tree set storing elements based on key-value pairings. The treemap
+ * is sorted by the stored keys based on their natural ordering defined through a
+ * comparator provided at construction time. Provides self-balancing capabilities
+ * for even distribution.
  *
  * Modeled after the Java 7 TreeMap interface.
  */

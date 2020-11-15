@@ -1,4 +1,5 @@
 ### Refinements
+- [ ] null function pointer check
 - [ ] pthread checks
 
 ### Testing

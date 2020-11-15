@@ -39,7 +39,8 @@ typedef struct hm_entry HmEntry;
 /**
  * Declaration for the HashMap ADT.
  *
- * Hashmap based implementation; holds elements based on key-value pairings.
+ * Hashmap based implementation; holds elements based on key-value pairings. Allows
+ * for null values, but does not permit null keys.
  *
  * Modeled after the Java 7 HashMap interface with string keys.
  */
