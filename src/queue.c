@@ -119,15 +119,16 @@ Status queue_poll(Queue *queue, void **first) {
  */
 static void clearQueue(Queue *queue, void (*destructor)(void *)) {
 
-    Node *temp = queue->head, *next = NULL;
+    Node *curr = queue->head, *next = NULL;
+    long i;
 
-    while (temp != NULL) {
-        next = temp->next;
+    for (i = 0L; i < queue->size; i++) {
+        next = curr->next;
         /* Frees the allocated memory */
         if (destructor != NULL)
-            (*destructor)(temp);
-        free(temp);
-        temp = next;
+            (*destructor)(curr);
+        free(curr);
+        curr = next;
     }
 }
 
@@ -203,12 +204,12 @@ Status queue_iterator(Queue *queue, Iterator **iter) {
     if (IS_EMPTY(queue) == TRUE)
         return STAT_STRUCT_EMPTY;
 
-    /* Generates the array of queue items for iterator */
+    /* Generates the array of items for iterator */
     void **items = generateArray(queue);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
-    /* Creates a new iterator with the queue items */
+    /* Creates a new iterator with the items */
     Status status = iterator_new(&temp, items, queue->size);
     if (status != STAT_SUCCESS) {
         free(items);

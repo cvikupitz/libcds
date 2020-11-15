@@ -108,15 +108,16 @@ Status stack_pop(Stack *stack, void **top) {
  */
 static void clearStack(Stack *stack, void (*destructor)(void *)) {
 
-    Node *temp = stack->top, *next = NULL;
+    Node *curr = stack->top, *next = NULL;
+    long i;
 
-    while (temp != NULL) {
-        next = temp->next;
+    for (i = 0L; i < stack->size; i++) {
+        next = curr->next;
         /* Free all allocated memory */
         if (destructor != NULL)
-            (*destructor)(temp->data);
-        free(temp);
-        temp = next;
+            (*destructor)(curr->data);
+        free(curr);
+        curr = next;
     }
 }
 
@@ -191,12 +192,12 @@ Status stack_iterator(Stack *stack, Iterator **iter) {
     if (IS_EMPTY(stack) == TRUE)
         return STAT_STRUCT_EMPTY;
 
-    /* Generates the array of stack items for iterator */
+    /* Generates the array of items for iterator */
     void **items = generateArray(stack);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
-    /* Creates a new iterator with the stack items */
+    /* Creates a new iterator with the items */
     Status status = iterator_new(&temp, items, stack->size);
     if (status != STAT_SUCCESS) {
         free(items);
