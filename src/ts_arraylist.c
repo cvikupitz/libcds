@@ -27,12 +27,17 @@
 #include "arraylist.h"
 #include "ts_arraylist.h"
 
+/*
+ * Struct for the thread-safe arraylist.
+ */
 struct ts_arraylist {
-    pthread_mutex_t lock;
-    ArrayList *instance;
+    pthread_mutex_t lock;       /* The lock */
+    ArrayList *instance;        /* Internal instance of ArrayList */
 };
 
+/* Macro used for locking the arraylist */
 #define LOCK(x)    pthread_mutex_lock( &((x)->lock) )
+/* Macro used for unlocking the arraylist */
 #define UNLOCK(x)  pthread_mutex_unlock( &((x)->lock) )
 
 Status ts_arraylist_new(ConcurrentArrayList **list, long capacity) {
@@ -41,19 +46,22 @@ Status ts_arraylist_new(ConcurrentArrayList **list, long capacity) {
     Status status;
     pthread_mutexattr_t attr;
 
+    /* Allocates memory for the arraylist */
     temp = (ConcurrentArrayList *)malloc(sizeof(ConcurrentArrayList));
     if (temp == NULL)
         return STAT_ALLOC_FAILURE;
 
+    /* Creates new internal arraylist instance */
     status = arraylist_new(&(temp->instance), capacity);
     if (status != STAT_SUCCESS) {
         free(temp);
         return status;
     }
 
-    pthread_mutexattr_init(&attr);//EAGAIN(no resources),ENOMEM(no memory),EPERM(no permission)
+    /* Create the pthread_mutex for locking */
+    pthread_mutexattr_init(&attr);
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-    pthread_mutex_init(&(temp->lock), &attr);//ENOMEM
+    pthread_mutex_init(&(temp->lock), &attr);
     pthread_mutexattr_destroy(&attr);
     *list = temp;
 
@@ -179,6 +187,7 @@ Status ts_arraylist_iterator(ConcurrentArrayList *list, ConcurrentIterator **ite
     Array *array;
     Status status;
 
+    /* Creates the array of items and locks the instance */
     LOCK(list);
     status = arraylist_toArray(list->instance, &array);
     if (status != STAT_SUCCESS) {
@@ -186,6 +195,7 @@ Status ts_arraylist_iterator(ConcurrentArrayList *list, ConcurrentIterator **ite
         return status;
     }
 
+    /* Creates the iterator */
     status = ts_iterator_new(iter, &(list->lock), array->items, array->len);
     if (status != STAT_SUCCESS) {
         FREE_ARRAY(array);

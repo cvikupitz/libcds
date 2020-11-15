@@ -27,12 +27,17 @@
 #include "stack.h"
 #include "ts_stack.h"
 
+/*
+ * Struct for the thread-safe stack.
+ */
 struct ts_stack {
-    pthread_mutex_t lock;
-    Stack *instance;
+    pthread_mutex_t lock;       /* The lock */
+    Stack *instance;            /* Internal instance of Stack. */
 };
 
+/* Macro used for locking the stack */
 #define LOCK(x)    pthread_mutex_lock( &((x)->lock) )
+/* Macro used for unlocking the stack */
 #define UNLOCK(x)  pthread_mutex_unlock( &((x)->lock) )
 
 Status ts_stack_new(ConcurrentStack **stack) {
@@ -41,16 +46,19 @@ Status ts_stack_new(ConcurrentStack **stack) {
     Status status;
     pthread_mutexattr_t attr;
 
+    /* Allocates memory for the stack */
     temp = (ConcurrentStack *)malloc(sizeof(ConcurrentStack));
     if (temp == NULL)
         return STAT_ALLOC_FAILURE;
 
+    /* Creates the internal instance of the stack */
     status = stack_new(&(temp->instance));
     if (status != STAT_SUCCESS) {
         free(temp);
         return status;
     }
 
+    /* Creates the pthread_mutex for locking */
     pthread_mutexattr_init(&attr);
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
     pthread_mutex_init(&(temp->lock), &attr);
@@ -134,6 +142,7 @@ Status ts_stack_iterator(ConcurrentStack *stack, ConcurrentIterator **iter) {
     Array *array;
     Status status;
 
+    /* Creates the array of items and locks it */
     LOCK(stack);
     status = stack_toArray(stack->instance, &array);
     if (status != STAT_SUCCESS) {
@@ -141,6 +150,7 @@ Status ts_stack_iterator(ConcurrentStack *stack, ConcurrentIterator **iter) {
         return status;
     }
 
+    /* Creates the iterator */
     status = ts_iterator_new(iter, &(stack->lock), array->items, array->len);
     if (status != STAT_SUCCESS) {
         FREE_ARRAY(array);
