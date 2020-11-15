@@ -66,12 +66,23 @@ Status ts_treemap_new(ConcurrentTreeMap **tree, int (*keyComparator)(void *, voi
         void (*keyDestructor)(void *));
 
 /**
- * FIXME
+ * Locks the treemap, providing exclusive access to the calling thread. Caller
+ * is responsible for unlocking the treemap to allow other threads access.
+ *
+ * Params:
+ *    tree - The treemap to operate on.
+ * Returns:
+ *    None
  */
 void ts_treemap_lock(ConcurrentTreeMap *tree);
 
 /**
- * FIXME
+ * Unlocks the treemap, releasing the exclusive access from the calling thread.
+ *
+ * Params:
+ *    tree - The treemap to operate on.
+ * Returns:
+ *    None
  */
 void ts_treemap_unlock(ConcurrentTreeMap *tree);
 

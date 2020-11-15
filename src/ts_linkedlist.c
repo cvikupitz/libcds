@@ -68,6 +68,14 @@ Status ts_linkedlist_new(ConcurrentLinkedList **list) {
     return STAT_SUCCESS;
 }
 
+void ts_linkedlist_lock(ConcurrentLinkedList *list) {
+    LOCK(list);
+}
+
+void ts_linkedlist_unlock(ConcurrentLinkedList *list) {
+    UNLOCK(list);
+}
+
 Status ts_linkedlist_addFirst(ConcurrentLinkedList *list, void *item) {
 
     LOCK(list);

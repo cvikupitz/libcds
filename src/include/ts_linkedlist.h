@@ -50,6 +50,27 @@ typedef struct ts_linkedlist ConcurrentLinkedList;
 Status ts_linkedlist_new(ConcurrentLinkedList **list);
 
 /**
+ * Locks the linked list, providing exclusive access to the calling thread. Caller
+ * is responsible for unlocking the linked list to allow other threads access.
+ *
+ * Params:
+ *    list - The linked list to operate on.
+ * Returns:
+ *    None
+ */
+void ts_linkedlist_lock(ConcurrentLinkedList *list);
+
+/**
+ * Unlocks the linked list, releasing the exclusive access from the calling thread.
+ *
+ * Params:
+ *    list - The linked list to operate on.
+ * Returns:
+ *    None
+ */
+void ts_linkedlist_unlock(ConcurrentLinkedList *list);
+
+/**
  * Inserts the specified element at the beginning of the linked list.
  *
  * Params:
