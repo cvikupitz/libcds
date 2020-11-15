@@ -215,7 +215,7 @@ void hashmap_destroy(HashMap *map, void (*destructor)(void *));
  * Returns the hashmap entry's stored key.
  *
  * Params:
- *    entry - The HmEntry ADT to operate on.
+ *    entry - The HmEntry to operate on.
  * Returns:
  *    The entry's key.
  */
@@ -225,10 +225,21 @@ char *hmentry_getKey(HmEntry *entry);
  * Returns the hashmap entry's stored value.
  *
  * Params:
- *    entry - The HmEntry ADT to operate on.
+ *    entry - The HmEntry to operate on.
  * Returns:
  *    The entry's value.
  */
 void *hmentry_getValue(HmEntry *entry);
+
+/**
+ * Sets the corresponding value of the entry with the new specified value.
+ *
+ * Params:
+ *    entry - The HmEntry to operate on.
+ *    value - The new value to store.
+ * Returns:
+ *    None
+ */
+void hmentry_setValue(HmEntry *entry, void *value);
 
 #endif  /* _CDS_HASHMAP_H__ */

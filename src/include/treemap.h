@@ -443,4 +443,15 @@ void *tmentry_getKey(TmEntry *entry);
  */
 void *tmentry_getValue(TmEntry *entry);
 
+/**
+ * Sets the corresponding value of the entry with the new specified value.
+ *
+ * Params:
+ *    entry - The TmEntry to operate on.
+ *    value - The new value to store.
+ * Returns:
+ *    None
+ */
+void tmentry_setValue(TmEntry *entry, void *value);
+
 #endif  /* _CDS_TREEMAP_H__ */
