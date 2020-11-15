@@ -48,12 +48,23 @@ typedef struct ts_circular_list ConcurrentCircularList;
 Status ts_circularlist_new(ConcurrentCircularList **list);
 
 /**
- * FIXME
+ * Locks the circular list, providing exclusive access to the calling thread. Caller
+ * is responsible for unlocking the circular list to allow other threads access.
+ *
+ * Params:
+ *    list - The circular list to operate on.
+ * Returns:
+ *    None
  */
 void ts_circularlist_lock(ConcurrentCircularList *list);
 
 /**
- * FIXME
+ * Unlocks the circular list, releasing the exclusive access from the calling thread.
+ *
+ * Params:
+ *    list - The circular list to operate on.
+ * Returns:
+ *    None
  */
 void ts_circularlist_unlock(ConcurrentCircularList *list);
 

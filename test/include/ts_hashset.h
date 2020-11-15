@@ -65,12 +65,23 @@ Status ts_hashset_new(ConcurrentHashSet **set, long (*hash)(void *, long),
         long capacity, double loadFactor);
 
 /**
- * FIXME
+ * Locks the hashset, providing exclusive access to the calling thread. Caller
+ * is responsible for unlocking the hashset to allow other threads access.
+ *
+ * Params:
+ *    set - The hashset to operate on.
+ * Returns:
+ *    None
  */
 void ts_hashset_lock(ConcurrentHashSet *set);
 
 /**
- * FIXME
+ * Unlocks the hashset, releasing the exclusive access from the calling thread.
+ *
+ * Params:
+ *    set - The hashset to operate on.
+ * Returns:
+ *    None
  */
 void ts_hashset_unlock(ConcurrentHashSet *set);
 
