@@ -26,11 +26,11 @@
 #include "arraylist.h"
 
 /*
- * The structure for the arraylist ADT.
+ * Struct for the arraylist ADT.
  */
 struct arraylist {
-    void **data;        /* The arraylist's elements */
-    long size;          /* The arraylist's size */
+    void **data;        /* The list of elements */
+    long size;          /* The arraylist's current size */
     long capacity;      /* The arraylist's current capacity */
 };
 
@@ -49,11 +49,13 @@ Status arraylist_new(ArrayList **list, long capacity) {
     size_t bytes = (cap * sizeof(void *));
     void **array = (void **)malloc(bytes);
 
+    /* Checks for allocation failures */
     if (array == NULL) {
         free(temp);
         return STAT_ALLOC_FAILURE;
     }
 
+    /* Initializes the remainder of struct members */
     temp->data = array;
     temp->size = 0L;
     temp->capacity = cap;
@@ -64,10 +66,12 @@ Status arraylist_new(ArrayList **list, long capacity) {
 
 /* Macro used to validate the given index i */
 #define INDEX_VALID(i,N) ( ( 0L <= (i) && (i) < (N) ) ? TRUE : FALSE )
+/* Macro to check if the list is currently empty */
+#define IS_EMPTY(x)  ( ((x)->size == 0L) ? TRUE : FALSE )
 
 /*
  * Extends the arraylist's capacity to the new specified capacity. Returns TRUE if
- * extension was successful, FALSE if not.
+ * extension was successful, or FALSE if not.
  */
 static Boolean ensureCapacity(ArrayList *list, long newCapacity) {
 
@@ -83,26 +87,6 @@ static Boolean ensureCapacity(ArrayList *list, long newCapacity) {
     }
 
     return status;
-}
-
-/*
- * Shifts all items in arraylist to the left onto the specified index. Performed to
- * fill gaps after removals.
- */
-static void shiftLeft(ArrayList *list, long index) {
-    long i;
-    for (i = index; i < list->size - 1; i++)
-        list->data[i] = list->data[i + 1];
-}
-
-/*
- * Shifts all items in arraylist to the right after the specified index. Performed to
- * create gaps for insertions.
- */
-static void shiftRight(ArrayList *list, long index) {
-    long i;
-    for (i = list->size; i > index; i--)
-        list->data[i] = list->data[i - 1];
 }
 
 Status arraylist_add(ArrayList *list, void *item) {
@@ -129,7 +113,10 @@ Status arraylist_insert(ArrayList *list, long i, void *item) {
             return STAT_ALLOC_FAILURE;
 
     /* Shift items to make room for insertion */
-    shiftRight(list, i);
+    long j;
+    for (j = list->size; j > i; j--)
+        list->data[j] = list->data[j - 1];
+    /* Insert data into new index */
     list->data[i] = item;
     list->size++;
 
@@ -139,12 +126,13 @@ Status arraylist_insert(ArrayList *list, long i, void *item) {
 Status arraylist_get(ArrayList *list, long i, void **item) {
 
     /* Checks if the list is currently empty */
-    if (arraylist_isEmpty(list) == TRUE)
+    if (IS_EMPTY(list) == TRUE)
         return STAT_STRUCT_EMPTY;
 
     /* Checks if the index is valid */
     if (INDEX_VALID(i, list->size) == FALSE)
         return STAT_INVALID_INDEX;
+    /* Retrieves the item, saves into pointer */
     *item = list->data[i];
 
     return STAT_SUCCESS;
@@ -153,12 +141,13 @@ Status arraylist_get(ArrayList *list, long i, void **item) {
 Status arraylist_set(ArrayList *list, long i, void *item, void **previous) {
 
     /* Checks if the list is currently empty */
-    if (arraylist_isEmpty(list) == TRUE)
+    if (IS_EMPTY(list) == TRUE)
         return STAT_STRUCT_EMPTY;
     /* Checks if the index is valid */
     if (INDEX_VALID(i, list->size) == FALSE)
         return STAT_INVALID_INDEX;
 
+    /* Replaces the old item with the new one */
     *previous = list->data[i];
     list->data[i] = item;
 
@@ -168,15 +157,18 @@ Status arraylist_set(ArrayList *list, long i, void *item, void **previous) {
 Status arraylist_remove(ArrayList *list, long i, void **item) {
 
     /* Checks if the list is currently empty */
-    if (arraylist_isEmpty(list) == TRUE)
+    if (IS_EMPTY(list) == TRUE)
         return STAT_STRUCT_EMPTY;
     /* Checks if the index is valid */
     if (INDEX_VALID(i, list->size) == FALSE)
         return STAT_INVALID_INDEX;
 
+    /* Retrieve removed item, saves to pointer */
     *item = list->data[i];
     /* Shift items to fill gap after removal */
-    shiftLeft(list, i);
+    long j;
+    for (j = i; j < list->size - 1; j++)
+        list->data[j] = list->data[j + 1];
     list->size--;
 
     return STAT_SUCCESS;
@@ -195,7 +187,7 @@ Status arraylist_ensureCapacity(ArrayList *list, long capacity) {
 Status arraylist_trimToSize(ArrayList *list) {
 
     /* Checks if the list is currently empty */
-    if (arraylist_isEmpty(list) == TRUE)
+    if (IS_EMPTY(list) == TRUE)
         return STAT_STRUCT_EMPTY;
 
     /* Only trim if size < capacity */
@@ -207,22 +199,21 @@ Status arraylist_trimToSize(ArrayList *list) {
 }
 
 /*
- * Local method to clear out the arraylist of its elements. If destructor != NULL,
- * it is invoked on each element after removal.
+ * Clears out the list of all its elements. Frees up all reserved memory
+ * back to the heap.
  */
 static void clearList(ArrayList *list, void (*destructor)(void *)) {
 
-    void *temp;
-
-    while (arraylist_isEmpty(list) == FALSE) {
-        temp = list->data[--list->size];
+    long i;
+    for (i = 0L; i < list->size; i++) {
         if (destructor != NULL)
-            (*destructor)(temp);
+            (*destructor)(list->data[i]);
     }
 }
 
 void arraylist_clear(ArrayList *list, void (*destructor)(void *)) {
     clearList(list, destructor);
+    list->size = 0L;
 }
 
 long arraylist_size(ArrayList *list) {
@@ -234,11 +225,11 @@ long arraylist_capacity(ArrayList *list) {
 }
 
 Boolean arraylist_isEmpty(ArrayList *list) {
-    return ( list->size == 0L ) ? TRUE : FALSE;
+    return IS_EMPTY(list);
 }
 
 /*
- * Local method to allocate and create an array representation of the arraylist.
+ * Generates and returns an array representation of the array list.
  */
 static void **generateArray(ArrayList *list) {
 
@@ -262,19 +253,22 @@ static void **generateArray(ArrayList *list) {
 Status arraylist_toArray(ArrayList *list, Array **array) {
 
     /* Do not create the array if currently empty */
-    if (arraylist_isEmpty(list) == TRUE)
+    if (IS_EMPTY(list) == TRUE)
         return STAT_STRUCT_EMPTY;
 
+    /* Generate the array of arraylist items */
     void **items = generateArray(list);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
+    /* Allocate memory for the array struct */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
         return STAT_ALLOC_FAILURE;
     }
 
+    /* Initializes the remaining struct members */
     temp->items = items;
     temp->len = list->size;
     *array = temp;
@@ -285,17 +279,17 @@ Status arraylist_toArray(ArrayList *list, Array **array) {
 Status arraylist_iterator(ArrayList *list, Iterator **iter) {
 
     Iterator *temp = NULL;
-    void **items = NULL;
 
-    if (arraylist_isEmpty(list) == TRUE)
+    /* Checks if the list is currently empty */
+    if (IS_EMPTY(list) == TRUE)
         return STAT_STRUCT_EMPTY;
 
-    /* Generates the array of stack items for iterator */
-    items = generateArray(list);
+    /* Generates the array of items for iterator */
+    void **items = generateArray(list);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
-    /* Creates a new iterator with the stack items */
+    /* Creates a new iterator with the items */
     Status status = iterator_new(&temp, items, list->size);
     if (status != STAT_SUCCESS) {
         free(items);

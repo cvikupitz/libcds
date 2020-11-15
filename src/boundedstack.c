@@ -190,12 +190,12 @@ Status boundedstack_iterator(BoundedStack *stack, Iterator **iter) {
     if (boundedstack_isEmpty(stack) == TRUE)
         return STAT_STRUCT_EMPTY;
 
-    /* Generates the array of stack items for iterator */
+    /* Generates the array of items for iterator */
     void **items = generateArray(stack);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
-    /* Creates a new iterator with the stack items */
+    /* Creates a new iterator with th items */
     Status status = iterator_new(&temp, items, stack->size);
     if (status != STAT_SUCCESS) {
         free(items);

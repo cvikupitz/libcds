@@ -1,8 +1,20 @@
 ### Refinements
-- [ ] Code Cleanup
-- [ ] Comments
-- [ ] isEmpty checks
 - [ ] pthread checks
+
+### Cleanup
+- [x] Iterator
+- [x] Stack
+- [x] BoundedStack
+- [x] Queue
+- [x] BoundedQueue
+- [x] Circular List
+- [x] ArrayList
+- [x] LinkedList
+- [x] Heap
+- [x] HashMap
+- [x] HashSet
+- [ ] TreeMap
+- [ ] TreeSet
 
 ### Testing
 - [x] Iterator
@@ -10,7 +22,6 @@
 - [x] BoundedStack
 - [x] Queue
 - [x] BoundedQueue
-- [x] Deque
 - [x] Circular List
 - [x] ArrayList
 - [x] LinkedList

@@ -201,12 +201,12 @@ Status boundedqueue_iterator(BoundedQueue *queue, Iterator **iter) {
     if (boundedqueue_isEmpty(queue) == TRUE)
         return STAT_STRUCT_EMPTY;
 
-    /* Generates the array of stack items for iterator */
+    /* Generates the array of items for iterator */
     void **items = generateArray(queue);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
-    /* Creates a new iterator with the stack items */
+    /* Creates a new iterator with the items */
     Status status = iterator_new(&temp, items, queue->size);
     if (status != STAT_SUCCESS) {
         free(items);

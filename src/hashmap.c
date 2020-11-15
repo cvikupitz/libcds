@@ -27,7 +27,7 @@
 #include "hashmap.h"
 
 /*
- * The struct for the hashmap entry ADT.
+ * Struct for the hashmap entry ADT.
  */
 struct hm_entry {
     HmEntry *next;      /* Pointer to the next bucket */
@@ -36,11 +36,11 @@ struct hm_entry {
 };
 
 /*
- * The struct for the hashmap ADT.
+ * Struct for the hashmap ADT.
  */
 struct hashmap {
     HmEntry **buckets;  /* Array of buckets containing the entries */
-    long size;          /* The hashmap's size */
+    long size;          /* The hashmap's current size */
     long capacity;      /* The hashmap's current capacity */
     long changes;       /* Number of changes since last trigger */
     double load;        /* The hashmap's current load */
@@ -70,11 +70,13 @@ Status hashmap_new(HashMap **map, long capacity, double loadFactor) {
     size_t bytes = (cap * sizeof(HmEntry *));
     HmEntry **buckets = (HmEntry **)malloc(bytes);
 
+    /* Checks for allocation failures */
     if (buckets == NULL) {
         free(temp);
         return STAT_ALLOC_FAILURE;
     }
 
+    /* Initializes the remaining struct members */
     temp->buckets = buckets;
     temp->size = 0L;
     temp->capacity = cap;
@@ -108,7 +110,7 @@ static long djb2(char *key, long N) {
 }
 
 /*
- * Local method to fetch the entry from the map and returns it.
+ * Fetches the entry from the map and returns it.
  */
 static HmEntry *fetchEntry(HashMap *map, char *key, long *index) {
 
@@ -124,7 +126,7 @@ static HmEntry *fetchEntry(HashMap *map, char *key, long *index) {
 }
 
 /*
- * Local method that allocates and returns a new hashmap entry ADT.
+ * Allocates and returns a new hashmap entry ADT.
  */
 static HmEntry *mallocEntry(char *key, void *value) {
 
@@ -145,8 +147,7 @@ static HmEntry *mallocEntry(char *key, void *value) {
 }
 
 /*
- * Local method to resize the hashmap by doubling its capacity once its loadfactor
- * is reached.
+ * Resizes the hashmap by doubling its capacity once its loadfactor is reached.
  */
 static void resizeMap(HashMap *map) {
 
@@ -189,6 +190,9 @@ static void resizeMap(HashMap *map) {
 /* Default trigger: check load factor after this many map changes */
 #define TRIGGER 100L
 
+/* Macro to check if the map is currently empty */
+#define IS_EMPTY(x)  ( ((x)->size == 0L) ? TRUE : FALSE )
+
 Status hashmap_put(HashMap *map, char *key, void *value, void **previous) {
 
     Status status;
@@ -212,6 +216,7 @@ Status hashmap_put(HashMap *map, char *key, void *value, void **previous) {
         /* Otherwise, allocate and insert the new entry */
         HmEntry *entry = mallocEntry(key, value);
         if (entry != NULL) {
+            /* Add bucket into targeted index */
             entry->next = map->buckets[i];
             map->buckets[i] = entry;
             map->changes++;
@@ -234,13 +239,15 @@ Boolean hashmap_containsKey(HashMap *map, char *key) {
 Status hashmap_get(HashMap *map, char *key, void **value) {
 
     /* Checks if the map is currently empty */
-    if (hashmap_isEmpty(map) == TRUE)
+    if (IS_EMPTY(map) == TRUE)
         return STAT_STRUCT_EMPTY;
 
+    /* Fetches the node with the specified key */
     long index;
     HmEntry *temp = fetchEntry(map, key, &index);
-    if (temp == NULL)   /* Entry not found */
+    if (temp == NULL)
         return STAT_NOT_FOUND;
+    /* Retrieves the value, saves into pointer */
     *value = temp->payload;
 
     return STAT_SUCCESS;
@@ -249,15 +256,16 @@ Status hashmap_get(HashMap *map, char *key, void **value) {
 Status hashmap_remove(HashMap *map, char *key, void **value) {
 
     /* Checks if the map is currently empty */
-    if (hashmap_isEmpty(map) == TRUE)
+    if (IS_EMPTY(map) == TRUE)
         return STAT_STRUCT_EMPTY;
 
+    /* Fetches the node with the specified key */
     long i;
     HmEntry *temp = fetchEntry(map, key, &i);
-    if (temp == NULL)   /* Entry not found */
+    if (temp == NULL)
         return STAT_NOT_FOUND;
 
-    /* Fetch the entry from the hashmap */
+    /* Fetch the node with the key's entry */
     HmEntry *prev = NULL, *curr = map->buckets[i];
     while (curr != temp) {
         prev = curr;
@@ -282,8 +290,8 @@ Status hashmap_remove(HashMap *map, char *key, void **value) {
 }
 
 /*
- * Local method to clear out the hashmap of its elements. If destructor != NULL, it is
- * invoked on each element after removal.
+ * Clears out the hashmap of all its elements. Frees up all reserved memory
+ * back to the heap.
  */
 static void clearMap(HashMap *map, void (*destructor)(void *)) {
 
@@ -317,7 +325,7 @@ long hashmap_size(HashMap *map) {
 }
 
 Boolean hashmap_isEmpty(HashMap *map) {
-    return ( map->size == 0L ) ? TRUE : FALSE;
+    return IS_EMPTY(map);
 }
 
 Status hashmap_keyArray(HashMap *map, Array **keys) {
@@ -328,9 +336,10 @@ Status hashmap_keyArray(HashMap *map, Array **keys) {
     char **items = NULL;
 
     /* Does not create the array if empty */
-    if (hashmap_isEmpty(map) == TRUE)
+    if (IS_EMPTY(map) == TRUE)
         return STAT_STRUCT_EMPTY;
 
+    /* Allocates memory for the array struct */
     Array *array = (Array *)malloc(sizeof(Array));
     if (array == NULL)
         return STAT_ALLOC_FAILURE;
@@ -355,7 +364,7 @@ Status hashmap_keyArray(HashMap *map, Array **keys) {
 }
 
 /*
- * Local method to allocate and create an array representation of the hashmap.
+ * Allocates and create an array representation of the hashmap.
  */
 static HmEntry **generateEntryArray(HashMap *map) {
 
@@ -380,19 +389,22 @@ static HmEntry **generateEntryArray(HashMap *map) {
 Status hashmap_entryArray(HashMap *map, Array **entries) {
 
     /* Does not create array if currently empty */
-    if (hashmap_isEmpty(map) == TRUE)
+    if (IS_EMPTY(map) == TRUE)
         return STAT_STRUCT_EMPTY;
 
+    /* Generates the array of hashmap entries */
     HmEntry **items = generateEntryArray(map);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
+    /* Allocates memory for the array struct */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
         return STAT_ALLOC_FAILURE;
     }
 
+    /* Initializes the remaining struct members */
     temp->items = (void **)items;
     temp->len = map->size;
     *entries = temp;
@@ -403,14 +415,13 @@ Status hashmap_entryArray(HashMap *map, Array **entries) {
 Status hashmap_iterator(HashMap *map, Iterator **iter) {
 
     Iterator *temp = NULL;
-    HmEntry **items = NULL;
 
     /* Does not create array if currently empty */
-    if (hashmap_isEmpty(map) == TRUE)
+    if (IS_EMPTY(map) == TRUE)
         return STAT_STRUCT_EMPTY;
 
     /* Generates the array of stack items for iterator */
-    items = generateEntryArray(map);
+    HmEntry **items = generateEntryArray(map);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
