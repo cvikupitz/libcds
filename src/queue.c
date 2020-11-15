@@ -26,20 +26,20 @@
 #include "queue.h"
 
 /*
- * The struct for a node inside the queue.
+ * Struct for a node inside the queue.
  */
 typedef struct node {
-    struct node *next;  /* Pointer to the next node */
-    void *data;         /* Pointer to hold the element */
+    struct node *next;  /* Points to the next node */
+    void *data;         /* Pointer that holds the element */
 } Node;
 
 /*
  * The struct for the queue ADT.
  */
 struct queue {
-    Node *head;         /* Pointer to head queue node */
-    Node *tail;         /* Pointer to tail queue node */
-    long size;          /* The queue's size */
+    Node *head;         /* Pointer to the queue's head */
+    Node *tail;         /* Pointer to the queue's tail */
+    long size;          /* The queue's current size */
 };
 
 Status queue_new(Queue **queue) {
@@ -58,17 +58,20 @@ Status queue_new(Queue **queue) {
     return STAT_SUCCESS;
 }
 
+/* Macro to check if the queue is currently empty */
+#define IS_EMPTY(x)  ( ((x)->size == 0L) ? TRUE : FALSE )
+
 Status queue_add(Queue *queue, void *item) {
 
     /* Allocate the node for item insertion */
     Node *node = (Node *)malloc(sizeof(Node));
     if (node == NULL)
         return STAT_ALLOC_FAILURE;
-
     node->next = NULL;
     node->data = item;
+
     /* Edge case: queue is empty, link the front and rear nodes */
-    if (queue->size == 0L)
+    if (IS_EMPTY(queue) == TRUE)
         queue->head = node;
     /* Otherwise, links to the rear node */
     else
@@ -82,8 +85,9 @@ Status queue_add(Queue *queue, void *item) {
 Status queue_peek(Queue *queue, void **first) {
 
     /* Checks of the queue is empty */
-    if (queue_isEmpty(queue) == TRUE)
+    if (IS_EMPTY(queue) == TRUE)
         return STAT_STRUCT_EMPTY;
+    /* Extract the element, saves to pointer */
     *first = queue->head->data;
 
     return STAT_SUCCESS;
@@ -92,37 +96,47 @@ Status queue_peek(Queue *queue, void **first) {
 Status queue_poll(Queue *queue, void **first) {
 
     /* Checks if the queue is empty */
-    if (queue_isEmpty(queue) == TRUE)
+    if (IS_EMPTY(queue) == TRUE)
         return STAT_STRUCT_EMPTY;
 
+    /* Unlink the head node from the queue */
     Node *temp = queue->head;
     queue->head = temp->next;
+    queue->size--;
     /* Edge case: one item, nullify both head and tail pointers */
-    if (queue->size == 1L)
+    if (IS_EMPTY(queue) == TRUE)
         queue->tail = NULL;
     /* Free the allocated node's struct */
     *first = temp->data;
     free(temp);
-    queue->size--;
 
     return STAT_SUCCESS;
 }
 
 /*
- * Local method to clear out the queue of its elements. If destructor != NULL, it is
- * invoked on each element after removal.
+ * Clears out the queue of all its elements. Frees up all reserved memory
+ * back to the heap.
  */
 static void clearQueue(Queue *queue, void (*destructor)(void *)) {
 
-    void *temp;
+    Node *curr = queue->head, *next = NULL;
+    long i;
 
-    while (queue_poll(queue, &temp) == STAT_SUCCESS)
+    for (i = 0L; i < queue->size; i++) {
+        next = curr->next;
+        /* Frees the allocated memory */
         if (destructor != NULL)
-            (*destructor)(temp);
+            (*destructor)(curr);
+        free(curr);
+        curr = next;
+    }
 }
 
 void queue_clear(Queue *queue, void (*destructor)(void *)) {
     clearQueue(queue, destructor);
+    queue->head = NULL;
+    queue->tail = NULL;
+    queue->size = 0L;
 }
 
 long queue_size(Queue *queue) {
@@ -130,11 +144,11 @@ long queue_size(Queue *queue) {
 }
 
 Boolean queue_isEmpty(Queue *queue) {
-    return ( queue->size == 0L ) ? TRUE : FALSE;
+    return IS_EMPTY(queue);
 }
 
 /*
- * Local method to allocate and create an array representation of the queue.
+ * Generates and returns an array representation of the queue.
  */
 static void **generateArray(Queue *queue) {
 
@@ -158,20 +172,23 @@ static void **generateArray(Queue *queue) {
 
 Status queue_toArray(Queue *queue, Array **array) {
 
-    /* Do not create the array if currently empty */
-    if (queue_isEmpty(queue) == TRUE)
+    /* Checks if the queue is empty */
+    if (IS_EMPTY(queue) == TRUE)
         return STAT_STRUCT_EMPTY;
 
+    /* Generate the array of queue items */
     void **items = generateArray(queue);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
+    /* Allocate memory for the array struct */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
         return STAT_ALLOC_FAILURE;
     }
 
+    /* Initialize the array struct members */
     temp->items = items;
     temp->len = queue->size;
     *array = temp;
@@ -182,17 +199,17 @@ Status queue_toArray(Queue *queue, Array **array) {
 Status queue_iterator(Queue *queue, Iterator **iter) {
 
     Iterator *temp = NULL;
-    void **items = NULL;
 
-    if (queue_isEmpty(queue) == TRUE)
+    /* Checks if the queue is empty */
+    if (IS_EMPTY(queue) == TRUE)
         return STAT_STRUCT_EMPTY;
 
-    /* Generates the array of stack items for iterator */
-    items = generateArray(queue);
+    /* Generates the array of items for iterator */
+    void **items = generateArray(queue);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
-    /* Creates a new iterator with the stack items */
+    /* Creates a new iterator with the items */
     Status status = iterator_new(&temp, items, queue->size);
     if (status != STAT_SUCCESS) {
         free(items);

@@ -26,12 +26,12 @@
 #include "heap.h"
 
 /*
- * The struct for the heap ADT
+ * Struct for the heap ADT.
  */
 struct heap {
     int (*cmp)(void *, void *); /* Function for comparing the heap's elements */
-    void **data;                /* Array to store heap's elements */
-    long size;                  /* The heap's size */
+    void **data;                /* Array of the heap elements */
+    long size;                  /* The heap's current size */
     long capacity;              /* The heap's current capacity */
 };
 
@@ -50,11 +50,13 @@ Status heap_new(Heap **heap, long capacity, int (*comparator)(void *, void *)) {
     size_t bytes = (cap * sizeof(void *));
     void **array = (void **)malloc(bytes);
 
+    /* Checks for allocation failures */
     if (array == NULL) {
         free(heap);
         return STAT_ALLOC_FAILURE;
     }
 
+    /* Initializes the remainder of struct members */
     temp->data = array;
     temp->size = 0L;
     temp->capacity = cap;
@@ -81,6 +83,9 @@ Status heap_new(Heap **heap, long capacity, int (*comparator)(void *, void *)) {
 /* Macro for comparing heap items given the indecies; used for readability */
 #define CMP(x,y)         ( (*heap->cmp)(heap->data[x], heap->data[y]) )
 
+/* Macro to check if the heap is currently empty */
+#define IS_EMPTY(x)  ( ((x)->size == 0L) ? TRUE : FALSE )
+
 /*
  * Swaps two elements in the array of items given the two indecies.
  */
@@ -91,8 +96,7 @@ static void swap(void **data, long i, long j) {
 }
 
 /*
- * Local method to update the heap via heapifying upwards. Needs to be done after
- * an insertion.
+ * Updates the heap via heapifying upwards. Needs to be done after an insertion.
  */
 static void upheap(Heap *heap) {
 
@@ -105,8 +109,7 @@ static void upheap(Heap *heap) {
 }
 
 /*
- * Local method to update the heap via heapifying downwards. Needs to be done after
- * a deletion.
+ * Updates the heap via heapifying downwards. Needs to be done after a deletion.
  */
 static void downheap(Heap *heap) {
 
@@ -114,8 +117,7 @@ static void downheap(Heap *heap) {
     while (HAS_LEFT(index, heap->size) == TRUE) {
         long childIndex = LEFT_CHILD(index);
         /* Advance downwards while lesser items are below */
-        if (HAS_RIGHT(index, heap->size) == TRUE
-                && CMP(RIGHT_CHILD(index), LEFT_CHILD(index)) < 0)
+        if (HAS_RIGHT(index, heap->size) == TRUE && CMP(RIGHT_CHILD(index), LEFT_CHILD(index)) < 0)
             childIndex = RIGHT_CHILD(index);
 
         if (CMP(index, childIndex) < 0)
@@ -162,8 +164,9 @@ Status heap_insert(Heap *heap, void *item) {
 Status heap_peek(Heap *heap, void **min) {
 
     /* Checks if the heap is empty */
-    if (heap_isEmpty(heap) == TRUE)
+    if (IS_EMPTY(heap) == TRUE)
         return STAT_STRUCT_EMPTY;
+    /* Retrieves the min item, saves into pointer */
     *min = heap->data[0];
 
     return STAT_SUCCESS;
@@ -172,9 +175,10 @@ Status heap_peek(Heap *heap, void **min) {
 Status heap_poll(Heap *heap, void **min) {
 
     /* Checks if the heap is empty */
-    if (heap_isEmpty(heap) == TRUE)
+    if (IS_EMPTY(heap) == TRUE)
         return STAT_STRUCT_EMPTY;
 
+    /* Retrieves the min item, saves into pointer */
     *min = heap->data[0];
     heap->data[0] = heap->data[--heap->size];
     /* Downheap to update the heap */
@@ -184,20 +188,21 @@ Status heap_poll(Heap *heap, void **min) {
 }
 
 /*
- * Local method to clear out the heap of its elements. If destructor != NULL, it is
- * invoked on each element after removal.
+ * Clears out the heap of all its elements. Frees up all reserved memory
+ * back to the heap.
  */
 static void clearHeap(Heap *heap, void (*destructor)(void *)) {
 
-    void *temp;
-
-    while (heap_poll(heap, &temp) == STAT_SUCCESS)
+    long i;
+    for (i = 0L; i < heap->size; i++) {
         if (destructor != NULL)
-            (*destructor)(temp);
+            (*destructor)(heap->data[i]);
+    }
 }
 
 void heap_clear(Heap *heap, void (*destructor)(void *)) {
     clearHeap(heap, destructor);
+    heap->size = 0;
 }
 
 long heap_size(Heap *heap) {
@@ -205,11 +210,11 @@ long heap_size(Heap *heap) {
 }
 
 Boolean heap_isEmpty(Heap *heap) {
-    return ( heap->size == 0L ) ? TRUE : FALSE;
+    return IS_EMPTY(heap);
 }
 
 /*
- * Local method to allocate and create an array representation of the heap.
+ * Allocates and creates an array representation of the heap.
  */
 static void **generateArray(Heap *heap) {
 
@@ -233,19 +238,22 @@ static void **generateArray(Heap *heap) {
 Status heap_toArray(Heap *heap, Array **array) {
 
     /* Do not create the array if currently empty */
-    if (heap_isEmpty(heap) == TRUE)
+    if (IS_EMPTY(heap) == TRUE)
         return STAT_STRUCT_EMPTY;
 
+    /* Generate the array of heap items */
     void **items = generateArray(heap);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
+    /* Allocates memory for the array struct */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
         return STAT_ALLOC_FAILURE;
     }
 
+    /* Initializes the remaining struct members */
     temp->items = items;
     temp->len = heap->size;
     *array = temp;
@@ -256,18 +264,17 @@ Status heap_toArray(Heap *heap, Array **array) {
 Status heap_iterator(Heap *heap, Iterator **iter) {
 
     Iterator *temp = NULL;
-    void **items = NULL;
 
     /* Does not create the array if currently empty */
-    if (heap_isEmpty(heap) == TRUE)
+    if (IS_EMPTY(heap) == TRUE)
         return STAT_STRUCT_EMPTY;
 
-    /* Generates the array of stack items for iterator */
-    items = generateArray(heap);
+    /* Generates the array of items for iterator */
+    void **items = generateArray(heap);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
-    /* Creates a new iterator with the stack items */
+    /* Creates a new iterator with the items */
     Status status = iterator_new(&temp, items, heap->size);
     if (status != STAT_SUCCESS) {
         free(items);

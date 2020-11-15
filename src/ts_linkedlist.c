@@ -78,15 +78,6 @@ Status ts_linkedlist_addLast(ConcurrentLinkedList *list, void *item) {
     return status;
 }
 
-Status ts_linkedlist_add(ConcurrentLinkedList *list, void *item) {
-
-    LOCK(list);
-    Status status = linkedlist_add(list->instance, item);
-    UNLOCK(list);
-
-    return status;
-}
-
 Status ts_linkedlist_insert(ConcurrentLinkedList *list, long i, void *item) {
 
     LOCK(list);

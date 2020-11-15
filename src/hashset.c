@@ -26,11 +26,11 @@
 #include "hashset.h"
 
 /*
- * The struct for an entry in the HashSet ADT.
+ * Struct for an entry in the HashSet ADT.
  */
 typedef struct hs_entry {
     struct hs_entry *next;      /* Pointer to the next bucket */
-    void *payload;              /* The element itself */
+    void *payload;              /* Points to the element */
 } HsEntry;
 
 /*
@@ -40,7 +40,7 @@ struct hashset {
     long (*hash)(void *, long); /* Hashing function for hashset items */
     int (*cmp)(void *, void *); /* Comparator function for hashset items */
     HsEntry **buckets;          /* Array of buckets containing the elements */
-    long size;                  /* The hashset's size */
+    long size;                  /* The hashset's current size */
     long capacity;              /* The hashset's current capacity */
     long changes;               /* Number of changes since last trigger */
     double load;                /* The hashset's current load */
@@ -71,11 +71,13 @@ Status hashset_new(HashSet **set, long (*hash)(void *, long),
     size_t bytes = (cap * sizeof(HsEntry *));
     HsEntry **buckets = (HsEntry **)malloc(bytes);
 
+    /* Checks for allocation failures */
     if (buckets == NULL) {
         free(temp);
         return STAT_ALLOC_FAILURE;
     }
 
+    /* Initializes the remaining struct members */
     temp->hash = hash;
     temp->cmp = comparator;
     temp->buckets = buckets;
@@ -95,7 +97,7 @@ Status hashset_new(HashSet **set, long (*hash)(void *, long),
 }
 
 /*
- * Local method to fetch the item from the set and returns it.
+ * Fetches the entry with the item from the set and returns it.
  */
 static HsEntry *fetchEntry(HashSet *set, void *item, long *index) {
 
@@ -111,7 +113,7 @@ static HsEntry *fetchEntry(HashSet *set, void *item, long *index) {
 }
 
 /*
- * Local method that allocates and returns a new hashset entry ADT.
+ * Allocates and returns a new hashset entry ADT.
  */
 static HsEntry *mallocEntry(void *item) {
 
@@ -125,8 +127,7 @@ static HsEntry *mallocEntry(void *item) {
 }
 
 /*
- * Local method to resize the hashset by doubling its capacity once its loadfactor
- * is reached.
+ * Resizes the hashset by doubling its capacity once its loadfactor is reached.
  */
 static void resizeSet(HashSet *set) {
 
@@ -168,6 +169,9 @@ static void resizeSet(HashSet *set) {
 /* Default trigger: check load factor after this many changes */
 #define TRIGGER 100L
 
+/* Macro to check if the map is currently empty */
+#define IS_EMPTY(x)  ( ((x)->size == 0L) ? TRUE : FALSE )
+
 Status hashset_add(HashSet *set, void *item) {
 
     Status status;
@@ -185,6 +189,7 @@ Status hashset_add(HashSet *set, void *item) {
         /* Allocates and insert new entry */
         HsEntry *entry = mallocEntry(item);
         if (entry != NULL) {
+            /* Adds the new element into the set */
             entry->next = set->buckets[i];
             set->buckets[i] = entry;
             set->changes++;
@@ -209,7 +214,7 @@ Boolean hashset_contains(HashSet *set, void *item) {
 Status hashset_remove(HashSet *set, void *item, void (*destructor)(void *)) {
 
     /* Checks if the set is currently empty */
-    if (hashset_isEmpty(set) == TRUE)
+    if (IS_EMPTY(set) == TRUE)
         return STAT_STRUCT_EMPTY;
 
     long i;
@@ -224,6 +229,7 @@ Status hashset_remove(HashSet *set, void *item, void (*destructor)(void *)) {
         prev = curr;
         curr = curr->next;
     }
+    /* Unlinks the bucket item from the set */
     if (prev == NULL)
         set->buckets[i] = temp->next;
     else
@@ -241,8 +247,8 @@ Status hashset_remove(HashSet *set, void *item, void (*destructor)(void *)) {
 }
 
 /*
- * Local method to clear out the hashset of its elements. If destructor != NULL, it is
- * invoked on each element after removal.
+ * Clears out the hashset of all its elements. Frees up all reserved memory
+ * back to the heap.
  */
 static void clearSet(HashSet *set, void (*destructor)(void *)) {
 
@@ -275,9 +281,12 @@ long hashset_size(HashSet *set) {
 }
 
 Boolean hashset_isEmpty(HashSet *set) {
-    return ( set->size == 0L ) ? TRUE : FALSE;
+    return IS_EMPTY(set);
 }
 
+/*
+ * Allocates and creates an array representation of the hashset.
+ */
 static void **generateArray(HashSet *set) {
 
     HsEntry *temp = NULL;
@@ -302,19 +311,22 @@ static void **generateArray(HashSet *set) {
 Status hashset_toArray(HashSet *set, Array **array) {
 
     /* Do not create the array if currently empty */
-    if (hashset_isEmpty(set) == TRUE)
+    if (IS_EMPTY(set) == TRUE)
         return STAT_STRUCT_EMPTY;
 
+    /* Generate the array of hashset items */
     void **items = generateArray(set);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
+    /* Allocate memory for the array struct */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
         return STAT_ALLOC_FAILURE;
     }
 
+    /* Initializes the remaining struct members */
     temp->items = items;
     temp->len = set->size;
     *array = temp;
@@ -325,18 +337,17 @@ Status hashset_toArray(HashSet *set, Array **array) {
 Status hashset_iterator(HashSet *set, Iterator **iter) {
 
     Iterator *temp = NULL;
-    void **items = NULL;
 
     /* Do not create the array if currently empty */
-    if (hashset_isEmpty(set) == TRUE)
+    if (IS_EMPTY(set) == TRUE)
         return STAT_STRUCT_EMPTY;
 
-    /* Generates the array of stack items for iterator */
-    items = generateArray(set);
+    /* Generates the array of items for iterator */
+    void **items = generateArray(set);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
-    /* Creates a new iterator with the stack items */
+    /* Creates a new iterator with the items */
     Status status = iterator_new(&temp, items, set->size);
     if (status != STAT_SUCCESS) {
         free(items);

@@ -5,11 +5,10 @@
 CC=gcc
 CFLAGS=-W -Wall -g
 IFLAG=-Iinclude
-OBJS=arraylist.o boundedstack.o boundedqueue.o circularlist.o deque.o hashmap.o hashset.o \
-     heap.o iterator.o linkedlist.o queue.o stack.o treemap.o treeset.o \
-     ts_arraylist.o ts_boundedqueue.o ts_boundedstack.o ts_circularlist.o ts_deque.o \
-     ts_hashmap.o ts_hashset.o ts_heap.o ts_iterator.o ts_linkedlist.o ts_queue.o ts_stack.o \
-     ts_treemap.o ts_treeset.o
+OBJS=arraylist.o boundedstack.o boundedqueue.o circularlist.o hashmap.o hashset.o heap.o iterator.o \
+     linkedlist.o queue.o stack.o treemap.o treeset.o \
+     ts_arraylist.o ts_boundedqueue.o ts_boundedstack.o ts_circularlist.o ts_hashmap.o ts_hashset.o \
+     ts_heap.o ts_iterator.o ts_linkedlist.o ts_queue.o ts_stack.o ts_treemap.o ts_treeset.o
 LIB=libcds.a
 
 # Compiles and builds the static library
@@ -32,8 +31,6 @@ boundedstack.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c boundedstack.c
 circularlist.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c circularlist.c
-deque.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c deque.c
 hashmap.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c hashmap.c
 hashset.o:
@@ -61,8 +58,6 @@ ts_boundedstack.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c ts_boundedstack.c
 ts_circularlist.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c ts_circularlist.c
-ts_deque.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c ts_deque.c
 ts_hashmap.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c ts_hashmap.c
 ts_hashset.o:

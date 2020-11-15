@@ -1,7 +1,4 @@
 ### Refinements
-- [ ] Code Cleanup
-- [ ] Comments
-- [ ] isEmpty checks
 - [ ] pthread checks
 
 ### Testing
@@ -10,7 +7,6 @@
 - [x] BoundedStack
 - [x] Queue
 - [x] BoundedQueue
-- [x] Deque
 - [x] Circular List
 - [x] ArrayList
 - [x] LinkedList

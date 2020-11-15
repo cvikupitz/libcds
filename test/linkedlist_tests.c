@@ -88,7 +88,7 @@ static void testSingleItem() {
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testSingleItem() - allocation failure");
 
-    stat = linkedlist_add(list, singleItem);
+    stat = linkedlist_addLast(list, singleItem);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
 
     size = linkedlist_size(list);
@@ -192,7 +192,7 @@ static void testInsertions() {
         CU_FAIL_FATAL("ERROR: testInsertions() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        stat = linkedlist_add(list, array[i]);
+        stat = linkedlist_addLast(list, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
@@ -232,7 +232,7 @@ static void testSetItem() {
         CU_FAIL_FATAL("ERROR: testSetItem() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        stat = linkedlist_add(list, array[i]);
+        stat = linkedlist_addLast(list, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
@@ -273,7 +273,7 @@ static void testSequentialDelete() {
         CU_FAIL_FATAL("ERROR: testSequentialDelete() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        stat = linkedlist_add(list, array[i]);
+        stat = linkedlist_addLast(list, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
@@ -300,7 +300,7 @@ static void testRandomDelete() {
         CU_FAIL_FATAL("ERROR: testRandomDelete() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        stat = linkedlist_add(list, array[i]);
+        stat = linkedlist_addLast(list, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
@@ -331,7 +331,7 @@ static void testInvalidIndexAccess() {
         CU_FAIL_FATAL("ERROR: testInvalidIndexAccess() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        stat = linkedlist_add(list, array[i]);
+        stat = linkedlist_addLast(list, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
@@ -380,7 +380,7 @@ static void testLinkedListToArray() {
         CU_FAIL_FATAL("ERROR: testLinkedListToArray() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        stat = linkedlist_add(list, array[i]);
+        stat = linkedlist_addLast(list, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
@@ -410,7 +410,7 @@ static void testLinkedListIterator() {
         CU_FAIL_FATAL("ERROR: testLinkedListIterator() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        stat = linkedlist_add(list, array[i]);
+        stat = linkedlist_addLast(list, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 
@@ -441,7 +441,7 @@ static void testLinkedListClear() {
         CU_FAIL_FATAL("ERROR: testLinkedListClear() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        stat = linkedlist_add(list, array[i]);
+        stat = linkedlist_addLast(list, array[i]);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     }
 

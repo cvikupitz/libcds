@@ -26,19 +26,18 @@
 #include "iterator.h"
 
 /*
- * The iterator ADT struct.
+ * The struct for the Iterator ADT .
  */
 struct iterator {
     void **items;       /* The collection of elements to iterate */
-    long next;          /* The next item in iteration */
-    long len;           /* Size of the item array */
+    long next;          /* Index to next element in iteration */
+    long len;           /* The total number of elements */
 };
 
 Status iterator_new(Iterator **iter, void **items, long len) {
 
+    /* Allocate memory for the struct, check for malloc() errors */
     Iterator *temp = (Iterator *)malloc(sizeof(Iterator));
-
-    /* Check for allocation failure */
     if (temp == NULL)
         return STAT_ALLOC_FAILURE;
 
@@ -57,7 +56,7 @@ Boolean iterator_hasNext(Iterator *iter) {
 
 Status iterator_next(Iterator *iter, void **next) {
 
-    /* Iteration already complete, return with status */
+    /* Return status is the current iteration has already ended */
     if (iter->next == iter->len)
         return STAT_ITERATION_END;
     /* Advances to next item in iteration */

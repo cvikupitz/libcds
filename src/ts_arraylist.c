@@ -51,9 +51,9 @@ Status ts_arraylist_new(ConcurrentArrayList **list, long capacity) {
         return status;
     }
 
-    pthread_mutexattr_init(&attr);
+    pthread_mutexattr_init(&attr);//EAGAIN(no resources),ENOMEM(no memory),EPERM(no permission)
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
-    pthread_mutex_init(&(temp->lock), &attr);
+    pthread_mutex_init(&(temp->lock), &attr);//ENOMEM
     pthread_mutexattr_destroy(&attr);
     *list = temp;
 
