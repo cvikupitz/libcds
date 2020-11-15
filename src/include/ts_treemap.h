@@ -32,10 +32,10 @@
 /**
  * Declaration for the thread-safe TreeMap ADT.
  *
- * A tree-like set storing elements based on key-value pairings. The treemap is sorted
- * by the stored keys based on their natural ordering defined through a comparator
- * provided at construction time. Provides self-balancing capabilities for even
- * distribution.
+ * A red-black tree set storing elements based on key-value pairings. The treemap
+ * is sorted by the stored keys based on their natural ordering defined through a
+ * comparator provided at construction time. Provides self-balancing capabilities
+ * for even distribution.
  *
  * Modeled after the Java 7 TreeMap interface.
  */
@@ -66,12 +66,23 @@ Status ts_treemap_new(ConcurrentTreeMap **tree, int (*keyComparator)(void *, voi
         void (*keyDestructor)(void *));
 
 /**
- * FIXME
+ * Locks the treemap, providing exclusive access to the calling thread. Caller
+ * is responsible for unlocking the treemap to allow other threads access.
+ *
+ * Params:
+ *    tree - The treemap to operate on.
+ * Returns:
+ *    None
  */
 void ts_treemap_lock(ConcurrentTreeMap *tree);
 
 /**
- * FIXME
+ * Unlocks the treemap, releasing the exclusive access from the calling thread.
+ *
+ * Params:
+ *    tree - The treemap to operate on.
+ * Returns:
+ *    None
  */
 void ts_treemap_unlock(ConcurrentTreeMap *tree);
 
@@ -294,7 +305,7 @@ Status ts_treemap_get(ConcurrentTreeMap *tree, void *key, void **value);
 
 /**
  * Retrieves and removes the first (least) entry from the treemap, then stores the
- * removed key and value into '*firstKey' and 'firstValue', respectively.
+ * removed key and value into '*firstKey' and '*firstValue', respectively.
  *
  * Params:
  *    tree - The treemap to operate on.

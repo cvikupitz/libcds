@@ -52,12 +52,23 @@ typedef struct ts_queue ConcurrentQueue;
 Status ts_queue_new(ConcurrentQueue **queue);
 
 /**
- * FIXME
+ * Locks the queue, providing exclusive access to the calling thread. Caller
+ * is responsible for unlocking the queue to allow other threads access.
+ *
+ * Params:
+ *    queue - The queue to operate on.
+ * Returns:
+ *    None
  */
 void ts_queue_lock(ConcurrentQueue *queue);
 
 /**
- * FIXME
+ * Unlocks the queue, releasing the exclusive access from the calling thread.
+ *
+ * Params:
+ *    queue - The queue to operate on.
+ * Returns:
+ *    None
  */
 void ts_queue_unlock(ConcurrentQueue *queue);
 

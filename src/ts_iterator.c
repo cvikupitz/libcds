@@ -25,19 +25,24 @@
 #include <stdlib.h>
 #include "ts_iterator.h"
 
+/*
+ * Struct for the thread-safe iterator.
+ */
 struct ts_iterator {
-    pthread_mutex_t *lock;
-    void **items;
-    long next;
-    long len;
+    pthread_mutex_t *lock;      /* The lock */
+    void **items;               /* Array of iterable elements */
+    long next;                  /* Index that points to next item in iteration */
+    long len;                   /* Total number of elements */
 };
 
 Status ts_iterator_new(ConcurrentIterator **iter, pthread_mutex_t *lock, void **items, long len) {
 
+    /* Allocates memory for the new iterator */
     ConcurrentIterator *temp = (ConcurrentIterator *)malloc(sizeof(ConcurrentIterator));
     if (temp == NULL)
         return STAT_ALLOC_FAILURE;
 
+    /* Initializes the remaining struct members */
     temp->lock = lock;
     temp->items = items;
     temp->next = 0L;

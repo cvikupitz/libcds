@@ -55,12 +55,23 @@ typedef struct ts_hashmap ConcurrentHashMap;
 Status ts_hashmap_new(ConcurrentHashMap **map, long capacity, double loadFactor);
 
 /**
- * FIXME
+ * Locks the hashmap, providing exclusive access to the calling thread. Caller
+ * is responsible for unlocking the hashmap to allow other threads access.
+ *
+ * Params:
+ *    map - The hashmap to operate on.
+ * Returns:
+ *    None
  */
 void ts_hashmap_lock(ConcurrentHashMap *map);
 
 /**
- * FIXME
+ * Unlocks the hashmap, releasing the exclusive access from the calling thread.
+ *
+ * Params:
+ *    map - The hashmap to operate on.
+ * Returns:
+ *    None
  */
 void ts_hashmap_unlock(ConcurrentHashMap *map);
 

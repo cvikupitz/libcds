@@ -53,12 +53,23 @@ typedef struct ts_bounded_queue ConcurrentBoundedQueue;
 Status ts_boundedqueue_new(ConcurrentBoundedQueue **queue, long capacity);
 
 /**
- * FIXME
+ * Locks the queue, providing exclusive access to the calling thread. Caller
+ * is responsible for unlocking the queue to allow other threads access.
+ *
+ * Params:
+ *    queue - The queue to operate on.
+ * Returns:
+ *    None
  */
 void ts_boundedqueue_lock(ConcurrentBoundedQueue *queue);
 
 /**
- * FIXME
+ * Unlocks the queue, releasing the exclusive access from the calling thread.
+ *
+ * Params:
+ *    queue - The queue to operate on.
+ * Returns:
+ *    None
  */
 void ts_boundedqueue_unlock(ConcurrentBoundedQueue *queue);
 

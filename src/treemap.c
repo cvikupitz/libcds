@@ -964,3 +964,7 @@ void *tmentry_getKey(TmEntry *entry) {
 void *tmentry_getValue(TmEntry *entry) {
     return entry->value;
 }
+
+void tmentry_setValue(TmEntry *entry, void *value) {
+    entry->value = value;
+}

@@ -39,10 +39,10 @@ typedef struct tm_entry TmEntry;
 /**
  * Declaration for the TreeMap ADT.
  *
- * A tree-like set storing elements based on key-value pairings. The treemap is sorted
- * by the stored keys based on their natural ordering defined through a comparator
- * provided at construction time. Provides self-balancing capabilities for even
- * distribution.
+ * A red-black tree set storing elements based on key-value pairings. The treemap
+ * is sorted by the stored keys based on their natural ordering defined through a
+ * comparator provided at construction time. Provides self-balancing capabilities
+ * for even distribution.
  *
  * Modeled after the Java 7 TreeMap interface.
  */
@@ -291,7 +291,7 @@ Status treemap_get(TreeMap *tree, void *key, void **value);
 
 /**
  * Retrieves and removes the first (least) entry from the treemap, then stores the
- * removed key and value into '*firstKey' and 'firstValue', respectively.
+ * removed key and value into '*firstKey' and '*firstValue', respectively.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -442,5 +442,16 @@ void *tmentry_getKey(TmEntry *entry);
  *    The entry's value.
  */
 void *tmentry_getValue(TmEntry *entry);
+
+/**
+ * Sets the corresponding value of the entry with the new specified value.
+ *
+ * Params:
+ *    entry - The TmEntry to operate on.
+ *    value - The new value to store.
+ * Returns:
+ *    None
+ */
+void tmentry_setValue(TmEntry *entry, void *value);
 
 #endif  /* _CDS_TREEMAP_H__ */

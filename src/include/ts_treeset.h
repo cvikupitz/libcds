@@ -31,9 +31,9 @@
 /**
  * Declaration for the thread-safe TreeSet ADT.
  *
- * A tree-like set storing elements based on their natural ordering defined through
- * a comparator provided at construction time. Provides self-balancing capabilities
- * for even distribution.
+ * A red-black tree set storing elements based on their natural ordering defined
+ * through a comparator provided at construction time. Provides self-balancing
+ * capabilities for even distribution.
  *
  * Modeled after the Java 7 TreeSet interface.
  */
@@ -56,12 +56,23 @@ typedef struct ts_treeset ConcurrentTreeSet;
 Status ts_treeset_new(ConcurrentTreeSet **tree, int (*comparator)(void *, void *));
 
 /**
- * FIXME
+ * Locks the treeset, providing exclusive access to the calling thread. Caller
+ * is responsible for unlocking the treeset to allow other threads access.
+ *
+ * Params:
+ *    tree - The tree to operate on.
+ * Returns:
+ *    None
  */
 void ts_treeset_lock(ConcurrentTreeSet *tree);
 
 /**
- * FIXME
+ * Unlocks the treeset, releasing the exclusive access from the calling thread.
+ *
+ * Params:
+ *    tree - The treeset to operate on.
+ * Returns:
+ *    None
  */
 void ts_treeset_unlock(ConcurrentTreeSet *tree);
 

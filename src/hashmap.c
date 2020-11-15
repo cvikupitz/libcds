@@ -449,3 +449,7 @@ char *hmentry_getKey(HmEntry *entry) {
 void *hmentry_getValue(HmEntry *entry) {
     return entry->payload;
 }
+
+void hmentry_setValue(HmEntry *entry, void *value) {
+    entry->payload = value;
+}

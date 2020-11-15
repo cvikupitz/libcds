@@ -27,12 +27,17 @@
 #include "queue.h"
 #include "ts_queue.h"
 
+/*
+ * Struct for the thread-safe queue.
+ */
 struct ts_queue {
-    pthread_mutex_t lock;
-    Queue *instance;
+    pthread_mutex_t lock;       /* The lock */
+    Queue *instance;            /* Internal instance of Queue */
 };
 
+/* Macro used for locking the queue */
 #define LOCK(x)    pthread_mutex_lock( &((x)->lock) )
+/* Macro used for unlocking the queue */
 #define UNLOCK(x)  pthread_mutex_unlock( &((x)->lock) )
 
 Status ts_queue_new(ConcurrentQueue **queue) {
@@ -41,16 +46,19 @@ Status ts_queue_new(ConcurrentQueue **queue) {
     Status status;
     pthread_mutexattr_t attr;
 
+    /* Allocates memory for the new queue */
     temp = (ConcurrentQueue *)malloc(sizeof(ConcurrentQueue));
     if (temp == NULL)
         return STAT_ALLOC_FAILURE;
 
+    /* Creates the internal queue instance */
     status = queue_new(&(temp->instance));
     if (status != STAT_SUCCESS) {
         free(temp);
         return status;
     }
 
+    /* Creates pthread_mutex for locking */
     pthread_mutexattr_init(&attr);
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
     pthread_mutex_init(&(temp->lock), &attr);
@@ -134,6 +142,7 @@ Status ts_queue_iterator(ConcurrentQueue *queue, ConcurrentIterator **iter) {
     Array *array;
     Status status;
 
+    /* Creates array of items and locks it */
     LOCK(queue);
     status = queue_toArray(queue->instance, &array);
     if (status != STAT_SUCCESS) {
@@ -141,6 +150,7 @@ Status ts_queue_iterator(ConcurrentQueue *queue, ConcurrentIterator **iter) {
         return status;
     }
 
+    /* Creates the iterator */
     status = ts_iterator_new(iter, &(queue->lock), array->items, array->len);
     if (status != STAT_SUCCESS) {
         FREE_ARRAY(array);

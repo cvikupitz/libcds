@@ -27,12 +27,17 @@
 #include "circularlist.h"
 #include "ts_circularlist.h"
 
+/*
+ * Struct for the thread-safe circular list.
+ */
 struct ts_circular_list {
-    pthread_mutex_t lock;
-    CircularList *instance;
+    pthread_mutex_t lock;       /* The lock */
+    CircularList *instance;     /* Internal isntance of CircularList */
 };
 
+/* Macro used for locking the list */
 #define LOCK(x)    pthread_mutex_lock( &((x)->lock) )
+/* Macro used for unlocking the list */
 #define UNLOCK(x)  pthread_mutex_unlock( &((x)->lock) )
 
 Status ts_circularlist_new(ConcurrentCircularList **list) {
@@ -41,16 +46,19 @@ Status ts_circularlist_new(ConcurrentCircularList **list) {
     Status status;
     pthread_mutexattr_t attr;
 
+    /* Allocates memory for the list instance */
     temp = (ConcurrentCircularList *)malloc(sizeof(ConcurrentCircularList));
     if (temp == NULL)
         return STAT_ALLOC_FAILURE;
 
+    /* Creates the internal list instance */
     status = circularlist_new(&(temp->instance));
     if (status != STAT_SUCCESS) {
         free(temp);
         return status;
     }
 
+    /* Creates the pthread_mutex for locking */
     pthread_mutexattr_init(&attr);
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
     pthread_mutex_init(&(temp->lock), &attr);
@@ -161,6 +169,7 @@ Status ts_circularlist_iterator(ConcurrentCircularList *list, ConcurrentIterator
     Array *array;
     Status status;
 
+    /* Creates the array of items and locks it */
     LOCK(list);
     status = circularlist_toArray(list->instance, &array);
     if (status != STAT_SUCCESS) {
@@ -168,6 +177,7 @@ Status ts_circularlist_iterator(ConcurrentCircularList *list, ConcurrentIterator
         return status;
     }
 
+    /* Creates the iterator */
     status = ts_iterator_new(iter, &(list->lock), array->items, array->len);
     if (status != STAT_SUCCESS) {
         FREE_ARRAY(array);

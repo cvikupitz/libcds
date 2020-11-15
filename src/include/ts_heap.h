@@ -59,12 +59,23 @@ typedef struct ts_heap ConcurrentHeap;
 Status ts_heap_new(ConcurrentHeap **heap, long capacity, int (*comparator)(void *, void *));
 
 /**
- * FIXME
+ * Locks the heap, providing exclusive access to the calling thread. Caller
+ * is responsible for unlocking the heap to allow other threads access.
+ *
+ * Params:
+ *    heap - The heap to operate on.
+ * Returns:
+ *    None
  */
 void ts_heap_lock(ConcurrentHeap *heap);
 
 /**
- * FIXME
+ * Unlocks the heap, releasing the exclusive access from the calling thread.
+ *
+ * Params:
+ *    heap - The heap to operate on.
+ * Returns:
+ *    None
  */
 void ts_heap_unlock(ConcurrentHeap *heap);
 
