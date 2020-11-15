@@ -58,7 +58,7 @@ struct treemap {
  * Struct iterator for populating tree elements via tree traversal.
  */
 typedef struct {
-    void **items;       /* Array of treeset items */
+    void **items;       /* Array of treemap items */
     long next;          /* Next index in the iteration */
 } TreeIter;
 
@@ -692,6 +692,7 @@ static void deleteNode(TreeMap *tree, Node *node, Node **src) {
     Node *splice, *child;
     tree->size--;
 
+    /* Finds the node to be removed, swaps elements within predecessor */
     if (node->left == NULL) {
         splice = node;
         child = node->right;
@@ -707,6 +708,7 @@ static void deleteNode(TreeMap *tree, Node *node, Node **src) {
         node->entry->value = splice->entry->value;
     }
 
+    /* Unlinks the node from the tree */
     Node *parent = splice->parent;
     if (child != NULL)
         child->parent = parent;
@@ -716,11 +718,13 @@ static void deleteNode(TreeMap *tree, Node *node, Node **src) {
         return;
     }
 
+    /* Links up the remaining nodes */
     if (splice == parent->left)
         parent->left = child;
     else
         parent->right = child;
 
+    /* Performs a fixup on the tree after removal */
     if (splice->color == BLACK)
         deleteFixup(tree, child, parent);
     *src = splice;
