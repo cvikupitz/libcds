@@ -1,7 +1,3 @@
-### Refinements
-- [ ] null function pointer check
-- [ ] pthread checks
-
 ### Testing
 - [x] Iterator
 - [x] Stack

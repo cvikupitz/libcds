@@ -294,7 +294,7 @@ Status ts_treemap_get(ConcurrentTreeMap *tree, void *key, void **value);
 
 /**
  * Retrieves and removes the first (least) entry from the treemap, then stores the
- * removed key and value into '*firstKey' and 'firstValue', respectively.
+ * removed key and value into '*firstKey' and '*firstValue', respectively.
  *
  * Params:
  *    tree - The treemap to operate on.
