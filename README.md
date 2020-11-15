@@ -1,25 +1,25 @@
 # libcds
 
-A collection of generic data structures implemented in C.
+A library containing several data structures implemented in C, for C. Contains many of the data structures you'd expect to find in a utility package that is provided by default with most programming languages. This one in particular models its API closely after the data structures provided in Java's  ```java.util``` package.
 
 ### Available Structures
 
 This library comes with the following implemented data structures, each one coming with a thread-safe and non thread-safe version:
 
-* Stack (Bounded & Unbounded)
-* Queue (Bounded & Unbounded)
-* Circular List
-* Linked List
-* Array List
-* Heap
-* Hash Map
-* Hash Set
-* Tree Map
-* Tree Set
+* [Stack](https://docs.oracle.com/javase/7/docs/api/java/util/Stack.html) (Bounded & Unbounded)
+* [Queue](https://docs.oracle.com/javase/7/docs/api/java/util/Queue.html) (Bounded & Unbounded)
+* [Linked List](https://docs.oracle.com/javase/7/docs/api/java/util/LinkedList.html)
+* [Circular List](https://www.tutorialspoint.com/data_structures_algorithms/circular_linked_list_algorithm.htm#:~:text=Advertisements,into%20a%20circular%20linked%20list.)
+* [Array List](https://docs.oracle.com/javase/7/docs/api/java/util/ArrayList.html)
+* [Heap](https://docs.oracle.com/javase/7/docs/api/java/util/PriorityQueue.html)
+* [Hash Map](https://docs.oracle.com/javase/7/docs/api/java/util/HashMap.html)
+* [Hash Set](https://docs.oracle.com/javase/7/docs/api/java/util/HashSet.html)
+* [Tree Map](https://docs.oracle.com/javase/7/docs/api/java/util/TreeMap.html)
+* [Tree Set](https://docs.oracle.com/javase/7/docs/api/java/util/TreeSet.html)
 
 ### Examples
 
-###### Basic ADT Usage
+##### Basic ADT Usage
 
 Below is an example of basic operations used for one of the ADTs. 
 
@@ -54,8 +54,8 @@ int main(int argc, char **argv) {
     
     /* Pops an item from the stack */
     (void)stack_pop(stack, (void **)&top);
-    fprintf(stdout, "Popped %s from the stack\n", top);
     /* Expected output: "Popped purple from the stack" */
+    fprintf(stdout, "Popped %s from the stack\n", top);
     
     /* Destroys the stack */
     stack_destroy(stack);
@@ -64,13 +64,13 @@ int main(int argc, char **argv) {
 }
 ```
 
-###### Creating & Accessing Arrays
+##### Creating & Accessing Arrays
 
 Each ADT comes with a ```toArray()``` method that returns an array representation of the structure. An example of how to use this is shown below.
 
 ```c
 /*
- * Calls stack.toArray(), then prints the array elements.
+ * Calls toArray(), then prints the array elements.
  */
 static void testArray(Stack *stack) {
     
@@ -95,13 +95,13 @@ static void testArray(Stack *stack) {
 }
 ```
 
-###### Iterators
+##### Iterators
 
 Each ADT also comes with an ```iterator()``` method that creates and returns an iterator for the structure. The iterator will iterate over the elements in the same order as the array returned from the ```toArray()``` method. An example of this is shown below.
 
 ```c
 /*
- * Calls iterator(), then prints the elements.
+ * Calls iterator(), then iterates over the elements.
  */
 static void testIterate(Stack *stack) {
     
