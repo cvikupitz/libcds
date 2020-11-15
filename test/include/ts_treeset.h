@@ -31,9 +31,9 @@
 /**
  * Declaration for the thread-safe TreeSet ADT.
  *
- * A tree-like set storing elements based on their natural ordering defined through
- * a comparator provided at construction time. Provides self-balancing capabilities
- * for even distribution.
+ * A red-black tree set storing elements based on their natural ordering defined
+ * through a comparator provided at construction time. Provides self-balancing
+ * capabilities for even distribution.
  *
  * Modeled after the Java 7 TreeSet interface.
  */
