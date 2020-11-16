@@ -28,7 +28,7 @@
 
 /* Single item used for testing */
 static char *singleKey = "10";
-static char *singleValue = "TEN";
+static char *singleValue = "TEST";
 
 /* Collection of items used for testing */
 #define LEN 30
@@ -173,6 +173,8 @@ static void testSingleKey() {
 
     stat = treemap_remove(tree, singleKey, (void **)&element);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(element, singleValue) == 0 );
+
     validateEmptyTreeMap(tree);
     treemap_destroy(tree, NULL);
 
@@ -182,10 +184,11 @@ static void testSingleKey() {
 static void testItemSet() {
 
     TreeMap *tree;
+    TmEntry *entry;
     Status stat;
     FILE *fd;
-    char line[256], key[4], value[32];
-    char *prev;
+    char line[256], keyItem[4], valueItem[32];
+    char *key, *val;
 
     stat = treemap_new(&tree, treeCmp, free);
     if (stat != STAT_SUCCESS)
@@ -197,8 +200,8 @@ static void testItemSet() {
     }
 
     while (fgets(line, sizeof(line), fd)) {
-        sscanf(line, "%s %s", key, value);
-        stat = treemap_put(tree, strdup(key), strdup(value), (void **)&prev);
+        sscanf(line, "%s %s", keyItem, valueItem);
+        stat = treemap_put(tree, strdup(keyItem), strdup(valueItem), (void **)&val);
         CU_ASSERT_EQUAL(stat, STAT_ENTRY_INSERTED);
     }
 
@@ -212,65 +215,162 @@ static void testItemSet() {
     CU_ASSERT_TRUE( treemap_containsKey(tree, "06") == TRUE );
     CU_ASSERT_TRUE( treemap_containsKey(tree, "07") == FALSE );
 
-    /*treemap_first(tree, (void **)&item);
-    CU_ASSERT_TRUE( strcmp(item, "02") == 0 );
-    treemap_last(tree, (void **)&item);
-    CU_ASSERT_TRUE( strcmp(item, "40") == 0 );*/
-
-    /*stat = treemap_floor(tree, "99", (void **)&item);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(item, "40") == 0 );
-    stat = treemap_floor(tree, "00", (void **)&item);
+    stat = treemap_get(tree, "00", (void **)&val);
     CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
-    stat = treemap_floor(tree, "07", (void **)&item);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(item, "06") == 0 );
-    stat = treemap_floor(tree, "16", (void **)&item);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(item, "16") == 0 );
-
-    stat = treemap_ceiling(tree, "00", (void **)&item);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(item, "02") == 0 );
-    stat = treemap_ceiling(tree, "99", (void **)&item);
+    stat = treemap_get(tree, "01", (void **)&val);
     CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
-    stat = treemap_ceiling(tree, "03", (void **)&item);
+    stat = treemap_get(tree, "02", (void **)&val);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(item, "04") == 0 );
-    stat = treemap_ceiling(tree, "18", (void **)&item);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(item, "18") == 0 );
-
-    stat = treemap_lower(tree, "99", (void **)&item);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(item, "40") == 0 );
-    stat = treemap_lower(tree, "00", (void **)&item);
+    CU_ASSERT_TRUE( strcmp(val, "TWO") == 0 );
+    stat = treemap_get(tree, "03", (void **)&val);
     CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
-    stat = treemap_lower(tree, "25", (void **)&item);
+    stat = treemap_get(tree, "04", (void **)&val);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(item, "24") == 0 );
-    stat = treemap_lower(tree, "32", (void **)&item);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(item, "30") == 0 );
-
-    stat = treemap_higher(tree, "00", (void **)&item);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(item, "02") == 0 );
-    stat = treemap_higher(tree, "99", (void **)&item);
+    CU_ASSERT_TRUE( strcmp(val, "FOUR") == 0 );
+    stat = treemap_get(tree, "05", (void **)&val);
     CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
-    stat = treemap_higher(tree, "23", (void **)&item);
+    stat = treemap_get(tree, "06", (void **)&val);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(item, "24") == 0 );
-    stat = treemap_higher(tree, "36", (void **)&item);
+    CU_ASSERT_TRUE( strcmp(val, "SIX") == 0 );
+    stat = treemap_get(tree, "07", (void **)&val);
+    CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
+
+    stat = treemap_firstKey(tree, (void **)&key);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(item, "38") == 0 );
+    CU_ASSERT_TRUE( strcmp(key, "02") == 0 );
+    stat = treemap_first(tree, &entry);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(tmentry_getKey(entry), "02") == 0 );
+    CU_ASSERT_TRUE( strcmp(tmentry_getValue(entry), "TWO") == 0 );
+
+    stat = treemap_lastKey(tree, (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(key, "40") == 0 );
+    stat = treemap_last(tree, &entry);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(tmentry_getKey(entry), "40") == 0 );
+    CU_ASSERT_TRUE( strcmp(tmentry_getValue(entry), "FORTY") == 0 );
+
+    stat = treemap_floorKey(tree, "99", (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(key, "40") == 0 );
+    stat = treemap_floor(tree, "99", &entry);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(tmentry_getKey(entry), "40") == 0 );
+    CU_ASSERT_TRUE( strcmp(tmentry_getValue(entry), "FORTY") == 0 );
+    stat = treemap_floorKey(tree, "00", (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
+    stat = treemap_floor(tree, "00", &entry);
+    CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
+    stat = treemap_floorKey(tree, "07", (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(key, "06") == 0 );
+    stat = treemap_floor(tree, "07", &entry);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(tmentry_getKey(entry), "06") == 0 );
+    CU_ASSERT_TRUE( strcmp(tmentry_getValue(entry), "SIX") == 0 );
+    stat = treemap_floorKey(tree, "16", (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(key, "16") == 0 );
+    stat = treemap_floor(tree, "16", &entry);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(tmentry_getKey(entry), "16") == 0 );
+    CU_ASSERT_TRUE( strcmp(tmentry_getValue(entry), "SIXTEEN") == 0 );
+
+    stat = treemap_ceilingKey(tree, "00", (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(key, "02") == 0 );
+    stat = treemap_ceiling(tree, "00", &entry);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(tmentry_getKey(entry), "02") == 0 );
+    CU_ASSERT_TRUE( strcmp(tmentry_getValue(entry), "TWO") == 0 );
+    stat = treemap_ceilingKey(tree, "99", (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
+    stat = treemap_ceiling(tree, "99", &entry);
+    CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
+    stat = treemap_ceilingKey(tree, "03", (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(key, "04") == 0 );
+    stat = treemap_ceiling(tree, "03", &entry);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(tmentry_getKey(entry), "04") == 0 );
+    CU_ASSERT_TRUE( strcmp(tmentry_getValue(entry), "FOUR") == 0 );
+    stat = treemap_ceilingKey(tree, "18", (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(key, "18") == 0 );
+    stat = treemap_ceiling(tree, "18", &entry);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(tmentry_getKey(entry), "18") == 0 );
+    CU_ASSERT_TRUE( strcmp(tmentry_getValue(entry), "EIGHTEEN") == 0 );
+
+    stat = treemap_lowerKey(tree, "99", (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(key, "40") == 0 );
+    stat = treemap_lower(tree, "99", &entry);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(tmentry_getKey(entry), "40") == 0 );
+    CU_ASSERT_TRUE( strcmp(tmentry_getValue(entry), "FORTY") == 0 );
+    stat = treemap_lowerKey(tree, "00", (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
+    stat = treemap_lower(tree, "00", &entry);
+    CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
+    stat = treemap_lowerKey(tree, "25", (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(key, "24") == 0 );
+    stat = treemap_lower(tree, "25", &entry);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(tmentry_getKey(entry), "24") == 0 );
+    CU_ASSERT_TRUE( strcmp(tmentry_getValue(entry), "TWENTY-FOUR") == 0 );
+    stat = treemap_lowerKey(tree, "32", (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(key, "30") == 0 );
+    stat = treemap_lower(tree, "32", &entry);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(tmentry_getKey(entry), "30") == 0 );
+    CU_ASSERT_TRUE( strcmp(tmentry_getValue(entry), "THIRTY") == 0 );
+
+    stat = treemap_higherKey(tree, "00", (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(key, "02") == 0 );
+    stat = treemap_higher(tree, "00", &entry);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(tmentry_getKey(entry), "02") == 0 );
+    CU_ASSERT_TRUE( strcmp(tmentry_getValue(entry), "TWO") == 0 );
+    stat = treemap_higherKey(tree, "99", (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
+    stat = treemap_higher(tree, "99", &entry);
+    CU_ASSERT_EQUAL(stat, STAT_NOT_FOUND);
+    stat = treemap_higherKey(tree, "23", (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(key, "24") == 0 );
+    stat = treemap_higher(tree, "23", &entry);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(tmentry_getKey(entry), "24") == 0 );
+    CU_ASSERT_TRUE( strcmp(tmentry_getValue(entry), "TWENTY-FOUR") == 0 );
+    stat = treemap_higherKey(tree, "36", (void **)&key);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(key, "38") == 0 );
+    stat = treemap_higher(tree, "36", &entry);
+    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( strcmp(tmentry_getKey(entry), "38") == 0 );
+    CU_ASSERT_TRUE( strcmp(tmentry_getValue(entry), "THIRTY-EIGHT") == 0 );
+
+    stat = treemap_put(tree, "02", strdup(singleValue), (void **)&val);
+    CU_ASSERT_EQUAL(stat, STAT_ENTRY_REPLACED);
+    CU_ASSERT_TRUE( strcmp(val, "TWO") == 0 );
+    stat = treemap_put(tree, "10", strdup(singleValue), (void **)&val);
+    CU_ASSERT_EQUAL(stat, STAT_ENTRY_REPLACED);
+    CU_ASSERT_TRUE( strcmp(val, "TEN") == 0 );
+    stat = treemap_put(tree, "18", strdup(singleValue), (void **)&val);
+    CU_ASSERT_EQUAL(stat, STAT_ENTRY_REPLACED);
+    CU_ASSERT_TRUE( strcmp(val, "EIGHTEEN") == 0 );
 
     rewind(fd);
     while (fgets(line, sizeof(line), fd)) {
-        line[2] = '\0';
-        stat = treemap_remove(tree, line, free);
+        sscanf(line, "%s %s", keyItem, valueItem);
+        stat = treemap_remove(tree, keyItem, (void **)&val);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }*/
+    }
 
     fclose(fd);
     treemap_destroy(tree, free);
