@@ -154,7 +154,7 @@ static void testItemSet() {
 
     if ((fd = fopen("treeset_items.txt", "r")) == NULL) {
         treeset_destroy(tree, NULL);
-        CU_FAIL_FATAL("ERROR: testItemSet() - allocation failure");
+        CU_FAIL_FATAL("ERROR: testItemSet() - failed to open 'treeset_items.txt");
     }
 
     while (fgets(line, sizeof(line), fd)) {
@@ -234,9 +234,63 @@ static void testItemSet() {
     }
 
     fclose(fd);
-    treeset_destroy(tree, free);
+    treeset_destroy(tree, NULL);
 
     CU_PASS("testItemSet() - Test Passed");
+}
+
+static void testPollFirst() {
+
+    TreeSet *tree;
+    Status stat;
+    char *first;
+    int i;
+
+    stat = treeset_new(&tree, treeCmp);
+    if (stat != STAT_SUCCESS)
+        CU_FAIL_FATAL("ERROR: testPollFirst() - allocation failure");
+
+    for (i = 0L; i < LEN; i++) {
+        stat = treeset_add(tree, orderedSet[i]);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    }
+
+    for (i = 0L; i < LEN; i++) {
+        stat = treeset_pollFirst(tree, (void **)&first);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        CU_ASSERT_TRUE( strcmp(first, orderedSet[i]) == 0 );
+    }
+
+    treeset_destroy(tree, NULL);
+
+    CU_PASS("testPollFirst() - Test Passed");
+}
+
+static void testPollLast() {
+
+    TreeSet *tree;
+    Status stat;
+    char *last;
+    int i;
+
+    stat = treeset_new(&tree, treeCmp);
+    if (stat != STAT_SUCCESS)
+        CU_FAIL_FATAL("ERROR: testPollLast() - allocation failure");
+
+    for (i = 0L; i < LEN; i++) {
+        stat = treeset_add(tree, orderedSet[i]);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    }
+
+    for (i = LEN - 1; i >= 0; i--) {
+        stat = treeset_pollLast(tree, (void **)&last);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        CU_ASSERT_TRUE( strcmp(last, orderedSet[i]) == 0 );
+    }
+
+    treeset_destroy(tree, NULL);
+
+    CU_PASS("testPollLast() - Test Passed");
 }
 
 static void testTreeSetToArray() {
@@ -339,6 +393,8 @@ int main(UNUSED int argc, UNUSED char **argv) {
     CU_add_test(suite, "TreeSet - Empty TreeSet", testEmptyTreeSet);
     CU_add_test(suite, "TreeSet - Single Item", testSingleItem);
     CU_add_test(suite, "TreeSet - Item Set", testItemSet);
+    CU_add_test(suite, "TreeSet - Poll First", testPollFirst);
+    CU_add_test(suite, "TreeSet - Poll Last", testPollLast);
     CU_add_test(suite, "TreeSet - Array", testTreeSetToArray);
     CU_add_test(suite, "TreeSet - Iterator", testTreeSetIterator);
     CU_add_test(suite, "TreeSet - Clear", testTreeSetClear);
