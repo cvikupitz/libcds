@@ -4,7 +4,7 @@
 ############################################
 CC=gcc
 CFLAGS=-W -Wall -g
-IFLAG=-Iinclude
+IFLAG=-I../include
 OBJS=arraylist.o boundedstack.o boundedqueue.o circularlist.o hashmap.o hashset.o heap.o iterator.o \
      linkedlist.o queue.o stack.o treemap.o treeset.o \
      ts_arraylist.o ts_boundedqueue.o ts_boundedstack.o ts_circularlist.o ts_hashmap.o ts_hashset.o \
