@@ -258,6 +258,7 @@ static void testHashMapToArray() {
 static void testHashMapIterator() {
 
     HashMap *map;
+    HmEntry *entry;
     Iterator *iter;
     Status stat;
     int i;
@@ -274,6 +275,10 @@ static void testHashMapIterator() {
 
     stat = hashmap_iterator(map, &iter);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    while (iterator_hasNext(iter) == TRUE) {
+        stat = iterator_next(iter, (void **)&entry);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    }
 
     iterator_destroy(iter);
     hashmap_destroy(map, NULL);
