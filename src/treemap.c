@@ -876,9 +876,9 @@ static void populateEntryArray(Node *node, TreeIter *iter) {
 
     if (node == NULL)
         return;
-    populateKeyArray(node->left, iter);
+    populateEntryArray(node->left, iter);
     iter->items[iter->next++] = node->entry;
-    populateKeyArray(node->right, iter);
+    populateEntryArray(node->right, iter);
 }
 
 /*

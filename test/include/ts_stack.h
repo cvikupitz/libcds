@@ -52,12 +52,23 @@ typedef struct ts_stack ConcurrentStack;
 Status ts_stack_new(ConcurrentStack **stack);
 
 /**
- * FIXME
+ * Locks the stack, providing exclusive access to the calling thread. Caller
+ * is responsible for unlocking the stack to allow other threads access.
+ *
+ * Params:
+ *    stack - The stack to operate on.
+ * Returns:
+ *    None
  */
 void ts_stack_lock(ConcurrentStack *stack);
 
 /**
- * FIXME
+ * Unlocks the stack, releasing the exclusive access from the calling thread.
+ *
+ * Params:
+ *    stack - The stack to operate on.
+ * Returns:
+ *    None
  */
 void ts_stack_unlock(ConcurrentStack *stack);
 

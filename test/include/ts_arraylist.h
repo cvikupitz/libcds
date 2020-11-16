@@ -52,12 +52,23 @@ typedef struct ts_arraylist ConcurrentArrayList;
 Status ts_arraylist_new(ConcurrentArrayList **list, long capacity);
 
 /**
- * FIXME
+ * Locks the arraylist, providing exclusive access to the calling thread. Caller
+ * is responsible for unlocking the list to allow other threads access.
+ *
+ * Params:
+ *    list - The arraylist to operate on.
+ * Returns:
+ *    None
  */
 void ts_arraylist_lock(ConcurrentArrayList *list);
 
 /**
- * FIXME
+ * Unlocks the arraylist, releasing the exclusive access from the calling thread.
+ *
+ * Params:
+ *    list - The arraylist to operate on.
+ * Returns:
+ *    None
  */
 void ts_arraylist_unlock(ConcurrentArrayList *list);
 
