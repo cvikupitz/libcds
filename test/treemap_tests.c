@@ -184,39 +184,40 @@ static void testItemSet() {
     TreeMap *tree;
     Status stat;
     FILE *fd;
-    char line[2], key[], *item;
+    char line[256], key[4], value[32];
+    char *prev;
 
-    stat = treemap_new(&tree, treeCmp, NULL);
+    stat = treemap_new(&tree, treeCmp, free);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testItemSet() - allocation failure");
 
     if ((fd = fopen("treemap_items.txt", "r")) == NULL) {
         treemap_destroy(tree, NULL);
-        CU_FAIL_FATAL("ERROR: testItemSet() - allocation failure");
+        CU_FAIL_FATAL("ERROR: testItemSet() - failed to open 'treemap_items.txt'");
     }
 
     while (fgets(line, sizeof(line), fd)) {
-        line[2] = '\0';
-        stat = treemap_add(tree, line);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        sscanf(line, "%s %s", key, value);
+        stat = treemap_put(tree, strdup(key), strdup(value), (void **)&prev);
+        CU_ASSERT_EQUAL(stat, STAT_ENTRY_INSERTED);
     }
 
     CU_ASSERT_TRUE( treemap_size(tree) == 20L );
-    CU_ASSERT_TRUE( treemap_contains(tree, "00") == FALSE );
-    CU_ASSERT_TRUE( treemap_contains(tree, "01") == FALSE );
-    CU_ASSERT_TRUE( treemap_contains(tree, "02") == TRUE );
-    CU_ASSERT_TRUE( treemap_contains(tree, "03") == FALSE );
-    CU_ASSERT_TRUE( treemap_contains(tree, "04") == TRUE );
-    CU_ASSERT_TRUE( treemap_contains(tree, "05") == FALSE );
-    CU_ASSERT_TRUE( treemap_contains(tree, "06") == TRUE );
-    CU_ASSERT_TRUE( treemap_contains(tree, "07") == FALSE );
+    CU_ASSERT_TRUE( treemap_containsKey(tree, "00") == FALSE );
+    CU_ASSERT_TRUE( treemap_containsKey(tree, "01") == FALSE );
+    CU_ASSERT_TRUE( treemap_containsKey(tree, "02") == TRUE );
+    CU_ASSERT_TRUE( treemap_containsKey(tree, "03") == FALSE );
+    CU_ASSERT_TRUE( treemap_containsKey(tree, "04") == TRUE );
+    CU_ASSERT_TRUE( treemap_containsKey(tree, "05") == FALSE );
+    CU_ASSERT_TRUE( treemap_containsKey(tree, "06") == TRUE );
+    CU_ASSERT_TRUE( treemap_containsKey(tree, "07") == FALSE );
 
-    treemap_first(tree, (void **)&item);
+    /*treemap_first(tree, (void **)&item);
     CU_ASSERT_TRUE( strcmp(item, "02") == 0 );
     treemap_last(tree, (void **)&item);
-    CU_ASSERT_TRUE( strcmp(item, "40") == 0 );
+    CU_ASSERT_TRUE( strcmp(item, "40") == 0 );*/
 
-    stat = treemap_floor(tree, "99", (void **)&item);
+    /*stat = treemap_floor(tree, "99", (void **)&item);
     CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
     CU_ASSERT_TRUE( strcmp(item, "40") == 0 );
     stat = treemap_floor(tree, "00", (void **)&item);
@@ -269,13 +270,69 @@ static void testItemSet() {
         line[2] = '\0';
         stat = treemap_remove(tree, line, free);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
+    }*/
 
     fclose(fd);
     treemap_destroy(tree, free);
 
     CU_PASS("testItemSet() - Test Passed");
-}*/
+}
+
+static void testPollFirst() {
+
+    TreeMap *tree;
+    Status stat;
+    char *key, *value;
+    int i;
+
+    stat = treemap_new(&tree, treeCmp, NULL);
+    if (stat != STAT_SUCCESS)
+        CU_FAIL_FATAL("ERROR: testPollFirst() - allocation failure");
+
+    for (i = 0; i < LEN; i++) {
+        treemap_put(tree, orderedKeys[i], orderedValues[i], (void **)&value);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    }
+
+    for (i = 0; i < LEN; i++) {
+        treemap_pollFirst(tree, (void **)&key, (void **)&value);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        CU_ASSERT_TRUE( strcmp(key, orderedKeys[i]) == 0 );
+        CU_ASSERT_TRUE( strcmp(value, orderedValues[i]) == 0 );
+    }
+
+    treemap_destroy(tree, NULL);
+
+    CU_PASS("testPollFirst() - Test Passed");
+}
+
+static void testPollLast() {
+
+    TreeMap *tree;
+    Status stat;
+    char *key, *value;
+    int i;
+
+    stat = treemap_new(&tree, treeCmp, NULL);
+    if (stat != STAT_SUCCESS)
+        CU_FAIL_FATAL("ERROR: testPollLast() - allocation failure");
+
+    for (i = 0; i < LEN; i++) {
+        treemap_put(tree, orderedKeys[i], orderedValues[i], (void **)&value);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    }
+
+    for (i = LEN - 1; i >= 0; i--) {
+        treemap_pollLast(tree, (void **)&key, (void **)&value);
+        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        CU_ASSERT_TRUE( strcmp(key, orderedKeys[i]) == 0 );
+        CU_ASSERT_TRUE( strcmp(value, orderedValues[i]) == 0 );
+    }
+
+    treemap_destroy(tree, NULL);
+
+    CU_PASS("testPollLast() - Test Passed");
+}
 
 static void testTreeMapToArray() {
 
@@ -396,7 +453,9 @@ int main(UNUSED int argc, UNUSED char **argv) {
 
     CU_add_test(suite, "TreeMap - Empty TreeMap", testEmptyTreeMap);
     CU_add_test(suite, "TreeMap - Single Item", testSingleKey);
-    //CU_add_test(suite, "TreeMap - Item Set", testItemSet);
+    CU_add_test(suite, "TreeMap - Item Set", testItemSet);
+    CU_add_test(suite, "TreeMap - Poll First", testPollFirst);
+    CU_add_test(suite, "TreeMap - Poll Last", testPollLast);
     CU_add_test(suite, "TreeMap - Array", testTreeMapToArray);
     CU_add_test(suite, "TreeMap - Iterator", testTreeMapIterator);
     CU_add_test(suite, "TreeMap - Clear", testTreeMapClear);
