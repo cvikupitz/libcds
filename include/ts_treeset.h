@@ -25,7 +25,7 @@
 #ifndef _CDS_TS_TREESET_H__
 #define _CDS_TS_TREESET_H__
 
-#include "common.h"
+#include "cds_common.h"
 #include "ts_iterator.h"
 
 /**

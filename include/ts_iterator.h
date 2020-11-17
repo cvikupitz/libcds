@@ -26,7 +26,7 @@
 #define _CDS_TS_ITERATOR_H__
 
 #include <pthread.h>
-#include "common.h"
+#include "cds_common.h"
 
 /**
  * Interface for the thread-safe Iterator ADT.

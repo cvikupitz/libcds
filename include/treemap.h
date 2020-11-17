@@ -25,7 +25,7 @@
 #ifndef _CDS_TREEMAP_H__
 #define _CDS_TREEMAP_H__
 
-#include "common.h"
+#include "cds_common.h"
 #include "iterator.h"
 
 /**

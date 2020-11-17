@@ -25,7 +25,7 @@
 #ifndef _CDS_TS_HASHMAP_H__
 #define _CDS_TS_HASHMAP_H__
 
-#include "common.h"
+#include "cds_common.h"
 #include "hashmap.h"
 #include "ts_iterator.h"
 

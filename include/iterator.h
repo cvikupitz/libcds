@@ -25,7 +25,7 @@
 #ifndef _CDS_ITERATOR_H__
 #define _CDS_ITERATOR_H__
 
-#include "common.h"
+#include "cds_common.h"
 
 /**
  * Interface for the Iterator ADT.
