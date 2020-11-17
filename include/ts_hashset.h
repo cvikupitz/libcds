@@ -1,0 +1,201 @@
+/**
+ * MIT License
+ *
+ * Copyright (c) 2020 Cole Vikupitz
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+#ifndef _CDS_TS_HASHSET_H__
+#define _CDS_TS_HASHSET_H__
+
+#include "cds_common.h"
+#include "ts_iterator.h"
+
+/**
+ * Declaration for the thread-safe HashSet ADT.
+ *
+ * Set based implementation; holds a collection of elements with no duplicates.
+ *
+ * Modeled after the Java 7 HashSet interface.
+ */
+typedef struct ts_hashset ConcurrentHashSet;
+
+/**
+ * Constructs a new hashset instance with the specified starting capacity and load
+ * factor, then stores the new instance into '*set'. If the capacity specified is
+ * <= 0, a default capacity is assigned. If the load factor specified is <= 0.0,
+ * a default load factor is assigned.
+ *
+ * The hash function specified should return an index number such that hash(obj, N)
+ * will return the hashed value of 'obj' in an array of size N.
+ *
+ * The comparator function specified should return an integer comparing the two
+ * specified values, such that cmp(a, b) returns 0 when a == b, <0 when a < b, and
+ * >0 when a > b.
+ *
+ * Params:
+ *    set - The pointer address to store the new HashSet instance.
+ *    hash - Function to hash the values inside the hashset.
+ *    comparator - Function for comparing two items in the hashset.
+ *    capacity - The hashset's starting capacity.
+ *    loadFactor - The hashset's assigned load factor.
+ * Returns:
+ *    STAT_SUCCESS - HashSet was successfully created.
+ *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ */
+Status ts_hashset_new(ConcurrentHashSet **set, long (*hash)(void *, long),
+        int (*comparator)(void *, void *),
+        long capacity, double loadFactor);
+
+/**
+ * Locks the hashset, providing exclusive access to the calling thread. Caller
+ * is responsible for unlocking the hashset to allow other threads access.
+ *
+ * Params:
+ *    set - The hashset to operate on.
+ * Returns:
+ *    None
+ */
+void ts_hashset_lock(ConcurrentHashSet *set);
+
+/**
+ * Unlocks the hashset, releasing the exclusive access from the calling thread.
+ *
+ * Params:
+ *    set - The hashset to operate on.
+ * Returns:
+ *    None
+ */
+void ts_hashset_unlock(ConcurrentHashSet *set);
+
+/**
+ * Adds the specified element to the hashset if it is not already present.
+ *
+ * Params:
+ *    set - The hashset to operate on.
+ *    item - The element to add.
+ * Returns:
+ *    STAT_SUCCESS - Operation was successful.
+ *    STAT_KEY_ALREADY_EXISTS - Specified entry is already present.
+ *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ */
+Status ts_hashset_add(ConcurrentHashSet *set, void *item);
+
+/**
+ * Returns TRUE if the hashset contains the specified element, FALSE if not.
+ *
+ * Params:
+ *    set - The hashset to operate on.
+ *    item - The item to search for.
+ * Returns:
+ *    TRUE if the element is present, FALSE if not.
+ */
+Boolean ts_hashset_contains(ConcurrentHashSet *set, void *item);
+
+/**
+ * Removes the specified element from the hashset if it is present. If 'destructor'
+ * is not NULL, it will be invoked on the element after removal.
+ *
+ * Params:
+ *    set - The hashset to operate on.
+ *    item - The element to remove.
+ *    destructor - Function to operate on element after removal.
+ * Returns:
+ *    STAT_SUCCESS - Operation was successful.
+ *    STAT_STRUCT_EMPTY - HashSet is currently empty.
+ *    STAT_NOT_FOUND - Entry with the specified key was not found.
+ */
+Status ts_hashset_remove(ConcurrentHashSet *set, void *item, void (*destructor)(void *));
+
+/**
+ * Removes all elements from the hashset. If 'destructor' is not NULL, it will be
+ * invoked on each element in the hashset after being removed.
+ *
+ * Params:
+ *    set - The hashset to operate on.
+ *    destructor - Function to operate on each element after removal.
+ * Returns:
+ *    None
+ */
+void ts_hashset_clear(ConcurrentHashSet *set, void (*destructor)(void *));
+
+/**
+ * Returns the number of elements in the hashset.
+ *
+ * Params:
+ *    set - The hashset to operate on.
+ * Returns:
+ *    The hashset's current size.
+ */
+long ts_hashset_size(ConcurrentHashSet *set);
+
+/**
+ * Returns TRUE if the hashset contains no elements, FALSE if otherwise.
+ *
+ * Params:
+ *    set - The hashset to operate on.
+ * Returns:
+ *    TRUE if the hashset is empty, FALSE if not.
+ */
+Boolean ts_hashset_isEmpty(ConcurrentHashSet *set);
+
+/**
+ * Allocates and generates an array containing all of the hashset's elements in no
+ * particular order, then stores the array into '*array'. Caller is responsible for
+ * freeing the array when finished.
+ *
+ * Params:
+ *    set - The hashset to operate on.
+ *    array - Address where the new array will be stored.
+ * Returns:
+ *    STAT_SUCCESS - Operation was successful.
+ *    STAT_STRUCT_EMPTY - HashSet is currently empty.
+ *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ */
+Status ts_hashset_toArray(ConcurrentHashSet *set, Array **array);
+
+/**
+ * Returns an Iterator instance to iterate over the the hashset's elements in no
+ * particular order. Caller is responsible for destroying the iterator instance when
+ * finished.
+ *
+ * Params:
+ *    set - The hashset to operate on.
+ *    iter - Address where the new iterator will be stored.
+ * Returns:
+ *    STAT_SUCCESS - Operation was successful.
+ *    STAT_STRUCT_EMPTY - HashSet is currently empty.
+ *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ */
+Status ts_hashset_iterator(ConcurrentHashSet *set, ConcurrentIterator **iter);
+
+/**
+ * Destroys the hashset instance by freeing all of its reserved memory. If 'destructor'
+ * is not NULL, it will be invoked on each element before the hashset is destroyed.
+ *
+ * Params:
+ *    set - The hashset to destroy.
+ *    destructor - Function to operate on each element prior to hashset destruction.
+ * Returns:
+ *    None
+ */
+void ts_hashset_destroy(ConcurrentHashSet *set, void (*destructor)(void *));
+
+#endif  /* _CDS_TS_HASHSET_H__ */

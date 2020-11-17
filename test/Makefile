@@ -4,7 +4,7 @@
 ##########################################
 CC=gcc
 CFLAGS=-W -Wall -g
-IFLAG=-Iinclude
+IFLAG=-I../include
 LFLAGS=-L. -lcds
 CUNIT=-lcunit
 OBJS=arraylist_tests.o boundedqueue_tests.o boundedstack_tests.o circularlist_tests.o hashmap_tests.o \

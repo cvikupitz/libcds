@@ -37,28 +37,16 @@ static void validateEmptyLinkedList(LinkedList *list) {
 
     Array *arr;
     Iterator *iter;
-    Status stat;
-    Boolean isEmpty;
-    char *element;
-    long size;
+    char *item;
 
-    stat = linkedlist_first(list, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = linkedlist_last(list, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = linkedlist_set(list, 0L, singleItem, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = linkedlist_remove(list, 0L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
-    size = linkedlist_size(list);
-    CU_ASSERT_EQUAL(size, 0L);
-    isEmpty = linkedlist_isEmpty(list);
-    CU_ASSERT_EQUAL(isEmpty, TRUE);
-    stat = linkedlist_iterator(list, &iter);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = linkedlist_toArray(list, &arr);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    CU_ASSERT_TRUE( linkedlist_first(list, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( linkedlist_last(list, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( linkedlist_set(list, 0L, singleItem, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( linkedlist_remove(list, 0L, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( linkedlist_size(list) == 0L );
+    CU_ASSERT_TRUE( linkedlist_isEmpty(list) == TRUE );
+    CU_ASSERT_TRUE( linkedlist_iterator(list, &iter) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( linkedlist_toArray(list, &arr) == STAT_STRUCT_EMPTY );
 }
 
 static void testEmptyLinkedList() {
@@ -80,33 +68,21 @@ static void testSingleItem() {
 
     LinkedList *list;
     Status stat;
-    Boolean isEmpty;
-    char *element;
-    long size;
+    char *item;
 
     stat = linkedlist_new(&list);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testSingleItem() - allocation failure");
 
-    stat = linkedlist_addLast(list, singleItem);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-
-    size = linkedlist_size(list);
-    isEmpty = linkedlist_isEmpty(list);
-    CU_ASSERT_EQUAL(size, 1L);
-    CU_ASSERT_EQUAL(isEmpty, FALSE);
-
-    stat = linkedlist_get(list, 0L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-
-    stat = linkedlist_remove(list, 99L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
-    stat = linkedlist_remove(list, 0L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-    stat = linkedlist_remove(list, 0L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    CU_ASSERT_TRUE( linkedlist_addLast(list, singleItem) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( linkedlist_size(list) == 1L );
+    CU_ASSERT_TRUE( linkedlist_isEmpty(list) == FALSE );
+    CU_ASSERT_TRUE( linkedlist_get(list, 0L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
+    CU_ASSERT_TRUE( linkedlist_remove(list, 99L, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( linkedlist_remove(list, 0L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
+    CU_ASSERT_TRUE( linkedlist_remove(list, 0L, (void **)&item) == STAT_STRUCT_EMPTY );
 
     validateEmptyLinkedList(list);
     linkedlist_destroy(list, NULL);
@@ -119,27 +95,23 @@ static void testAddFirst() {
     LinkedList *list;
     Status stat;
     int i, j;
-    char *element;
+    char *item;
 
     stat = linkedlist_new(&list);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testAddFirst() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        stat = linkedlist_addFirst(list, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        stat = linkedlist_first(list, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[i]) == 0 );
-        stat = linkedlist_last(list, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[0]) == 0 );
+        CU_ASSERT_TRUE( linkedlist_addFirst(list, array[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( linkedlist_first(list, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[i]) == 0 );
+        CU_ASSERT_TRUE( linkedlist_last(list, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[0]) == 0 );
     }
 
     for (i = 0, j = LEN - 1; i < LEN; i++, j--) {
-        stat = linkedlist_get(list, i, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[j]) == 0 );
+        CU_ASSERT_TRUE(linkedlist_get(list, i, (void **)&item) == STAT_SUCCESS);
+        CU_ASSERT_TRUE( strcmp(item, array[j]) == 0 );
     }
 
     linkedlist_destroy(list, NULL);
@@ -152,27 +124,23 @@ static void testAddLast() {
     LinkedList *list;
     Status stat;
     int i;
-    char *element;
+    char *item;
 
     stat = linkedlist_new(&list);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testAddLast() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        stat = linkedlist_addLast(list, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        stat = linkedlist_first(list, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[0]) == 0 );
-        stat = linkedlist_last(list, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[i]) == 0 );
+        CU_ASSERT_TRUE( linkedlist_addLast(list, array[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( linkedlist_first(list, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[0]) == 0 );
+        CU_ASSERT_TRUE( linkedlist_last(list, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[i]) == 0 );
     }
 
     for (i = 0; i < LEN; i++) {
-        stat = linkedlist_get(list, i, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[i]) == 0 );
+        CU_ASSERT_TRUE( linkedlist_get(list, i, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[i]) == 0 );
     }
 
     linkedlist_destroy(list, NULL);
@@ -185,35 +153,28 @@ static void testInsertions() {
     LinkedList *list;
     Status stat;
     int i;
-    char *element;
+    char *item;
 
     stat = linkedlist_new(&list);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testInsertions() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = linkedlist_addLast(list, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
-
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( linkedlist_addLast(list, array[i]) == STAT_SUCCESS );
     for (i = 0L; i < LEN; i++) {
-        stat = linkedlist_get(list, i, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[i]) == 0 );
+        CU_ASSERT_TRUE( linkedlist_get(list, i, (void **)&item) == STAT_SUCCESS);
+        CU_ASSERT_TRUE( strcmp(item, array[i]) == 0 );
     }
 
-    stat = linkedlist_insert(list, 0L, singleItem);
-    stat = linkedlist_insert(list, 3L, singleItem);
-    stat = linkedlist_insert(list, 6L, singleItem);
-    stat = linkedlist_get(list, 0L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-    stat = linkedlist_get(list, 3L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-    stat = linkedlist_get(list, 6L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
+    (void)linkedlist_insert(list, 0L, singleItem);
+    (void)linkedlist_insert(list, 3L, singleItem);
+    (void)linkedlist_insert(list, 6L, singleItem);
+    CU_ASSERT_TRUE( linkedlist_get(list, 0L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
+    CU_ASSERT_TRUE( linkedlist_get(list, 3L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
+    CU_ASSERT_TRUE( linkedlist_get(list, 6L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
 
     linkedlist_destroy(list, NULL);
 
@@ -225,36 +186,28 @@ static void testSetItem() {
     LinkedList *list;
     Status stat;
     int i;
-    char *element;
+    char *item;
 
     stat = linkedlist_new(&list);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testSetItem() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = linkedlist_addLast(list, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( linkedlist_addLast(list, array[i]) == STAT_SUCCESS );
 
-    stat = linkedlist_set(list, 0L, singleItem, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, array[0]) == 0 );
-    stat = linkedlist_set(list, 4L, singleItem, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, array[4]) == 0 );
-    stat = linkedlist_set(list, 7L, singleItem, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, array[7]) == 0 );
+    CU_ASSERT_TRUE( linkedlist_set(list, 0L, singleItem, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, array[0]) == 0 );
+    CU_ASSERT_TRUE( linkedlist_set(list, 4L, singleItem, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, array[4]) == 0 );
+    CU_ASSERT_TRUE( linkedlist_set(list, 7L, singleItem, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, array[7]) == 0 );
 
-    stat = linkedlist_get(list, 0L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-    stat = linkedlist_get(list, 4L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-    stat = linkedlist_get(list, 7L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
+    CU_ASSERT_TRUE( linkedlist_get(list, 0L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
+    CU_ASSERT_TRUE( linkedlist_get(list, 4L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
+    CU_ASSERT_TRUE( linkedlist_get(list, 7L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
 
     linkedlist_destroy(list, NULL);
 
@@ -266,21 +219,18 @@ static void testSequentialDelete() {
     LinkedList *list;
     Status stat;
     int i;
-    char *element;
+    char *item;
 
     stat = linkedlist_new(&list);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testSequentialDelete() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = linkedlist_addLast(list, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( linkedlist_addLast(list, array[i]) == STAT_SUCCESS );
 
     for (i = 0L; i < LEN; i++) {
-        stat = linkedlist_remove(list, 0L, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[i]) == 0 );
+        CU_ASSERT_TRUE( linkedlist_remove(list, 0L, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[i]) == 0 );
     }
 
     linkedlist_destroy(list, NULL);
@@ -293,26 +243,21 @@ static void testRandomDelete() {
     LinkedList *list;
     Status stat;
     int i;
-    char *element;
+    char *item;
 
     stat = linkedlist_new(&list);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testRandomDelete() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = linkedlist_addLast(list, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( linkedlist_addLast(list, array[i]) == STAT_SUCCESS );
 
-    stat = linkedlist_remove(list, 7L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, array[7]) == 0 );
-    stat = linkedlist_remove(list, 5L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, array[5]) == 0 );
-    stat = linkedlist_remove(list, 1L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, array[1]) == 0 );
+    CU_ASSERT_TRUE( linkedlist_remove(list, 7L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, array[7]) == 0 );
+    CU_ASSERT_TRUE( linkedlist_remove(list, 5L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, array[5]) == 0 );
+    CU_ASSERT_TRUE( linkedlist_remove(list, 1L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, array[1]) == 0 );
 
     linkedlist_destroy(list, NULL);
 
@@ -323,45 +268,28 @@ static void testInvalidIndexAccess() {
 
     LinkedList *list;
     Status stat;
-    char *element;
+    char *item;
     int i;
 
     stat = linkedlist_new(&list);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testInvalidIndexAccess() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = linkedlist_addLast(list, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( linkedlist_addLast(list, array[i]) == STAT_SUCCESS );
 
-    stat = linkedlist_insert(list, LEN + 1L, singleItem);
-    CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
-    stat = linkedlist_insert(list, LEN + 1L, singleItem);
-    CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
-    stat = linkedlist_insert(list, LEN + 10L, singleItem);
-    CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
-
-    stat = linkedlist_get(list, -1, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
-    stat = linkedlist_get(list, LEN + 1L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
-    stat = linkedlist_get(list, LEN + 10L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
-
-    stat = linkedlist_set(list, -1, singleItem, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
-    stat = linkedlist_set(list, LEN + 1L, singleItem, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
-    stat = linkedlist_set(list, LEN + 10L, singleItem, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
-
-    stat = linkedlist_remove(list, -1, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
-    stat = linkedlist_remove(list, LEN + 1L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
-    stat = linkedlist_remove(list, LEN + 10L, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_INVALID_INDEX);
+    CU_ASSERT_TRUE( linkedlist_insert(list, LEN + 1L, singleItem) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( linkedlist_insert(list, LEN + 1L, singleItem) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( linkedlist_insert(list, LEN + 10L, singleItem) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( linkedlist_get(list, -1, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( linkedlist_get(list, LEN + 1L, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( linkedlist_get(list, LEN + 10L, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( linkedlist_set(list, -1, singleItem, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( linkedlist_set(list, LEN + 1L, singleItem, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( linkedlist_set(list, LEN + 10L, singleItem, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( linkedlist_remove(list, -1, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( linkedlist_remove(list, LEN + 1L, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( linkedlist_remove(list, LEN + 10L, (void **)&item) == STAT_INVALID_INDEX );
 
     linkedlist_destroy(list, NULL);
 
@@ -379,14 +307,10 @@ static void testLinkedListToArray() {
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testLinkedListToArray() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = linkedlist_addLast(list, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
-
-    stat = linkedlist_toArray(list, &arr);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_EQUAL(arr->len, LEN);
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( linkedlist_addLast(list, array[i]) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( linkedlist_toArray(list, &arr) == STAT_SUCCESS);
+    CU_ASSERT_TRUE( arr->len == LEN );
 
     for (i = 0; i < arr->len; i++)
         CU_ASSERT_TRUE( strcmp(arr->items[i], array[i]) == 0 );
@@ -402,26 +326,21 @@ static void testLinkedListIterator() {
     LinkedList *list;
     Iterator *iter;
     Status stat;
-    char *element;
+    char *item;
     int i;
 
     stat = linkedlist_new(&list);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testLinkedListIterator() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = linkedlist_addLast(list, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
-
-    stat = linkedlist_iterator(list, &iter);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( linkedlist_addLast(list, array[i]) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( linkedlist_iterator(list, &iter) == STAT_SUCCESS );
 
     i = 0;
     while (iterator_hasNext(iter) == TRUE) {
-        stat = iterator_next(iter, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[i++]) == 0 );
+        CU_ASSERT_TRUE( iterator_next(iter, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[i++]) == 0 );
     }
 
     iterator_destroy(iter);
@@ -440,11 +359,8 @@ static void testLinkedListClear() {
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testLinkedListClear() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = linkedlist_addLast(list, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
-
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( linkedlist_addLast(list, array[i]) == STAT_SUCCESS );
     linkedlist_clear(list, NULL);
     validateEmptyLinkedList(list);
     linkedlist_destroy(list, NULL);
