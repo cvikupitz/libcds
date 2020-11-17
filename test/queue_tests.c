@@ -37,24 +37,14 @@ static void validateEmptyQueue(Queue *queue) {
 
     Array *arr;
     Iterator *iter;
-    Status stat;
-    Boolean isEmpty;
-    char *element;
-    long size;
+    char *item;
 
-    stat = queue_peek(queue, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = queue_poll(queue, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
-    size = queue_size(queue);
-    CU_ASSERT_EQUAL(size, 0L);
-    isEmpty = queue_isEmpty(queue);
-    CU_ASSERT_EQUAL(isEmpty, TRUE);
-    stat = queue_iterator(queue, &iter);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = queue_toArray(queue, &arr);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    CU_ASSERT_TRUE( queue_peek(queue, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( queue_poll(queue, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( queue_size(queue) == 0L );
+    CU_ASSERT_TRUE( queue_isEmpty(queue) == TRUE );
+    CU_ASSERT_TRUE( queue_iterator(queue, &iter) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( queue_toArray(queue, &arr) == STAT_STRUCT_EMPTY );
 }
 
 static void testEmptyQueue() {
@@ -76,31 +66,20 @@ static void testSingleItem() {
 
     Queue *queue;
     Status stat;
-    Boolean isEmpty;
-    long size;
-    char *element;
+    char *item;
 
     stat = queue_new(&queue);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testSingleItem() - allocation failure");
 
-    stat = queue_add(queue, singleItem);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-
-    size = queue_size(queue);
-    isEmpty = queue_isEmpty(queue);
-    CU_ASSERT_EQUAL(size, 1L);
-    CU_ASSERT_EQUAL(isEmpty, FALSE);
-
-    stat = queue_peek(queue, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-
-    stat = queue_poll(queue, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-    stat = queue_poll(queue, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    CU_ASSERT_TRUE( queue_add(queue, singleItem) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( queue_size(queue) == 1L );
+    CU_ASSERT_TRUE( queue_isEmpty(queue) == FALSE );
+    CU_ASSERT_TRUE( queue_peek(queue, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
+    CU_ASSERT_TRUE( queue_poll(queue, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
+    CU_ASSERT_TRUE( queue_poll(queue, (void **)&item) == STAT_STRUCT_EMPTY );
 
     validateEmptyQueue(queue);
     queue_destroy(queue, NULL);
@@ -112,34 +91,28 @@ static void testAddPoll() {
 
     Queue *queue;
     Status stat;
-    Boolean isEmpty;
     int i;
     long size;
-    char *element;
+    char *item;
 
     stat = queue_new(&queue);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testAddPoll() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        stat = queue_add(queue, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        size = queue_size(queue);
-        isEmpty = queue_isEmpty(queue);
-        CU_ASSERT_EQUAL(size, i + 1);
-        CU_ASSERT_EQUAL(isEmpty, FALSE);
-        stat = queue_peek(queue, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[0]) == 0 );
+        CU_ASSERT_TRUE( queue_add(queue, array[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( queue_size(queue) == (i + 1) );
+        CU_ASSERT_TRUE( queue_isEmpty(queue) == FALSE );
+        CU_ASSERT_TRUE( queue_peek(queue, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[0]) == 0 );
     }
 
     for (i = 0; i < LEN; i++) {
-        stat = queue_poll(queue, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[i]) == 0 );
+        CU_ASSERT_TRUE( queue_poll(queue, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[i]) == 0 );
         size = queue_size(queue);
-        isEmpty = queue_isEmpty(queue);
-        CU_ASSERT_EQUAL(size, (LEN - (i + 1)));
+        CU_ASSERT_TRUE( queue_isEmpty(queue) == (size == 0L ? TRUE : FALSE) );
+        CU_ASSERT_TRUE( queue_size(queue) == (LEN - (i + 1)) );
     }
 
     queue_destroy(queue, NULL);
@@ -158,14 +131,10 @@ static void testQueueToArray() {
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testQueueToArray() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = queue_add(queue, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
-
-    stat = queue_toArray(queue, &arr);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_EQUAL(arr->len, LEN);
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( queue_add(queue, array[i]) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( queue_toArray(queue, &arr) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arr->len == LEN );
 
     for (i = 0; i < arr->len; i++)
         CU_ASSERT_TRUE( strcmp(arr->items[i], array[i]) == 0 );
@@ -182,25 +151,20 @@ static void testQueueIterator() {
     Queue *queue;
     Status stat;
     int i;
-    char *element;
+    char *item;
 
     stat = queue_new(&queue);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testQueueIterator() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = queue_add(queue, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
-
-    stat = queue_iterator(queue, &iter);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( queue_add(queue, array[i]) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( queue_iterator(queue, &iter) == STAT_SUCCESS );
 
     i = 0;
     while (iterator_hasNext(iter) == TRUE) {
-        stat = iterator_next(iter, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[i++]) == 0 );
+        CU_ASSERT_TRUE( iterator_next(iter, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[i++]) == 0 );
     }
 
     iterator_destroy(iter);
@@ -219,10 +183,8 @@ static void testQueueClear() {
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testQueueClear() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = queue_add(queue, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( queue_add(queue, array[i]) == STAT_SUCCESS );
 
     queue_clear(queue, NULL);
     validateEmptyQueue(queue);

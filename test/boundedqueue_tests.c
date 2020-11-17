@@ -40,26 +40,15 @@ static void validateEmptyBoundedQueue(BoundedQueue *queue) {
 
     Array *arr;
     Iterator *iter;
-    Status stat;
-    Boolean boolean;
-    char *element;
-    long size;
+    char *item;
 
-    stat = boundedqueue_peek(queue, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = boundedqueue_poll(queue, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
-    size = boundedqueue_size(queue);
-    CU_ASSERT_EQUAL(size, 0L);
-    boolean = boundedqueue_isEmpty(queue);
-    CU_ASSERT_EQUAL(boolean, TRUE);
-    boolean = boundedqueue_isFull(queue);
-    CU_ASSERT_EQUAL(boolean, FALSE);
-    stat = boundedqueue_iterator(queue, &iter);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = boundedqueue_toArray(queue, &arr);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    CU_ASSERT_TRUE( boundedqueue_peek(queue, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( boundedqueue_poll(queue, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( boundedqueue_size(queue) == 0L );
+    CU_ASSERT_TRUE( boundedqueue_isEmpty(queue) == TRUE );
+    CU_ASSERT_TRUE( boundedqueue_isFull(queue) == FALSE );
+    CU_ASSERT_TRUE( boundedqueue_iterator(queue, &iter) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( boundedqueue_toArray(queue, &arr) == STAT_STRUCT_EMPTY );
 }
 
 static void testEmptyBoundedQueue() {
@@ -81,35 +70,22 @@ static void testSingleItem() {
 
     BoundedQueue *queue;
     Status stat;
-    Boolean boolean;
-    long size, capacity;
-    char *element;
+    char *item;
 
     stat = boundedqueue_new(&queue, 1L);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testSingleItem() - allocation failure");
 
-    stat = boundedqueue_add(queue, singleItem);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-
-    size = boundedqueue_size(queue);
-    CU_ASSERT_EQUAL(size, 1L);
-    capacity = boundedqueue_capacity(queue);
-    CU_ASSERT_EQUAL(capacity, 1L);
-    boolean = boundedqueue_isEmpty(queue);
-    CU_ASSERT_EQUAL(boolean, FALSE);
-    boolean = boundedqueue_isFull(queue);
-    CU_ASSERT_EQUAL(boolean, TRUE);
-
-    stat = boundedqueue_peek(queue, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-
-    stat = boundedqueue_poll(queue, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-    stat = boundedqueue_poll(queue, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    CU_ASSERT_TRUE( boundedqueue_add(queue, singleItem) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( boundedqueue_size(queue) == 1L );
+    CU_ASSERT_TRUE( boundedqueue_capacity(queue) == 1L );
+    CU_ASSERT_TRUE( boundedqueue_isEmpty(queue) == FALSE );
+    CU_ASSERT_TRUE( boundedqueue_isFull(queue) == TRUE );
+    CU_ASSERT_TRUE( boundedqueue_peek(queue, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
+    CU_ASSERT_TRUE( boundedqueue_poll(queue, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
+    CU_ASSERT_TRUE( boundedqueue_poll(queue, (void **)&item) == STAT_STRUCT_EMPTY );
 
     validateEmptyBoundedQueue(queue);
     boundedqueue_destroy(queue, NULL);
@@ -121,39 +97,28 @@ static void testAddPoll() {
 
     BoundedQueue *queue;
     Status stat;
-    Boolean boolean;
     int i;
-    long size;
-    char *element;
+    char *item;
 
     stat = boundedqueue_new(&queue, 0L);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testAddPoll() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        stat = boundedqueue_add(queue, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        size = boundedqueue_size(queue);
-        boolean = boundedqueue_isEmpty(queue);
-        CU_ASSERT_EQUAL(size, i + 1);
-        CU_ASSERT_EQUAL(boolean, FALSE);
-        boolean = boundedqueue_isFull(queue);
-        CU_ASSERT_EQUAL(boolean, FALSE);
-        stat = boundedqueue_peek(queue, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[0]) == 0 );
+        CU_ASSERT_TRUE( boundedqueue_add(queue, array[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( boundedqueue_size(queue) == (i + 1) );
+        CU_ASSERT_TRUE( boundedqueue_isEmpty(queue) == FALSE );
+        CU_ASSERT_TRUE( boundedqueue_isFull(queue) == FALSE );
+        CU_ASSERT_TRUE( boundedqueue_peek(queue, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[0]) == 0 );
     }
 
     for (i = 0; i < LEN; i++) {
-        stat = boundedqueue_poll(queue, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[i]) == 0 );
-        size = boundedqueue_size(queue);
-        boolean = boundedqueue_isEmpty(queue);
-        CU_ASSERT_EQUAL(boolean, (i == LEN - 1) ? TRUE : FALSE);
-        CU_ASSERT_EQUAL(size, (LEN - (i + 1)));
-        boolean = boundedqueue_isFull(queue);
-        CU_ASSERT_EQUAL(boolean, FALSE);
+        CU_ASSERT_TRUE( boundedqueue_poll(queue, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[i]) == 0 );
+        CU_ASSERT_TRUE( boundedqueue_isEmpty(queue) == ((i == LEN - 1) ? TRUE : FALSE) );
+        CU_ASSERT_TRUE( boundedqueue_size(queue) == (LEN - (i + 1)) );
+        CU_ASSERT_TRUE( boundedqueue_isFull(queue) == FALSE );
     }
 
     boundedqueue_destroy(queue, NULL);
@@ -164,9 +129,8 @@ static void testAddPoll() {
 static void testCapacity() {
 
     BoundedQueue *queue;
-    Boolean boolean;
     Status stat;
-    char *element;
+    char *item;
     int i;
     long size;
 
@@ -175,17 +139,13 @@ static void testCapacity() {
         CU_FAIL_FATAL("ERROR: testCapacity() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        stat = boundedqueue_add(queue, array[i]);
-        CU_ASSERT_EQUAL(stat, i < CAPACITY ? STAT_SUCCESS : STAT_STRUCT_FULL);
+        CU_ASSERT_TRUE( boundedqueue_add(queue, array[i]) == (i < CAPACITY ? STAT_SUCCESS : STAT_STRUCT_FULL) );
         size = boundedqueue_size(queue);
-        boolean = boundedqueue_isEmpty(queue);
-        CU_ASSERT_EQUAL(size, (i < CAPACITY) ? (i + 1) : CAPACITY);
-        CU_ASSERT_EQUAL(boolean, FALSE);
-        boolean = boundedqueue_isFull(queue);
-        CU_ASSERT_EQUAL(boolean, (size < CAPACITY) ? FALSE : TRUE);
-        stat = boundedqueue_peek(queue, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[0]) == 0 );
+        CU_ASSERT_TRUE( size == (i < CAPACITY) ? (i + 1) : CAPACITY );
+        CU_ASSERT_TRUE( boundedqueue_isEmpty(queue) == FALSE );
+        CU_ASSERT_TRUE( boundedqueue_isFull(queue) == (size < CAPACITY ? FALSE : TRUE) );
+        CU_ASSERT_TRUE( boundedqueue_peek(queue, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[0]) == 0 );
     }
 
     boundedqueue_destroy(queue, NULL);
@@ -204,14 +164,10 @@ static void testBoundedQueueToArray() {
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testBoundedQueueToArray() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = boundedqueue_add(queue, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
-
-    stat = boundedqueue_toArray(queue, &arr);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_EQUAL(arr->len, LEN);
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( boundedqueue_add(queue, array[i]) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( boundedqueue_toArray(queue, &arr) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arr->len == LEN );
 
     for (i = 0; i < arr->len; i++)
         CU_ASSERT_TRUE( strcmp(arr->items[i], array[i]) == 0 );
@@ -228,25 +184,20 @@ static void testBoundedQueueIterator() {
     BoundedQueue *queue;
     Status stat;
     int i;
-    char *element;
+    char *item;
 
     stat = boundedqueue_new(&queue, 0L);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testBoundedQueueIterator() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = boundedqueue_add(queue, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
-
-    stat = boundedqueue_iterator(queue, &iter);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( boundedqueue_add(queue, array[i]) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( boundedqueue_iterator(queue, &iter) == STAT_SUCCESS );
 
     i = 0;
     while (iterator_hasNext(iter) == TRUE) {
-        stat = iterator_next(iter, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[i++]) == 0 );
+        CU_ASSERT_TRUE( iterator_next(iter, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[i++]) == 0 );
     }
 
     iterator_destroy(iter);
@@ -265,10 +216,8 @@ static void testBoundedQueueClear() {
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testBoundedQueueClear() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = boundedqueue_add(queue, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( boundedqueue_add(queue, array[i]) == STAT_SUCCESS );
 
     boundedqueue_clear(queue, NULL);
     validateEmptyBoundedQueue(queue);

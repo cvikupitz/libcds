@@ -37,26 +37,15 @@ static void validateEmptyCircularList(CircularList *list) {
 
     Array *arr;
     Iterator *iter;
-    Status stat;
-    Boolean isEmpty;
-    char *element;
-    long size;
+    char *item;
 
-    stat = circularlist_first(list, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = circularlist_last(list, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = circularlist_poll(list, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-
-    size = circularlist_size(list);
-    CU_ASSERT_EQUAL(size, 0L);
-    isEmpty = circularlist_isEmpty(list);
-    CU_ASSERT_EQUAL(isEmpty, TRUE);
-    stat = circularlist_iterator(list, &iter);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
-    stat = circularlist_toArray(list, &arr);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    CU_ASSERT_TRUE( circularlist_first(list, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( circularlist_last(list, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( circularlist_poll(list, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( circularlist_size(list) == 0L );
+    CU_ASSERT_TRUE( circularlist_isEmpty(list) == TRUE );
+    CU_ASSERT_TRUE( circularlist_iterator(list, &iter) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( circularlist_toArray(list, &arr) == STAT_STRUCT_EMPTY );
 }
 
 static void testEmptyCircularList() {
@@ -76,44 +65,31 @@ static void testEmptyCircularList() {
 
 static void validateSingleItem(CircularList *list) {
 
-    Status stat;
-    Boolean isEmpty;
-    long size;
-    char *element;
+    char *item;
 
-    size = circularlist_size(list);
-    isEmpty = circularlist_isEmpty(list);
-    CU_ASSERT_EQUAL(size, 1L);
-    CU_ASSERT_EQUAL(isEmpty, FALSE);
-
-    stat = circularlist_first(list, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-    stat = circularlist_last(list, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
-
-    stat = circularlist_poll(list, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_TRUE( strcmp(element, singleItem) == 0 );
+    CU_ASSERT_TRUE( circularlist_size(list) == 1L );
+    CU_ASSERT_TRUE( circularlist_isEmpty(list) == FALSE );
+    CU_ASSERT_TRUE( circularlist_first(list, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
+    CU_ASSERT_TRUE( circularlist_last(list, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
+    CU_ASSERT_TRUE( circularlist_poll(list, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
 }
 
 static void testSingleItemAtHead() {
 
     CircularList *list;
     Status stat;
-    char *element;
+    char *item;
 
     stat = circularlist_new(&list);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testSingleItemAtHead() - allocation failure");
 
-    stat = circularlist_addFirst(list, singleItem);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( circularlist_addFirst(list, singleItem) == STAT_SUCCESS );
     validateSingleItem(list);
-
-    stat = circularlist_poll(list, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    CU_ASSERT_TRUE( circularlist_poll(list, (void **)&item) == STAT_STRUCT_EMPTY );
     validateEmptyCircularList(list);
     circularlist_destroy(list, NULL);
 
@@ -124,18 +100,15 @@ static void testSingleItemAtTail() {
 
     CircularList *list;
     Status stat;
-    char *element;
+    char *item;
 
     stat = circularlist_new(&list);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testSingleItemAtTail() - allocation failure");
 
-    stat = circularlist_addFirst(list, singleItem);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    CU_ASSERT_TRUE( circularlist_addFirst(list, singleItem) == STAT_SUCCESS );
     validateSingleItem(list);
-
-    stat = circularlist_poll(list, (void **)&element);
-    CU_ASSERT_EQUAL(stat, STAT_STRUCT_EMPTY);
+    CU_ASSERT_TRUE( circularlist_poll(list, (void **)&item) == STAT_STRUCT_EMPTY );
     validateEmptyCircularList(list);
     circularlist_destroy(list, NULL);
 
@@ -147,21 +120,18 @@ static void testHeadOperations() {
     CircularList *list;
     Status stat;
     int i;
-    char *element;
+    char *item;
 
     stat = circularlist_new(&list);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testHeadOperations() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = circularlist_addFirst(list, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( circularlist_addFirst(list, array[i]) == STAT_SUCCESS );
 
     for (i = LEN - 1; i >= 0; i--) {
-        stat = circularlist_poll(list, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[i]) == 0 );
+        CU_ASSERT_TRUE( circularlist_poll(list, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[i]) == 0 );
     }
 
     circularlist_destroy(list, NULL);
@@ -173,21 +143,18 @@ static void testTailOperations() {
     CircularList *list;
     Status stat;
     int i;
-    char *element;
+    char *item;
 
     stat = circularlist_new(&list);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testTailOperations() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = circularlist_addLast(list, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( circularlist_addLast(list, array[i]) == STAT_SUCCESS );
 
     for (i = 0; i < LEN; i++) {
-        stat = circularlist_poll(list, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[i]) == 0 );
+        CU_ASSERT_TRUE( circularlist_poll(list, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[i]) == 0 );
     }
 
     circularlist_destroy(list, NULL);
@@ -206,18 +173,14 @@ static void testRotations() {
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testRotations() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = circularlist_addLast(list, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( circularlist_addLast(list, array[i]) == STAT_SUCCESS );
 
     x = 0;
     y = LEN - 1;
     for (i = 0; i < LEN; i++) {
-        stat = circularlist_first(list, (void **)&first);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        stat = circularlist_last(list, (void **)&last);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        CU_ASSERT_TRUE(circularlist_first(list, (void **)&first) == STAT_SUCCESS);
+        CU_ASSERT_TRUE(circularlist_last(list, (void **)&last) == STAT_SUCCESS);
         CU_ASSERT_TRUE( strcmp(first, array[x]) == 0 );
         CU_ASSERT_TRUE( strcmp(last, array[y]) == 0 );
         circularlist_rotate(list);
@@ -240,14 +203,10 @@ static void testCircularListToArray() {
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testCircularListToArray() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = circularlist_addLast(list, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
-
-    stat = circularlist_toArray(list, &arr);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    CU_ASSERT_EQUAL(arr->len, LEN);
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( circularlist_addLast(list, array[i]) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( circularlist_toArray(list, &arr) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arr->len == LEN );
 
     for (i = 0; i < arr->len; i++)
         CU_ASSERT_TRUE( strcmp(arr->items[i], array[i]) == 0 );
@@ -264,25 +223,20 @@ static void testCircularListIterator() {
     Iterator *iter;
     Status stat;
     int i;
-    char *element;
+    char *item;
 
     stat = circularlist_new(&list);
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testCircularListIterator() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = circularlist_addLast(list, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
-
-    stat = circularlist_iterator(list, &iter);
-    CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( circularlist_addLast(list, array[i]) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( circularlist_iterator(list, &iter) == STAT_SUCCESS );
 
     i = 0;
     while (iterator_hasNext(iter) == TRUE) {
-        stat = iterator_next(iter, (void **)&element);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-        CU_ASSERT_TRUE( strcmp(element, array[i++]) == 0 );
+        CU_ASSERT_TRUE( iterator_next(iter, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[i++]) == 0 );
     }
 
     iterator_destroy(iter);
@@ -301,10 +255,8 @@ static void testCircularListClear() {
     if (stat != STAT_SUCCESS)
         CU_FAIL_FATAL("ERROR: testCircularListClear() - allocation failure");
 
-    for (i = 0; i < LEN; i++) {
-        stat = circularlist_addFirst(list, array[i]);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
-    }
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( circularlist_addFirst(list, array[i]) == STAT_SUCCESS );
 
     circularlist_clear(list, NULL);
     validateEmptyCircularList(list);

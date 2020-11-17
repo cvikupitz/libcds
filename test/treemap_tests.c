@@ -358,18 +358,22 @@ static void testItemSet() {
     stat = treemap_put(tree, "02", strdup(singleValue), (void **)&val);
     CU_ASSERT_EQUAL(stat, STAT_ENTRY_REPLACED);
     CU_ASSERT_TRUE( strcmp(val, "TWO") == 0 );
+    free(val);
     stat = treemap_put(tree, "10", strdup(singleValue), (void **)&val);
     CU_ASSERT_EQUAL(stat, STAT_ENTRY_REPLACED);
     CU_ASSERT_TRUE( strcmp(val, "TEN") == 0 );
+    free(val);
     stat = treemap_put(tree, "18", strdup(singleValue), (void **)&val);
     CU_ASSERT_EQUAL(stat, STAT_ENTRY_REPLACED);
     CU_ASSERT_TRUE( strcmp(val, "EIGHTEEN") == 0 );
+    free(val);
 
     rewind(fd);
     while (fgets(line, sizeof(line), fd)) {
         sscanf(line, "%s %s", keyItem, valueItem);
         stat = treemap_remove(tree, keyItem, (void **)&val);
         CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        free(val);
     }
 
     fclose(fd);
