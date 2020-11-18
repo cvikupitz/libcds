@@ -797,18 +797,35 @@ Status treemap_remove(TreeMap *tree, void *key, void **value) {
  */
 static void clearTree(Node *node, void (*keyDxn)(void *), void (*valueDxn)(void *)) {
 
-    if (node == NULL)
-        return;
-    clearTree(node->left, keyDxn, valueDxn);
-    clearTree(node->right, keyDxn, valueDxn);
+    Node *parent;
 
-    /* Destroys the node and its entry values */
-    if (keyDxn != NULL)
-        (*keyDxn)(node->entry->key);
-    if (valueDxn != NULL)
-        (*valueDxn)(node->entry->value);
-    free(node->entry);
-    free(node);
+    while (node != NULL) {
+        parent = node->parent;
+        /* Node is a leaf node, safe to delete */
+        if (node->left == NULL && node->right == NULL) {
+            /* Need to nullify parent's correct child node */
+            if (parent != NULL) {
+                if (parent->left == node)
+                    parent->left = NULL;
+                else
+                    parent->right = NULL;
+            }
+            /* Destroys the node and its entry values */
+            if (keyDxn != NULL)
+                (*keyDxn)(node->entry->key);
+            if (valueDxn != NULL)
+                (*valueDxn)(node->entry->value);
+            free(node->entry);
+            free(node);
+            node = parent;
+        } else if (node->left != NULL) {
+            /* Left child exists, traverse left subtree */
+            node = node->left;
+        } else {
+            /* Right child exists, traverse right subtree */
+            node = node->right;
+        }
+    }
 }
 
 void treemap_clear(TreeMap *tree, void (*valueDestructor)(void *)) {

@@ -628,15 +628,32 @@ Status treeset_remove(TreeSet *tree, void *item, void (*destructor)(void *)) {
  */
 static void clearTree(Node *node, void (*destructor)(void *)) {
 
-    if (node == NULL)
-        return;
-    clearTree(node->left, destructor);
-    clearTree(node->right, destructor);
+    Node *parent;
 
-    /* Destroys the node and its item */
-    if (destructor != NULL)
-        (*destructor)(node->data);
-    free(node);
+    while (node != NULL) {
+        parent = node->parent;
+        /* Node is a leaf node, safe to delete */
+        if (node->left == NULL && node->right == NULL) {
+            /* Need to nullify parent's correct child node */
+            if (parent != NULL) {
+                if (parent->left == node)
+                    parent->left = NULL;
+                else
+                    parent->right = NULL;
+            }
+            /* Deallocate node and stored item */
+            if (*destructor != NULL)
+                (*destructor)(node->data);
+            free(node);
+            node = parent;
+        } else if (node->left != NULL) {
+            /* Left child exists, traverse left subtree */
+            node = node->left;
+        } else {
+            /* Right child exists, traverse right subtree */
+            node = node->right;
+        }
+    }
 }
 
 void treeset_clear(TreeSet *tree, void (*destructor)(void *)) {
