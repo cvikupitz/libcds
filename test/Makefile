@@ -7,6 +7,7 @@ CFLAGS=-W -Wall -g
 IFLAG=-I../include
 LFLAGS=-L. -lcds
 CUNIT=-lcunit
+MATH=-lm
 OBJS=arraylist_tests.o boundedqueue_tests.o boundedstack_tests.o circularlist_tests.o hashmap_tests.o \
      hashset_tests.o heap_tests.o iterator_tests.o linkedlist_tests.o queue_tests.o stack_tests.o \
      treemap_tests.o treeset_tests.o
@@ -40,9 +41,9 @@ queue_tests: queue_tests.o
 stack_tests: stack_tests.o
 	$(CC) $(CFLAGS) $(IFLAG) stack_tests.o -o stack_tests $(LFLAGS) $(CUNIT)
 treemap_tests: treemap_tests.o
-	$(CC) $(CFLAGS) $(IFLAG) treemap_tests.o -o treemap_tests $(LFLAGS) $(CUNIT)
+	$(CC) $(CFLAGS) $(IFLAG) treemap_tests.o -o treemap_tests $(LFLAGS) $(CUNIT) $(MATH)
 treeset_tests: treeset_tests.o
-	$(CC) $(CFLAGS) $(IFLAG) treeset_tests.o -o treeset_tests $(LFLAGS) $(CUNIT)
+	$(CC) $(CFLAGS) $(IFLAG) treeset_tests.o -o treeset_tests $(LFLAGS) $(CUNIT) $(MATH)
 
 # Cleans up files
 clean:

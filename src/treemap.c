@@ -22,7 +22,9 @@
  * SOFTWARE.
  */
 
+#include <math.h>
 #include <stdlib.h>
+#include "boundedstack.h"
 #include "treemap.h"
 
 /*
@@ -797,18 +799,35 @@ Status treemap_remove(TreeMap *tree, void *key, void **value) {
  */
 static void clearTree(Node *node, void (*keyDxn)(void *), void (*valueDxn)(void *)) {
 
-    if (node == NULL)
-        return;
-    clearTree(node->left, keyDxn, valueDxn);
-    clearTree(node->right, keyDxn, valueDxn);
+    Node *parent;
 
-    /* Destroys the node and its entry values */
-    if (keyDxn != NULL)
-        (*keyDxn)(node->entry->key);
-    if (valueDxn != NULL)
-        (*valueDxn)(node->entry->value);
-    free(node->entry);
-    free(node);
+    while (node != NULL) {
+        parent = node->parent;
+        /* Node is a leaf node, safe to delete */
+        if (node->left == NULL && node->right == NULL) {
+            /* Need to nullify parent's correct child node */
+            if (parent != NULL) {
+                if (parent->left == node)
+                    parent->left = NULL;
+                else
+                    parent->right = NULL;
+            }
+            /* Destroys the node and its entry values */
+            if (keyDxn != NULL)
+                (*keyDxn)(node->entry->key);
+            if (valueDxn != NULL)
+                (*valueDxn)(node->entry->value);
+            free(node->entry);
+            free(node);
+            node = parent;
+        } else if (node->left != NULL) {
+            /* Left child exists, traverse left subtree */
+            node = node->left;
+        } else {
+            /* Right child exists, traverse right subtree */
+            node = node->right;
+        }
+    }
 }
 
 void treemap_clear(TreeMap *tree, void (*valueDestructor)(void *)) {
@@ -828,17 +847,27 @@ Boolean treemap_isEmpty(TreeMap *tree) {
 /*
  * Populates the iteration of treemap keys via an in-order traversal.
  */
-static void populateKeyArray(Node *node, TreeIter *iter) {
+static void populateKeyArray(TreeIter *iter, BoundedStack *toVisit, Node *node) {
 
-    if (node == NULL)
-        return;
-    populateKeyArray(node->left, iter);
-    iter->items[iter->next++] = node->entry->key;
-    populateKeyArray(node->right, iter);
+    while (node != NULL || boundedstack_isEmpty(toVisit) == FALSE) {
+
+        /* Traverse down to the left-most node */
+        while (node != NULL) {
+            /* Pushes nodes onto visiting stack during left traversal */
+            (void)boundedstack_push(toVisit, node);
+            node = node->left;
+        }
+
+        /* Once leaf node reached, process and move to right subtree */
+        (void)boundedstack_pop(toVisit, (void **)&node);
+        iter->items[iter->next++] = node->entry->key;
+        node = node->right;
+    }
 }
 
 Status treemap_keyArray(TreeMap *tree, Array **keys) {
 
+    BoundedStack *stack;
     size_t bytes;
     void **items = NULL;
 
@@ -859,12 +888,21 @@ Status treemap_keyArray(TreeMap *tree, Array **keys) {
         return STAT_ALLOC_FAILURE;
     }
 
+    /* Create stack for iterative approach */
+    long capacity = (long)( 2 * ceil( log2(tree->size + 1) ) );  /* Max depth should be <= 2*log2(N + 1) */
+    if (boundedstack_new(&stack, capacity) != STAT_SUCCESS) {
+        free(items);
+        free(temp);
+        return STAT_ALLOC_FAILURE;
+    }
+
     /* Populates the iterator with the key, saves the results into pointer */
     TreeIter iter = {items, 0L};
-    populateKeyArray(tree->root, &iter);
+    populateKeyArray(&iter, stack, tree->root);
     temp->items = iter.items;
     temp->len = tree->size;
     *keys = temp;
+    boundedstack_destroy(stack, NULL);
 
     return STAT_SUCCESS;
 }
@@ -872,13 +910,22 @@ Status treemap_keyArray(TreeMap *tree, Array **keys) {
 /*
  * Populates the iteration of treemap entries via an in-order traversal.
  */
-static void populateEntryArray(Node *node, TreeIter *iter) {
+static void populateEntryArray(TreeIter *iter, BoundedStack *toVisit, Node *node) {
 
-    if (node == NULL)
-        return;
-    populateEntryArray(node->left, iter);
-    iter->items[iter->next++] = node->entry;
-    populateEntryArray(node->right, iter);
+    while (node != NULL || boundedstack_isEmpty(toVisit) == FALSE) {
+
+        /* Traverse down to the left-most node */
+        while (node != NULL) {
+            /* Pushes nodes onto visiting stack during left traversal */
+            (void)boundedstack_push(toVisit, node);
+            node = node->left;
+        }
+
+        /* Once leaf node reached, process and move to right subtree */
+        (void)boundedstack_pop(toVisit, (void **)&node);
+        iter->items[iter->next++] = node->entry;
+        node = node->right;
+    }
 }
 
 /*
@@ -886,6 +933,7 @@ static void populateEntryArray(Node *node, TreeIter *iter) {
  */
 static TmEntry **generateEntryArray(TreeMap *tree) {
 
+    BoundedStack *stack;
     size_t bytes;
     TmEntry **items = NULL;
 
@@ -895,9 +943,17 @@ static TmEntry **generateEntryArray(TreeMap *tree) {
     if (items == NULL)
         return NULL;
 
+    /* Create stack for iterative approach */
+    long capacity = (long)( 2 * ceil( log2(tree->size + 1) ) );  /* Max depth should be <= 2*log2(N + 1) */
+    if (boundedstack_new(&stack, capacity) != STAT_SUCCESS) {
+        free(items);
+        return NULL;
+    }
+
     /* Collects the array of treemap entries */
     TreeIter iter = {(void **)items, 0L};
-    populateEntryArray(tree->root, &iter);
+    populateEntryArray(&iter, stack, tree->root);
+    boundedstack_destroy(stack, NULL);
 
     return (TmEntry **)iter.items;
 }
