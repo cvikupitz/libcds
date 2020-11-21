@@ -32,7 +32,8 @@
  * Interface for the thread-safe CircularList ADT.
  *
  * The CircularList is a linked list where the head and tail are linked, allowing
- * the elements in the list to be 'rotated' in place, mocking a round-robin schema.
+ * the elements in the list to be 'rotated' in place. Provides a similar API as
+ * the LinkedList, and in addition supports rotating the elements in the list.
  */
 typedef struct ts_circular_list ConcurrentCircularList;
 
@@ -49,7 +50,7 @@ Status ts_circularlist_new(ConcurrentCircularList **list);
 
 /**
  * Locks the circular list, providing exclusive access to the calling thread. Caller
- * is responsible for unlocking the circular list to allow other threads access.
+ * is responsible for unlocking the list to allow other threads access.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -81,7 +82,7 @@ void ts_circularlist_unlock(ConcurrentCircularList *list);
 Status ts_circularlist_addFirst(ConcurrentCircularList *list, void *item);
 
 /**
- * Appends the specified element to the end of the circular list.
+ * Inserts the specified element to the end of the circular list.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -91,6 +92,22 @@ Status ts_circularlist_addFirst(ConcurrentCircularList *list, void *item);
  *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_circularlist_addLast(ConcurrentCircularList *list, void *item);
+
+/**
+ * Inserts the specified element at the specified position in the circular list.
+ * Shifts the element currently at that position (if any) and any subsequent
+ * elements to the right (adds one to their indices).
+ *
+ * Params:
+ *    list - The circular list to operate on.
+ *    i - The index at which the specified element is to be inserted.
+ *    item - The element to be inserted.
+ * Returns:
+ *    STAT_SUCCESS - Operation was successful.
+ *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
+ *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ */
+Status ts_circularlist_insert(ConcurrentCircularList *list, long i, void *item);
 
 /**
  * Retrieves, but does not remove, the first element of the circular list, and
@@ -119,6 +136,38 @@ Status ts_circularlist_first(ConcurrentCircularList *list, void **first);
 Status ts_circularlist_last(ConcurrentCircularList *list, void **last);
 
 /**
+ * Retrieves the element at the specified index from the circular list without removing
+ * it, and stores the element into '*item'.
+ *
+ * Params:
+ *    list - The circular list to operate on.
+ *    i - The index of the element to return.
+ *    item - The pointer address to store the fetched element into.
+ * Returns:
+ *    STAT_SUCCESS - Operation was successful.
+ *    STAT_STRUCT_EMPTY - Circular list is currently empty.
+ *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ */
+Status ts_circularlist_get(ConcurrentCircularList *list, long i, void **item);
+
+/**
+ * Replaces the element at the specified position in the circular list with the specified
+ * element. The old element is then placed into '*previous'.
+ *
+ * Params:
+ *    list - The circular list to operate on.
+ *    i - The index of the element to replace
+ *    item - The element to be stored at the specified position
+ *    previous - The pointer address to store the element previously at the specified
+ *               position.
+ * Returns:
+ *    STAT_SUCCESS - Operation was successful.
+ *    STAT_STRUCT_EMPTY - Circular list is currently empty.
+ *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ */
+Status ts_circularlist_set(ConcurrentCircularList *list, long i, void *item, void **previous);
+
+/**
  * Retrieves and removes the first element of the circular list, and stores the
  * removed element into '*first'.
  *
@@ -129,19 +178,60 @@ Status ts_circularlist_last(ConcurrentCircularList *list, void **last);
  *    STAT_SUCCESS - Operation was successful.
  *    STAT_STRUCT_EMPTY - Circular list is currently empty.
  */
-Status ts_circularlist_poll(ConcurrentCircularList *list, void **first);
+Status ts_circularlist_removeFirst(ConcurrentCircularList *list, void **first);
 
 /**
- * Rotates the elements in the circular list, such that, the first item is moved to
- * the back, and the next element becomes the front.
+ * Retrieves and removes the last element of the circular list, and stores the
+ * removed element into '*last'.
  *
  * Params:
  *    list - The circular list to operate on.
+ *    first - The pointer address to store the removed element into.
  * Returns:
  *    STAT_SUCCESS - Operation was successful.
  *    STAT_STRUCT_EMPTY - Circular list is currently empty.
  */
-Status ts_circularlist_rotate(ConcurrentCircularList *list);
+Status ts_circularlist_removeLast(ConcurrentCircularList *list, void **last);
+
+/**
+ * Removes the element at the specified position in the circular list. Shifts any
+ * subsequent elements to the left (subtracts one from their indices). Stores the
+ * removed element into '*item'.
+ *
+ * Params:
+ *    list - The circular list to operate on.
+ *    i - The index of the element to remove.
+ *    item - The pointer address to store the element previously at the specified position.
+ * Returns:
+ *    STAT_SUCCESS - Operation was successful.
+ *    STAT_STRUCT_EMPTY - Circular list is currently empty.
+ *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ */
+Status ts_circularlist_remove(ConcurrentCircularList *list, long i, void **item);
+
+/**
+ * Rotates the elements in the circular list forward, such that, the first item is moved
+ * to the back, and the next element becomes the front. If the list is currently empty,
+ * no rotations are performed.
+ *
+ * Params:
+ *    list - The circular list to operate on.
+ * Returns:
+ *    None
+ */
+void ts_circularlist_rotateForward(ConcurrentCircularList *list);
+
+/**
+ * Rotates the elements in the circular list backward, such that, the last item is moved
+ * to the front, and the previous element becomes the last. If the list is currently empty,
+ * no rotations are performed.
+ *
+ * Params:
+ *    list - The circular list to operate on.
+ * Returns:
+ *    None
+ */
+void ts_circularlist_rotateBackward(ConcurrentCircularList *list);
 
 /**
  * Removes all elements from the circular list. If 'destructor' is not NULL, it will

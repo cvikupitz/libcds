@@ -225,13 +225,61 @@ Status circularlist_set(CircularList *list, long i, void *item, void **previous)
     return STAT_SUCCESS;
 }
 
-Status circularlist_removeFirst(CircularList *list, void **first) {return STAT_SUCCESS;}
+Status circularlist_removeFirst(CircularList *list, void **first) {
 
-Status circularlist_removeLast(CircularList *list, void **last) {return 0;}
+    /* Check if the list is empty */
+    if (IS_EMPTY(list) == TRUE)
+        return STAT_STRUCT_EMPTY;
+
+    /* Fetches the first node, unlinks from list */
+    list->size--;
+    Node *temp = list->head;
+    list->head = (IS_EMPTY(list) == FALSE) ? temp->next : NULL;
+    *first = temp->data;
+    unlinkNode(temp);
+    free(temp);
+
+    return STAT_SUCCESS;
+}
+
+Status circularlist_removeLast(CircularList *list, void **last) {
+
+    /* Check if the list is empty */
+    if (IS_EMPTY(list) == TRUE)
+        return STAT_STRUCT_EMPTY;
+
+    /* Fetches the first node, unlinks from list */
+    list->size--;
+    Node *temp = TAIL(list);
+    *last = temp->data;
+    unlinkNode(temp);
+    free(temp);
+
+    return STAT_SUCCESS;
+}
 
 Status circularlist_remove(CircularList *list, long i, void **item) {
 
+    /* Checks if the list is empty */
+    if (IS_EMPTY(list) == TRUE)
+        return STAT_STRUCT_EMPTY;
+    /* Checks if the index is valid */
+    if (INDEX_VALID(i, list->size) == FALSE)
+        return STAT_INVALID_INDEX;
 
+    if (i == 0L)        /* Same operation as removeFirst() */
+        return circularlist_removeFirst(list, item);
+    if (i == list->size - 1)    /* Same operation as removeLast() */
+        return circularlist_removeLast(list, item);
+
+    /* Fetch the node to be removed, unlink from list */
+    Node *temp = fetchNode(list, i);
+    *item = temp->data;
+    unlinkNode(temp);
+    free(temp);
+    list->size--;
+
+    return STAT_SUCCESS;
 }
 
 void circularlist_rotateForward(CircularList *list) {
