@@ -200,7 +200,7 @@ static void insertNode(TreeSet *tree, Node *node) {
 static void insertFixup(TreeSet *tree, Node *node) {
 
     /* Rebalance needed only if the parent is red */
-    while (COLOR(node->parent) == RED) {
+    while (COLOR(node->parent) == RED && node->parent->parent != NULL) {
         if (node->parent == node->parent->parent->left) {
             Node *uncle = node->parent->parent->right;
             if (COLOR(uncle) == RED) {
