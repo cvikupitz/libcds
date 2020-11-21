@@ -62,7 +62,7 @@ Status circularlist_new(CircularList **list) {
 /* Macro to check if the list is currently empty */
 #define IS_EMPTY(x)  ( ((x)->size == 0L) ? TRUE : FALSE )
 /* Macro to return the list's tail node */
-#define TAIL(x) ( ( (x)->head != NULL ) ? (x)->head->prev : NULL )
+#define TAIL(x) ( ((x)->head != NULL) ? (x)->head->prev : NULL )
 
 /*
  * Fetches the node from list at the specified index.
@@ -109,6 +109,10 @@ static void linkNodes(Node *node, Node *prev, Node *next) {
  * will be linked up removing the node.
  */
 static void unlinkNode(Node *node) {
+
+    /* Node is linked to itself, so no need to unlink anything */
+    if (node == node->next)
+        return;
     Node *next = node->next;
     Node *prev = node->prev;
     next->prev = prev;
@@ -124,7 +128,8 @@ Status circularlist_addFirst(CircularList *list, void *item) {
 
     /* Inserts the node into the front of the list */
     node->data = item;
-    linkNodes(node, list->head, TAIL(list));
+    linkNodes(node, TAIL(list), list->head);
+    list->head = node;
     list->size++;
 
     return STAT_SUCCESS;
@@ -140,6 +145,7 @@ Status circularlist_addLast(CircularList *list, void *item) {
     /* Inserts the node into the back of the list */
     node->data = item;
     linkNodes(node, TAIL(list), list->head);
+    list->head = node->next;
     list->size++;
 
     return STAT_SUCCESS;
@@ -301,7 +307,7 @@ static void clearList(CircularList *list, void (*destructor)(void *)) {
     Node *curr = list->head, *next = NULL;
     long i;
 
-    for (i = 0L ; i < list->size; i++) {
+    for (i = 0L; i < list->size; i++) {
         next = curr->next;
         if (destructor != NULL)
             (*destructor)(curr->data);
