@@ -26,10 +26,11 @@
 #include "circularlist.h"
 
 /*
- * Struct for a node inside the circular list
+ * Struct for a node inside the circular list.
  */
 typedef struct node {
-    struct node *next;  /* Points to the next node */
+    struct node *next;  /* Pointer to the next node */
+    struct node *prev;  /* Pointer to the previous node */
     void *data;         /* Pointer to hold the element */
 } Node;
 
@@ -37,27 +38,82 @@ typedef struct node {
  * Struct for the circular list ADT.
  */
 struct circular_list {
-    Node *tail;         /* Pointer to the tail node */
-    long size;          /* The circular list's current size */
+    Node *head;         /* Points to the list's head node */
+    long size;          /* The list's current size */
 };
 
 Status circularlist_new(CircularList **list) {
 
-    /* Allocates the struct, check for allocation failures */
+    /* Allocates the struct, checks for allocation failure */
     CircularList *temp = (CircularList *)malloc(sizeof(CircularList));
     if (temp == NULL)
         return STAT_ALLOC_FAILURE;
 
-    /* Initialize the remaining struct members */
-    temp->tail = NULL;
+    /* Initializes the remaining struct members */
+    temp->head = NULL;
     temp->size = 0L;
     *list = temp;
 
     return STAT_SUCCESS;
 }
 
+/* Macro used to validate the given index i */
+#define INDEX_VALID(i,N) ( ( 0L <= (i) && (i) < (N) ) ? TRUE : FALSE )
 /* Macro to check if the list is currently empty */
 #define IS_EMPTY(x)  ( ((x)->size == 0L) ? TRUE : FALSE )
+/* Macro to return the list's tail node */
+#define TAIL(x) ( ( (x)->head != NULL ) ? (x)->head->prev : NULL )
+
+/*
+ * Fetches the node from list at the specified index.
+ */
+static Node *fetchNode(CircularList *list, long index) {
+
+    Node *temp = list->head;
+    long i;
+    long mid = ( list->size / 2 );  /* Middle index in list */
+
+    /* If the index is closer to the head, traverse from the head */
+    /* Otherwise, traverse from tail for faster access */
+    if (index <= mid) {
+        /* Traverses forward from the head to the node */
+        for (i = 0L; i < index; i++)
+            temp = temp->next;
+    } else {
+        /* Traverses backwards from the tail to node */
+        for (i = list->size - 1; i > index; i--)
+            temp = temp->prev;
+    }
+
+    return temp;
+}
+
+/*
+ * Links up the specified node 'node' with 'prev' and 'next' such that
+ * the node linkage will become:
+ *     prev <------> node <-----> next
+ * If either 'prev' or 'next' are NULL, the node will link those pointers
+ * to itself.
+ */
+static void linkNodes(Node *node, Node *prev, Node *next) {
+    node->prev = (prev != NULL) ? prev : node;
+    node->next = (next != NULL) ? next : node;
+    if (next != NULL)
+        next->prev = node;
+    if (prev != NULL)
+        prev->next = node;
+}
+
+/*
+ * Unlinks the node 'node' from the list. The previous and next nodes
+ * will be linked up removing the node.
+ */
+static void unlinkNode(Node *node) {
+    Node *next = node->next;
+    Node *prev = node->prev;
+    next->prev = prev;
+    prev->next = next;
+}
 
 Status circularlist_addFirst(CircularList *list, void *item) {
 
@@ -66,16 +122,9 @@ Status circularlist_addFirst(CircularList *list, void *item) {
     if (node == NULL)
         return STAT_ALLOC_FAILURE;
 
+    /* Inserts the node into the front of the list */
     node->data = item;
-    if (IS_EMPTY(list)) {
-        /* Edge case: when empty, link the tail node to itself */
-        node->next = node;
-        list->tail = node;
-    } else {
-        /* Links new node to tail's next pointer */
-        node->next = list->tail->next;
-        list->tail->next = node;
-    }
+    linkNodes(node, list->head, TAIL(list));
     list->size++;
 
     return STAT_SUCCESS;
@@ -83,12 +132,42 @@ Status circularlist_addFirst(CircularList *list, void *item) {
 
 Status circularlist_addLast(CircularList *list, void *item) {
 
-    Status status = circularlist_addFirst(list, item);
-    /* Same as addFirst(), but needs to rotate afterwards */
-    if (status == STAT_SUCCESS)
-        list->tail = list->tail->next;
+    /* Allocates the node for insertion */
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL)
+        return STAT_ALLOC_FAILURE;
 
-    return status;
+    /* Inserts the node into the back of the list */
+    node->data = item;
+    linkNodes(node, TAIL(list), list->head);
+    list->size++;
+
+    return STAT_SUCCESS;
+}
+
+Status circularlist_insert(CircularList *list, long i, void *item) {
+
+    /* Check if the index is valid */
+    if (INDEX_VALID(i, list->size) == FALSE)
+        return STAT_INVALID_INDEX;
+
+    if (i == 0)         /* Same operation as addFirst() */
+        return circularlist_addFirst(list, item);
+    if (i == list->size)        /* Same operation as addLast() */
+        return circularlist_addLast(list, item);
+
+    /* Allocates the node for insertion */
+    Node *node = (Node *)malloc(sizeof(Node));
+    if (node == NULL)
+        return STAT_ALLOC_FAILURE;
+
+    /* Fetch the node at the current index, relink for insertion */
+    node->data = item;
+    Node *temp = fetchNode(list, i);
+    linkNodes(node, temp->prev, temp);
+    list->size++;
+
+    return STAT_SUCCESS;
 }
 
 Status circularlist_first(CircularList *list, void **first) {
@@ -96,8 +175,8 @@ Status circularlist_first(CircularList *list, void **first) {
     /* Checks if the list is empty */
     if (IS_EMPTY(list) == TRUE)
         return STAT_STRUCT_EMPTY;
-    /* Retrieves the data, stores into pointer */
-    *first = list->tail->next->data;
+    /* Fetches the first item, stores into pointer */
+    *first = list->head->data;
 
     return STAT_SUCCESS;
 }
@@ -107,41 +186,62 @@ Status circularlist_last(CircularList *list, void **last) {
     /* Checks if the list is empty */
     if (IS_EMPTY(list) == TRUE)
         return STAT_STRUCT_EMPTY;
-    /* Retrieves the data, stores into pointer */
-    *last = list->tail->data;
+    /* Fetches the last item, stores into pointer */
+    *last = TAIL(list)->data;
 
     return STAT_SUCCESS;
 }
 
-Status circularlist_poll(CircularList *list, void **first) {
+Status circularlist_get(CircularList *list, long i, void **item) {
 
     /* Checks if the list is empty */
     if (IS_EMPTY(list) == TRUE)
         return STAT_STRUCT_EMPTY;
+    /* Checks if the index is valid */
+    if (INDEX_VALID(i, list->size) == FALSE)
+        return STAT_INVALID_INDEX;
 
-    Node *temp = list->tail->next;
-    list->size--;
-    /* Edge case: if only one item, nullify the tail pointer */
-    if (IS_EMPTY(list) == TRUE)
-        list->tail = NULL;
-    /* Links the next node to the tail's next pointer */
-    else
-        list->tail->next = temp->next;
-
-    *first = temp->data;
-    free(temp);
+    /* Fetches the item at the index, stores into pointer */
+    Node *temp = fetchNode(list, i);
+    *item = temp->data;
 
     return STAT_SUCCESS;
 }
 
-Status circularlist_rotate(CircularList *list) {
+Status circularlist_set(CircularList *list, long i, void *item, void **previous) {
 
     /* Checks if the list is empty */
-    if (circularlist_isEmpty(list) == TRUE)
+    if (IS_EMPTY(list) == TRUE)
         return STAT_STRUCT_EMPTY;
-    list->tail = list->tail->next;
+    /* Checks if the index is valid */
+    if (INDEX_VALID(i, list->size) == FALSE)
+        return STAT_INVALID_INDEX;
+
+    /* Retrieve the node, swaps with new element */
+    Node *temp = fetchNode(list, i);
+    *previous = temp->data;
+    temp->data = item;
 
     return STAT_SUCCESS;
+}
+
+Status circularlist_removeFirst(CircularList *list, void **first) {return STAT_SUCCESS;}
+
+Status circularlist_removeLast(CircularList *list, void **last) {return 0;}
+
+Status circularlist_remove(CircularList *list, long i, void **item) {
+
+
+}
+
+void circularlist_rotateForward(CircularList *list) {
+    if (IS_EMPTY(list) == FALSE)
+        list->head = list->head->next;
+}
+
+void circularlist_rotateBackward(CircularList *list) {
+    if (IS_EMPTY(list) == FALSE)
+        list->head = list->head->prev;
 }
 
 /*
@@ -150,12 +250,11 @@ Status circularlist_rotate(CircularList *list) {
  */
 static void clearList(CircularList *list, void (*destructor)(void *)) {
 
-    Node *curr = list->tail, *next = NULL;
+    Node *curr = list->head, *next = NULL;
     long i;
 
-    for (i = 0L; i < list->size; i++) {
+    for (i = 0L ; i < list->size; i++) {
         next = curr->next;
-        /* Frees the allocated memory */
         if (destructor != NULL)
             (*destructor)(curr->data);
         free(curr);
@@ -165,6 +264,7 @@ static void clearList(CircularList *list, void (*destructor)(void *)) {
 
 void circularlist_clear(CircularList *list, void (*destructor)(void *)) {
     clearList(list, destructor);
+    list->head = NULL;
     list->size = 0L;
 }
 
@@ -181,8 +281,8 @@ Boolean circularlist_isEmpty(CircularList *list) {
  */
 static void **generateArray(CircularList *list) {
 
-    Node *temp = NULL;
-    long i = 0L;
+    Node *temp = list->head;
+    long i;
     size_t bytes;
     void **items = NULL;
 
@@ -192,11 +292,10 @@ static void **generateArray(CircularList *list) {
     if (items == NULL)
         return NULL;
 
-    /* Populates the array with the list items */
-    temp = list->tail;
+    /* Populates the array with circular list items */
     for (i = 0L; i < list->size; i++) {
-        temp = temp->next;
         items[i] = temp->data;
+        temp = temp->next;
     }
 
     return items;
@@ -204,23 +303,23 @@ static void **generateArray(CircularList *list) {
 
 Status circularlist_toArray(CircularList *list, Array **array) {
 
-    /* Does not create the list if currently empty */
+    /* Does not create the array if empty */
     if (IS_EMPTY(list) == TRUE)
         return STAT_STRUCT_EMPTY;
 
-    /* Generates the array of list items */
+    /* Generate the array of circular list items */
     void **items = generateArray(list);
     if (items == NULL)
         return STAT_ALLOC_FAILURE;
 
-    /* Allocates the array of list items */
+    /* Allocate memory for the array struct */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
         return STAT_ALLOC_FAILURE;
     }
 
-    /* Initialize the remaining struct members */
+    /* Initialize remaining struct members */
     temp->items = items;
     temp->len = list->size;
     *array = temp;
@@ -232,7 +331,7 @@ Status circularlist_iterator(CircularList *list, Iterator **iter) {
 
     Iterator *temp = NULL;
 
-    /* Does not create the array if currently empty */
+    /* Does not create the array if empty */
     if (IS_EMPTY(list) == TRUE)
         return STAT_STRUCT_EMPTY;
 

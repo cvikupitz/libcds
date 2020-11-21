@@ -56,8 +56,8 @@ ts_boundedqueue.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c ts_boundedqueue.c
 ts_boundedstack.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c ts_boundedstack.c
-ts_circularlist.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c ts_circularlist.c
+#ts_circularlist.o:
+#	$(CC) $(CFLAGS) $(IFLAG) -c ts_circularlist.c
 ts_hashmap.o:
 	$(CC) $(CFLAGS) $(IFLAG) -c ts_hashmap.c
 ts_hashset.o:
