@@ -50,7 +50,7 @@ typedef struct ts_iterator ConcurrentIterator;
  *
  * Params:
  *    iter - The pointer address to store the new Iterator into.
- *    lock - FIXME
+ *    lock - The mutex that currently is locked on the ADT being iterated over.
  *    items - The array of items to iterate through.
  *    len - The length of the array.
  * Returns:
