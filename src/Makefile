@@ -5,8 +5,7 @@
 CC=gcc
 CFLAGS=-W -Wall -Wextra -g
 INCLUDE=-I../include
-CPFLAG=-c
-COMPILE=$(CC) $(CFLAGS) $(INCLUDE) $(CPFLAG)
+COMPILE=$(CC) $(CFLAGS) $(INCLUDE) -c $^
 OBJS=arraylist.o boundedstack.o boundedqueue.o circularlist.o hashmap.o hashset.o heap.o iterator.o \
      linkedlist.o queue.o stack.o treemap.o treeset.o \
      ts_arraylist.o ts_boundedqueue.o ts_boundedstack.o ts_circularlist.o ts_hashmap.o ts_hashset.o \
@@ -25,56 +24,57 @@ clean:
 	rm -f $(OBJS) $(LIB)
 
 # Targets for compiling the .obj files
-arraylist.o:
-	$(COMPILE) arraylist.c
-boundedqueue.o:
-	$(COMPILE) boundedqueue.c
-boundedstack.o:
-	$(COMPILE) boundedstack.c
-circularlist.o:
-	$(COMPILE) circularlist.c
-hashmap.o:
-	$(COMPILE) hashmap.c
-hashset.o:
-	$(COMPILE) hashset.c
-heap.o:
-	$(COMPILE) heap.c
-iterator.o:
-	$(COMPILE) iterator.c
-linkedlist.o:
-	$(COMPILE) linkedlist.c
-queue.o:
-	$(COMPILE) queue.c
-stack.o:
-	$(COMPILE) stack.c
-treemap.o:
-	$(COMPILE) treemap.c
-treeset.o:
-	$(COMPILE) treeset.c
+arraylist.o: arraylist.c
+	$(COMPILE)
+boundedqueue.o: boundedqueue.c
+	$(COMPILE)
+boundedstack.o: boundedstack.c
+	$(COMPILE)
+circularlist.o: circularlist.c
+	$(COMPILE)
+hashmap.o: hashmap.c
+	$(COMPILE)
+hashset.o: hashset.c
+	$(COMPILE)
+heap.o: heap.c
+	$(COMPILE)
+iterator.o: iterator.c
+	$(COMPILE)
+linkedlist.o: linkedlist.c
+	$(COMPILE)
+queue.o: queue.c
+	$(COMPILE)
+stack.o: stack.c
+	$(COMPILE)
+treemap.o: treemap.c
+	$(COMPILE)
+treeset.o: treeset.c
+	$(COMPILE)
 
-ts_arraylist.o:
-	$(COMPILE) ts_arraylist.c
-ts_boundedqueue.o:
-	$(COMPILE) ts_boundedqueue.c
-ts_boundedstack.o:
-	$(COMPILE) ts_boundedstack.c
-ts_circularlist.o:
-	$(COMPILE) ts_circularlist.c
-ts_hashmap.o:
-	$(COMPILE) ts_hashmap.c
-ts_hashset.o:
-	$(COMPILE) ts_hashset.c
-ts_heap.o:
-	$(COMPILE) ts_heap.c
-ts_iterator.o:
-	$(COMPILE) ts_iterator.c
-ts_linkedlist.o:
-	$(COMPILE) ts_linkedlist.c
-ts_queue.o:
-	$(COMPILE) ts_queue.c
-ts_stack.o:
-	$(COMPILE) ts_stack.c
-ts_treemap.o:
-	$(COMPILE) ts_treemap.c
-ts_treeset.o:
-	$(COMPILE) ts_treeset.c
+ts_arraylist.o: ts_arraylist.c
+	$(COMPILE)
+ts_boundedqueue.o: ts_boundedqueue.c
+	$(COMPILE)
+ts_boundedstack.o: ts_boundedstack.c
+	$(COMPILE)
+ts_circularlist.o: ts_circularlist.c
+	$(COMPILE)
+ts_hashmap.o: ts_hashmap.c
+	$(COMPILE)
+ts_hashset.o: ts_hashset.c
+	$(COMPILE)
+ts_heap.o: ts_heap.c
+	$(COMPILE)
+ts_iterator.o: ts_iterator.c
+	$(COMPILE)
+ts_linkedlist.o: ts_linkedlist.c
+	$(COMPILE)
+ts_queue.o: ts_queue.c
+	$(COMPILE)
+ts_stack.o: ts_stack.c
+	$(COMPILE)
+ts_treemap.o: ts_treemap.c
+	$(COMPILE)
+ts_treeset.o: ts_treeset.c
+	$(COMPILE)
+
