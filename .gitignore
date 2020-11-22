@@ -65,6 +65,7 @@ iterator_tests
 linkedlist_tests
 queue_tests
 stack_tests
+treemap_tests
 treeset_tests
 
 # SWP Files
