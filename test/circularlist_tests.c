@@ -258,10 +258,16 @@ static void testSequentialDelete() {
         CU_FAIL_FATAL("ERROR: testSequentialDelete() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( circularlist_addLast(list, array[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( circularlist_addFirst(list, array[i]) == STAT_SUCCESS );
+    for (i = LEN - 1; i >= 0; i--) {
+        CU_ASSERT_TRUE( circularlist_removeFirst(list, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( strcmp(item, array[i]) == 0 );
+    }
 
-    for (i = 0L; i < LEN; i++) {
-        CU_ASSERT_TRUE( circularlist_remove(list, 0L, (void **)&item) == STAT_SUCCESS );
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( circularlist_addLast(list, array[i]) == STAT_SUCCESS );
+    for (i = LEN - 1; i >= 0; i--) {
+        CU_ASSERT_TRUE( circularlist_removeLast(list, (void **)&item) == STAT_SUCCESS );
         CU_ASSERT_TRUE( strcmp(item, array[i]) == 0 );
     }
 
@@ -294,6 +300,44 @@ static void testRandomDelete() {
     circularlist_destroy(list, NULL);
 
     CU_PASS("testRandomDelete() - Test Passed");
+}
+
+#define ROTATIONS 4
+static void testRotations() {
+
+    CircularList *list;
+    Status stat;
+    int i, tmp;
+    char *item;
+
+    stat = circularlist_new(&list);
+    if (stat != STAT_SUCCESS)
+        CU_FAIL_FATAL("ERROR: testRotations() - allocation failure");
+
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( circularlist_addLast(list, array[i]) == STAT_SUCCESS );
+    for (i = 0; i < ROTATIONS; i++)
+        circularlist_rotateForward(list);
+    for (i = 0; i < LEN; i++) {
+        circularlist_get(list, i, (void **)&item);
+        tmp = ( (i + ROTATIONS) % LEN );
+        CU_ASSERT_TRUE( strcmp(item, array[tmp]) == 0 );
+    }
+    circularlist_clear(list, NULL);
+
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( circularlist_addLast(list, array[i]) == STAT_SUCCESS );
+    for (i = 0; i < ROTATIONS; i++)
+        circularlist_rotateBackward(list);
+    tmp = ( LEN - ROTATIONS );
+    for (i = 0; i < LEN; i++) {
+        circularlist_get(list, i, (void **)&item);
+        CU_ASSERT_TRUE( strcmp(item, array[tmp]) == 0 );
+        tmp = ( (tmp + 1) % LEN );
+    }
+    circularlist_destroy(list, NULL);
+
+    CU_PASS("testRotations() - Test Passed");
 }
 
 static void testCircularListToArray() {
@@ -390,6 +434,7 @@ int main(UNUSED int argc, UNUSED char **argv) {
     CU_add_test(suite, "CircularList - Set", testSetItem);
     CU_add_test(suite, "CircularList - Sequential Delete", testSequentialDelete);
     CU_add_test(suite, "CircularList - Random Delete", testRandomDelete);
+    CU_add_test(suite, "CircularList - Rotations", testRotations);
     CU_add_test(suite, "CircularList - Array", testCircularListToArray);
     CU_add_test(suite, "CircularList - Iterator", testCircularListIterator);
     CU_add_test(suite, "CircularList - Clear", testCircularListClear);
