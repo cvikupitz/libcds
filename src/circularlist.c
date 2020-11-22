@@ -69,7 +69,7 @@ Status circularlist_new(CircularList **list) {
  */
 static Node *fetchNode(CircularList *list, long index) {
 
-    Node *temp = list->head;
+    Node *temp;
     long i;
     long mid = ( list->size / 2 );  /* Middle index in list */
 
@@ -77,10 +77,12 @@ static Node *fetchNode(CircularList *list, long index) {
     /* Otherwise, traverse from tail for faster access */
     if (index <= mid) {
         /* Traverses forward from the head to the node */
+        temp = list->head;
         for (i = 0L; i < index; i++)
             temp = temp->next;
     } else {
         /* Traverses backwards from the tail to node */
+        temp = TAIL(list);
         for (i = list->size - 1; i > index; i--)
             temp = temp->prev;
     }
