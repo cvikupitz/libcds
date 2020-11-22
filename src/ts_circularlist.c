@@ -28,11 +28,11 @@
 #include "ts_circularlist.h"
 
 /*
- * Struct for the thread-safe circular list.
+ * Struct for thread-safe circular list.
  */
 struct ts_circular_list {
     pthread_mutex_t lock;       /* The lock */
-    CircularList *instance;     /* Internal isntance of CircularList */
+    CircularList *instance;     /* Internal instance of CircularList */
 };
 
 /* Macro used for locking the list */
@@ -46,7 +46,7 @@ Status ts_circularlist_new(ConcurrentCircularList **list) {
     Status status;
     pthread_mutexattr_t attr;
 
-    /* Allocates memory for the list instance */
+    /* Allocates memory for the new list */
     temp = (ConcurrentCircularList *)malloc(sizeof(ConcurrentCircularList));
     if (temp == NULL)
         return STAT_ALLOC_FAILURE;
@@ -94,6 +94,15 @@ Status ts_circularlist_addLast(ConcurrentCircularList *list, void *item) {
     return status;
 }
 
+Status ts_circularlist_insert(ConcurrentCircularList *list, long i, void *item) {
+
+    LOCK(list);
+    Status status = circularlist_insert(list->instance, i, item);
+    UNLOCK(list);
+
+    return status;
+}
+
 Status ts_circularlist_first(ConcurrentCircularList *list, void **first) {
 
     LOCK(list);
@@ -112,26 +121,64 @@ Status ts_circularlist_last(ConcurrentCircularList *list, void **last) {
     return status;
 }
 
-Status ts_circularlist_poll(ConcurrentCircularList *list, void **first) {
+Status ts_circularlist_get(ConcurrentCircularList *list, long i, void **item) {
 
     LOCK(list);
-    Status status = circularlist_poll(list->instance, first);
+    Status status = circularlist_get(list->instance, i, item);
     UNLOCK(list);
 
     return status;
 }
 
-Status ts_circularlist_rotate(ConcurrentCircularList *list) {
+Status ts_circularlist_set(ConcurrentCircularList *list, long i, void *item, void **previous) {
 
     LOCK(list);
-    Status status = circularlist_rotate(list->instance);
+    Status status = circularlist_set(list->instance, i, item, previous);
     UNLOCK(list);
 
     return status;
+}
+
+Status ts_circularlist_removeFirst(ConcurrentCircularList *list, void **first) {
+
+    LOCK(list);
+    Status status = circularlist_removeFirst(list->instance, first);
+    UNLOCK(list);
+
+    return status;
+}
+
+Status ts_circularlist_removeLast(ConcurrentCircularList *list, void **last) {
+
+    LOCK(list);
+    Status status = circularlist_removeLast(list->instance, last);
+    UNLOCK(list);
+
+    return status;
+}
+
+Status ts_circularlist_remove(ConcurrentCircularList *list, long i, void **item) {
+
+    LOCK(list);
+    Status status = circularlist_remove(list->instance, i, item);
+    UNLOCK(list);
+
+    return status;
+}
+
+void ts_circularlist_rotateForward(ConcurrentCircularList *list) {
+    LOCK(list);
+    circularlist_rotateForward(list->instance);
+    UNLOCK(list);
+}
+
+void ts_circularlist_rotateBackward(ConcurrentCircularList *list) {
+    LOCK(list);
+    circularlist_rotateBackward(list->instance);
+    UNLOCK(list);
 }
 
 void ts_circularlist_clear(ConcurrentCircularList *list, void (*destructor)(void *)) {
-
     LOCK(list);
     circularlist_clear(list->instance, destructor);
     UNLOCK(list);

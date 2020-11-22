@@ -4,7 +4,9 @@
 ############################################
 CC=gcc
 CFLAGS=-W -Wall -Wextra -g
-IFLAG=-I../include
+INCLUDE=-I../include
+CPFLAG=-c
+COMPILE=$(CC) $(CFLAGS) $(INCLUDE) $(CPFLAG)
 OBJS=arraylist.o boundedstack.o boundedqueue.o circularlist.o hashmap.o hashset.o heap.o iterator.o \
      linkedlist.o queue.o stack.o treemap.o treeset.o \
      ts_arraylist.o ts_boundedqueue.o ts_boundedstack.o ts_circularlist.o ts_hashmap.o ts_hashset.o \
@@ -24,55 +26,55 @@ clean:
 
 # Targets for compiling the .obj files
 arraylist.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c arraylist.c
+	$(COMPILE) arraylist.c
 boundedqueue.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c boundedqueue.c
+	$(COMPILE) boundedqueue.c
 boundedstack.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c boundedstack.c
+	$(COMPILE) boundedstack.c
 circularlist.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c circularlist.c
+	$(COMPILE) circularlist.c
 hashmap.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c hashmap.c
+	$(COMPILE) hashmap.c
 hashset.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c hashset.c
+	$(COMPILE) hashset.c
 heap.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c heap.c
+	$(COMPILE) heap.c
 iterator.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c iterator.c
+	$(COMPILE) iterator.c
 linkedlist.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c linkedlist.c
+	$(COMPILE) linkedlist.c
 queue.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c queue.c
+	$(COMPILE) queue.c
 stack.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c stack.c
+	$(COMPILE) stack.c
 treemap.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c treemap.c
+	$(COMPILE) treemap.c
 treeset.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c treeset.c
+	$(COMPILE) treeset.c
 
 ts_arraylist.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c ts_arraylist.c
+	$(COMPILE) ts_arraylist.c
 ts_boundedqueue.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c ts_boundedqueue.c
+	$(COMPILE) ts_boundedqueue.c
 ts_boundedstack.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c ts_boundedstack.c
+	$(COMPILE) ts_boundedstack.c
 ts_circularlist.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c ts_circularlist.c
+	$(COMPILE) ts_circularlist.c
 ts_hashmap.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c ts_hashmap.c
+	$(COMPILE) ts_hashmap.c
 ts_hashset.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c ts_hashset.c
+	$(COMPILE) ts_hashset.c
 ts_heap.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c ts_heap.c
+	$(COMPILE) ts_heap.c
 ts_iterator.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c ts_iterator.c
+	$(COMPILE) ts_iterator.c
 ts_linkedlist.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c ts_linkedlist.c
+	$(COMPILE) ts_linkedlist.c
 ts_queue.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c ts_queue.c
+	$(COMPILE) ts_queue.c
 ts_stack.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c ts_stack.c
+	$(COMPILE) ts_stack.c
 ts_treemap.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c ts_treemap.c
+	$(COMPILE) ts_treemap.c
 ts_treeset.o:
-	$(CC) $(CFLAGS) $(IFLAG) -c ts_treeset.c
+	$(COMPILE) ts_treeset.c
