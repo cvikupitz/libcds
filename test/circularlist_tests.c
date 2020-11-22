@@ -90,6 +90,38 @@ static void testSingleItem() {
     CU_PASS("testSingleItem() - Test Passed");
 }
 
+static void testInvalidIndexAccess() {
+
+    CircularList *list;
+    Status stat;
+    char *item;
+    int i;
+
+    stat = circularlist_new(&list);
+    if (stat != STAT_SUCCESS)
+        CU_FAIL_FATAL("ERROR: testInvalidIndexAccess() - allocation failure");
+
+    for (i = 0; i < LEN; i++)
+        CU_ASSERT_TRUE( circularlist_addLast(list, array[i]) == STAT_SUCCESS );
+
+    CU_ASSERT_TRUE( circularlist_insert(list, LEN + 1L, singleItem) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( circularlist_insert(list, LEN + 1L, singleItem) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( circularlist_insert(list, LEN + 10L, singleItem) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( circularlist_get(list, -1, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( circularlist_get(list, LEN + 1L, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( circularlist_get(list, LEN + 10L, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( circularlist_set(list, -1, singleItem, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( circularlist_set(list, LEN + 1L, singleItem, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( circularlist_set(list, LEN + 10L, singleItem, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( circularlist_remove(list, -1, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( circularlist_remove(list, LEN + 1L, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( circularlist_remove(list, LEN + 10L, (void **)&item) == STAT_INVALID_INDEX );
+
+    circularlist_destroy(list, NULL);
+
+    CU_PASS("testInvalidIndexAccess() - Test Passed");
+}
+
 static void testAddFirst() {
 
     CircularList *list;
@@ -262,38 +294,6 @@ static void testRandomDelete() {
     circularlist_destroy(list, NULL);
 
     CU_PASS("testRandomDelete() - Test Passed");
-}
-
-static void testInvalidIndexAccess() {
-
-    CircularList *list;
-    Status stat;
-    char *item;
-    int i;
-
-    stat = circularlist_new(&list);
-    if (stat != STAT_SUCCESS)
-        CU_FAIL_FATAL("ERROR: testInvalidIndexAccess() - allocation failure");
-
-    for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( circularlist_addLast(list, array[i]) == STAT_SUCCESS );
-
-    CU_ASSERT_TRUE( circularlist_insert(list, LEN + 1L, singleItem) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( circularlist_insert(list, LEN + 1L, singleItem) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( circularlist_insert(list, LEN + 10L, singleItem) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( circularlist_get(list, -1, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( circularlist_get(list, LEN + 1L, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( circularlist_get(list, LEN + 10L, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( circularlist_set(list, -1, singleItem, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( circularlist_set(list, LEN + 1L, singleItem, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( circularlist_set(list, LEN + 10L, singleItem, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( circularlist_remove(list, -1, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( circularlist_remove(list, LEN + 1L, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( circularlist_remove(list, LEN + 10L, (void **)&item) == STAT_INVALID_INDEX );
-
-    circularlist_destroy(list, NULL);
-
-    CU_PASS("testInvalidIndexAccess() - Test Passed");
 }
 
 static void testCircularListToArray() {
