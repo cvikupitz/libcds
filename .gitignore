@@ -70,3 +70,6 @@ treeset_tests
 
 # SWP Files
 .*.swp
+
+# Archives
+libcds*.tgz
