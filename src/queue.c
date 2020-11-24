@@ -104,8 +104,10 @@ Status queue_poll(Queue *queue, void **first) {
     queue->head = temp->next;
     queue->size--;
     /* Edge case: one item, nullify both head and tail pointers */
-    if (IS_EMPTY(queue) == TRUE)
+    if (IS_EMPTY(queue) == TRUE) {
+        queue->head = NULL;
         queue->tail = NULL;
+    }
     /* Free the allocated node's struct */
     *first = temp->data;
     free(temp);
@@ -126,7 +128,7 @@ static void clearQueue(Queue *queue, void (*destructor)(void *)) {
         next = curr->next;
         /* Frees the allocated memory */
         if (destructor != NULL)
-            (*destructor)(curr);
+            (*destructor)(curr->data);
         free(curr);
         curr = next;
     }
