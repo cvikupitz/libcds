@@ -2,6 +2,56 @@
 
 A library containing several data structures implemented in C, for C. Contains many of the data structures you'd expect to find in a utility package that is provided by default with most programming languages. This one in particular models its API closely after the data structures provided in Java's  ```java.util``` package.
 
+### Installing
+
+To install the library, clone the repository onto your machine:
+
+```powershell
+$ git clone https://github.com/cvikupitz/libcds.git
+```
+
+Navigate to the root of the of the repository, and open the Makefile. Locate the macro *INSTALL_PATH* which specifies where the project libraries, headers, and other files will be installed to. Ensure that the root directory specified is appropriate for you (if you have write access to these directories). Then run the following make commands to install the libraries:
+
+```powershell
+$ make
+$ make install
+```
+
+The libraries will be installed into whatever directory you specified. You may now use the library in your C projects as shown in the examples section below.
+
+To uninstall the project, you can also run the uninstall target as such:
+
+```powershell
+$ make uninstall
+```
+
+### Compiling & Linking
+
+To compile and link the library together with your own project, you will need to reference the library name *cds* with the compiler's *-l* flag as shown below:
+
+```c
+// test.c
+// Author: Some Name
+
+#include <stdlib.h>
+#include <libcds/stack.h>
+
+int main() {
+
+	Stack *st;
+	(void)stack_new(&st);
+	
+	// do some work here...
+	destroy_stack(st, NULL);
+	return 0;
+}
+```
+
+```powershell
+$ gcc -c test.c
+$ gcc test.o -o test -lcds
+```
+
 ### Available Structures
 
 This library comes with the following implemented data structures, each one coming with a thread-safe and non thread-safe version:
@@ -25,7 +75,7 @@ Below is an example of basic operations used for one of the ADTs.
 
 ```c
 #include <stdio.h>
-#include "stack.h"
+#include <libcds/stack.h>
 
 #define LEN 6
 static char *items[] = {"red","orange","yellow","green","blue","purple"};
