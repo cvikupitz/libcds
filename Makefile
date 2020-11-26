@@ -24,7 +24,7 @@ TEST=./test
 
 ##### Macros used for compilation & linking stages
 CC=gcc
-CFLAGS=-W -Wall -Wextra -g -fPIC
+CFLAGS=-W -Wall -Wextra -g -fPIC -O2
 IFLAGS=-I$(INCLUDE)
 LIBS=-lm -lpthread
 LFLAGS=-L. -lcds -lcunit $(LIBS)
