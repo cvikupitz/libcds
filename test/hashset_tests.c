@@ -67,11 +67,11 @@ static void validateEmptyHashSet(HashSet *set) {
     Iterator *iter;
 
     CU_ASSERT_TRUE( hashset_contains(set, singleItem) == FALSE );
-    CU_ASSERT_TRUE( hashset_remove(set, singleItem, NULL) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( hashset_remove(set, singleItem, NULL) == STRUCT_EMPTY );
     CU_ASSERT_TRUE( hashset_size(set) == 0L );
     CU_ASSERT_TRUE( hashset_isEmpty(set) == TRUE );
-    CU_ASSERT_TRUE( hashset_iterator(set, &iter) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( hashset_toArray(set, &arr) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( hashset_iterator(set, &iter) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( hashset_toArray(set, &arr) == STRUCT_EMPTY );
 }
 
 static void testEmptyHashSet() {
@@ -80,7 +80,7 @@ static void testEmptyHashSet() {
     Status stat;
 
     stat = hashset_new(&set, hash, strCmp, CAPACITY, LOAD_FACTOR);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testEmptyHashSet() - allocation failure");
 
     validateEmptyHashSet(set);
@@ -95,17 +95,17 @@ static void testSingleItem() {
     Status stat;
 
     stat = hashset_new(&set, hash, strCmp, CAPACITY, LOAD_FACTOR);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testSingleItem() - allocation failure");
 
-    CU_ASSERT_TRUE( hashset_add(set, singleItem) == STAT_SUCCESS );
-    CU_ASSERT_TRUE( hashset_add(set, singleItem) == STAT_KEY_ALREADY_EXISTS );
+    CU_ASSERT_TRUE( hashset_add(set, singleItem) == OK );
+    CU_ASSERT_TRUE( hashset_add(set, singleItem) == ALREADY_EXISTS );
     CU_ASSERT_TRUE( hashset_size(set) == 1L );
     CU_ASSERT_TRUE( hashset_isEmpty(set) == FALSE );
     CU_ASSERT_TRUE( hashset_contains(set, singleItem) == TRUE );
-    CU_ASSERT_TRUE( hashset_remove(set, "Non-present key", NULL) == STAT_NOT_FOUND );
-    CU_ASSERT_TRUE( hashset_remove(set, singleItem, NULL) == STAT_SUCCESS );
-    CU_ASSERT_TRUE( hashset_remove(set, singleItem, NULL) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( hashset_remove(set, "Non-present key", NULL) == NOT_FOUND );
+    CU_ASSERT_TRUE( hashset_remove(set, singleItem, NULL) == OK );
+    CU_ASSERT_TRUE( hashset_remove(set, singleItem, NULL) == STRUCT_EMPTY );
 
     validateEmptyHashSet(set);
     hashset_destroy(set, NULL);
@@ -120,22 +120,22 @@ static void testCompleteSet() {
     int i;
 
     stat = hashset_new(&set, hash, strCmp, CAPACITY, LOAD_FACTOR);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testCompleteSet() - allocation failure");
 
-    CU_ASSERT_TRUE( hashset_add(set, singleItem) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( hashset_add(set, singleItem) == OK );
 
     for (i = 0; i < LEN; i++) {
-        CU_ASSERT_TRUE( hashset_add(set, array[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( hashset_add(set, array[i]) == OK );
         CU_ASSERT_TRUE( hashset_contains(set, array[i]) == TRUE );
     }
 
     for (i = 0; i < LEN; i++) {
-        CU_ASSERT_TRUE( hashset_remove(set, array[i], NULL) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( hashset_remove(set, array[i], NULL) == OK );
         CU_ASSERT_TRUE( hashset_contains(set, array[i]) == FALSE );
     }
 
-    CU_ASSERT_TRUE( hashset_remove(set, array[0], NULL) == STAT_NOT_FOUND );
+    CU_ASSERT_TRUE( hashset_remove(set, array[0], NULL) == NOT_FOUND );
     hashset_destroy(set, NULL);
 
     CU_PASS("testCompleteSet() - Test Passed");
@@ -148,11 +148,11 @@ static void testHashSetClear() {
     int i;
 
     stat = hashset_new(&set, hash, strCmp, CAPACITY, LOAD_FACTOR);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testHashSetClear() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( hashset_add(set, array[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( hashset_add(set, array[i]) == OK );
 
     hashset_clear(set, NULL);
     validateEmptyHashSet(set);
@@ -169,12 +169,12 @@ static void testHashSetToArray() {
     int i;
 
     stat = hashset_new(&set, hash, strCmp, CAPACITY, LOAD_FACTOR);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testHashSetToArray() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( hashset_add(set, array[i]) == STAT_SUCCESS );
-    CU_ASSERT_TRUE( hashset_toArray(set, &arr) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( hashset_add(set, array[i]) == OK );
+    CU_ASSERT_TRUE( hashset_toArray(set, &arr) == OK );
     CU_ASSERT_TRUE( arr->len == LEN );
 
     FREE_ARRAY(arr)
@@ -191,12 +191,12 @@ static void testHashSetIterator() {
     int i;
 
     stat = hashset_new(&set, hash, strCmp, CAPACITY, LOAD_FACTOR);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testHashSetIterator() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( hashset_add(set, array[i]) == STAT_SUCCESS );
-    CU_ASSERT_TRUE( hashset_iterator(set, &iter) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( hashset_add(set, array[i]) == OK );
+    CU_ASSERT_TRUE( hashset_iterator(set, &iter) == OK );
     iterator_destroy(iter);
     hashset_destroy(set, NULL);
 

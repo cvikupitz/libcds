@@ -37,12 +37,12 @@ void testEmptyIterator() {
     char *item;
 
     stat = iterator_new(&iter, NULL, 0L);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testEmptyIterator() - allocation failure");
 
     CU_ASSERT_TRUE( iterator_hasNext(iter) == FALSE );
     stat = iterator_next(iter, (void **)&item);
-    CU_ASSERT_EQUAL(stat, STAT_ITERATION_END);
+    CU_ASSERT_EQUAL(stat, ITER_END);
 
     iterator_destroy(iter);
 
@@ -63,7 +63,7 @@ void testIteration() {
         items[i] = array[i];
 
     stat = iterator_new(&iter, (void **)items, 6L);
-    if (stat != STAT_SUCCESS) {
+    if (stat != OK) {
         free(items);
         CU_FAIL_FATAL("ERROR: testIteration() - allocation failure");
     }
@@ -71,13 +71,13 @@ void testIteration() {
     for (i = 0; i < LEN; i++) {
         CU_ASSERT_TRUE( iterator_hasNext(iter) == TRUE);
         stat = iterator_next(iter, (void **)&item);
-        CU_ASSERT_EQUAL(stat, STAT_SUCCESS);
+        CU_ASSERT_EQUAL(stat, OK);
         CU_ASSERT_TRUE( strcmp(item, array[i]) == 0 );
     }
 
     CU_ASSERT_TRUE( iterator_hasNext(iter) == FALSE );
     stat = iterator_next(iter, (void **)&item);
-    CU_ASSERT_EQUAL(stat, STAT_ITERATION_END);
+    CU_ASSERT_EQUAL(stat, ITER_END);
 
     iterator_destroy(iter);
 

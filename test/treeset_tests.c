@@ -49,19 +49,19 @@ static void validateEmptyTreeSet(TreeSet *tree) {
     char *item;
 
     CU_ASSERT_TRUE( treeset_contains(tree, &singleItem) == FALSE );
-    CU_ASSERT_TRUE( treeset_first(tree, (void **)&item) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( treeset_last(tree, (void **)&item) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( treeset_floor(tree, singleItem, (void **)&item) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( treeset_ceiling(tree, singleItem, (void **)&item) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( treeset_lower(tree, singleItem, (void **)&item) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( treeset_higher(tree, singleItem, (void **)&item) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( treeset_pollFirst(tree, (void **)&item) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( treeset_pollLast(tree, (void **)&item) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( treeset_remove(tree, &singleItem, NULL) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( treeset_first(tree, (void **)&item) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( treeset_last(tree, (void **)&item) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( treeset_floor(tree, singleItem, (void **)&item) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( treeset_ceiling(tree, singleItem, (void **)&item) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( treeset_lower(tree, singleItem, (void **)&item) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( treeset_higher(tree, singleItem, (void **)&item) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( treeset_pollFirst(tree, (void **)&item) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( treeset_pollLast(tree, (void **)&item) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( treeset_remove(tree, &singleItem, NULL) == STRUCT_EMPTY );
     CU_ASSERT_TRUE( treeset_size(tree) == 0L );
     CU_ASSERT_TRUE( treeset_isEmpty(tree) == TRUE );
-    CU_ASSERT_TRUE( treeset_iterator(tree, &iter) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( treeset_toArray(tree, &arr) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( treeset_iterator(tree, &iter) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( treeset_toArray(tree, &arr) == STRUCT_EMPTY );
 }
 
 static void testEmptyTreeSet() {
@@ -70,7 +70,7 @@ static void testEmptyTreeSet() {
     Status stat;
 
     stat = treeset_new(&tree, treeCmp);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testEmptyTreeSet() - allocation failure");
 
     validateEmptyTreeSet(tree);
@@ -86,20 +86,20 @@ static void testSingleItem() {
     char *item;
 
     stat = treeset_new(&tree, treeCmp);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testSingleItem() - allocation failure");
 
-    CU_ASSERT_TRUE( treeset_add(tree, singleItem) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_add(tree, singleItem) == OK );
     CU_ASSERT_TRUE( treeset_contains(tree, singleItem) == TRUE );
     CU_ASSERT_TRUE( treeset_size(tree) == 1L );
     CU_ASSERT_TRUE( treeset_isEmpty(tree) == FALSE );
-    CU_ASSERT_TRUE( treeset_first(tree, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_first(tree, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
-    CU_ASSERT_TRUE( treeset_last(tree, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_last(tree, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
-    CU_ASSERT_TRUE( treeset_lower(tree, singleItem, (void **)&item) == STAT_NOT_FOUND );
-    CU_ASSERT_TRUE( treeset_higher(tree, singleItem, (void **)&item) == STAT_NOT_FOUND );
-    CU_ASSERT_TRUE( treeset_remove(tree, singleItem, NULL) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_lower(tree, singleItem, (void **)&item) == NOT_FOUND );
+    CU_ASSERT_TRUE( treeset_higher(tree, singleItem, (void **)&item) == NOT_FOUND );
+    CU_ASSERT_TRUE( treeset_remove(tree, singleItem, NULL) == OK );
     validateEmptyTreeSet(tree);
     treeset_destroy(tree, NULL);
 
@@ -114,7 +114,7 @@ static void testItemSet() {
     char line[4], *item;
 
     stat = treeset_new(&tree, treeCmp);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testItemSet() - allocation failure");
 
     if ((fd = fopen("treeset_items.txt", "r")) == NULL) {
@@ -124,7 +124,7 @@ static void testItemSet() {
 
     while (fgets(line, sizeof(line), fd)) {
         line[2] = '\0';
-        CU_ASSERT_TRUE( treeset_add(tree, strdup(line)) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( treeset_add(tree, strdup(line)) == OK );
     }
 
     CU_ASSERT_TRUE( treeset_size(tree) == 20L );
@@ -137,47 +137,47 @@ static void testItemSet() {
     CU_ASSERT_TRUE( treeset_contains(tree, "06") == TRUE );
     CU_ASSERT_TRUE( treeset_contains(tree, "07") == FALSE );
 
-    CU_ASSERT_TRUE( treeset_first(tree, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_first(tree, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, "02") == 0 );
-    CU_ASSERT_TRUE( treeset_last(tree, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_last(tree, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, "40") == 0 );
 
-    CU_ASSERT_TRUE( treeset_floor(tree, "99", (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_floor(tree, "99", (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, "40") == 0 );
-    CU_ASSERT_TRUE( treeset_floor(tree, "00", (void **)&item) == STAT_NOT_FOUND );
-    CU_ASSERT_TRUE( treeset_floor(tree, "07", (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_floor(tree, "00", (void **)&item) == NOT_FOUND );
+    CU_ASSERT_TRUE( treeset_floor(tree, "07", (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, "06") == 0 );
-    CU_ASSERT_TRUE( treeset_floor(tree, "16", (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_floor(tree, "16", (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, "16") == 0 );
 
-    CU_ASSERT_TRUE( treeset_ceiling(tree, "00", (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_ceiling(tree, "00", (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, "02") == 0 );
-    CU_ASSERT_TRUE( treeset_ceiling(tree, "99", (void **)&item) == STAT_NOT_FOUND );
-    CU_ASSERT_TRUE( treeset_ceiling(tree, "03", (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_ceiling(tree, "99", (void **)&item) == NOT_FOUND );
+    CU_ASSERT_TRUE( treeset_ceiling(tree, "03", (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, "04") == 0 );
-    CU_ASSERT_TRUE( treeset_ceiling(tree, "18", (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_ceiling(tree, "18", (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, "18") == 0 );
 
-    CU_ASSERT_TRUE( treeset_lower(tree, "99", (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_lower(tree, "99", (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, "40") == 0 );
-    CU_ASSERT_TRUE( treeset_lower(tree, "00", (void **)&item) == STAT_NOT_FOUND );
-    CU_ASSERT_TRUE( treeset_lower(tree, "25", (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_lower(tree, "00", (void **)&item) == NOT_FOUND );
+    CU_ASSERT_TRUE( treeset_lower(tree, "25", (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, "24") == 0 );
-    CU_ASSERT_TRUE( treeset_lower(tree, "32", (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_lower(tree, "32", (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, "30") == 0 );
 
-    CU_ASSERT_TRUE( treeset_higher(tree, "00", (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_higher(tree, "00", (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, "02") == 0 );
-    CU_ASSERT_TRUE( treeset_higher(tree, "99", (void **)&item) == STAT_NOT_FOUND );
-    CU_ASSERT_TRUE( treeset_higher(tree, "23", (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_higher(tree, "99", (void **)&item) == NOT_FOUND );
+    CU_ASSERT_TRUE( treeset_higher(tree, "23", (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, "24") == 0 );
-    CU_ASSERT_TRUE( treeset_higher(tree, "36", (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( treeset_higher(tree, "36", (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, "38") == 0 );
 
     rewind(fd);
     while (fgets(line, sizeof(line), fd)) {
         line[2] = '\0';
-        CU_ASSERT_TRUE( treeset_remove(tree, line, free) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( treeset_remove(tree, line, free) == OK );
     }
 
     fclose(fd);
@@ -194,14 +194,14 @@ static void testPollFirst() {
     int i;
 
     stat = treeset_new(&tree, treeCmp);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testPollFirst() - allocation failure");
 
     for (i = 0L; i < LEN; i++)
-        CU_ASSERT_TRUE( treeset_add(tree, orderedSet[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( treeset_add(tree, orderedSet[i]) == OK );
 
     for (i = 0L; i < LEN; i++) {
-        CU_ASSERT_TRUE( treeset_pollFirst(tree, (void **)&first) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( treeset_pollFirst(tree, (void **)&first) == OK );
         CU_ASSERT_TRUE( strcmp(first, orderedSet[i]) == 0 );
     }
     treeset_destroy(tree, NULL);
@@ -217,13 +217,13 @@ static void testPollLast() {
     int i;
 
     stat = treeset_new(&tree, treeCmp);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testPollLast() - allocation failure");
 
     for (i = 0L; i < LEN; i++)
-        CU_ASSERT_TRUE( treeset_add(tree, orderedSet[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( treeset_add(tree, orderedSet[i]) == OK );
     for (i = LEN - 1; i >= 0; i--) {
-        CU_ASSERT_TRUE( treeset_pollLast(tree, (void **)&last) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( treeset_pollLast(tree, (void **)&last) == OK );
         CU_ASSERT_TRUE( strcmp(last, orderedSet[i]) == 0 );
     }
     treeset_destroy(tree, NULL);
@@ -239,12 +239,12 @@ static void testTreeSetToArray() {
     int i;
 
     stat = treeset_new(&tree, treeCmp);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testTreeSetToArray() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( treeset_add(tree, orderedSet[i]) == STAT_SUCCESS );
-    CU_ASSERT_TRUE( treeset_toArray(tree, &arr) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( treeset_add(tree, orderedSet[i]) == OK );
+    CU_ASSERT_TRUE( treeset_toArray(tree, &arr) == OK );
     CU_ASSERT_TRUE( arr->len == LEN );
 
     for (i = 0; i < arr->len; i++)
@@ -264,16 +264,16 @@ static void testTreeSetIterator() {
     char *element;
 
     stat = treeset_new(&tree, treeCmp);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testTreeSetIterator() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE(treeset_add(tree, orderedSet[i]) == STAT_SUCCESS);
-    CU_ASSERT_TRUE( treeset_iterator(tree, &iter) == STAT_SUCCESS );
+        CU_ASSERT_TRUE(treeset_add(tree, orderedSet[i]) == OK);
+    CU_ASSERT_TRUE( treeset_iterator(tree, &iter) == OK );
 
     i = 0;
     while (iterator_hasNext(iter) == TRUE) {
-        CU_ASSERT_TRUE( iterator_next(iter, (void **)&element) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( iterator_next(iter, (void **)&element) == OK );
         CU_ASSERT_TRUE( element == orderedSet[i++] );
     }
     iterator_destroy(iter);
@@ -289,11 +289,11 @@ static void testTreeSetClear() {
     int i;
 
     stat = treeset_new(&tree, treeCmp);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testTreeSetClear() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( treeset_add(tree, &(orderedSet[i])) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( treeset_add(tree, &(orderedSet[i])) == OK );
     treeset_clear(tree, NULL);
     validateEmptyTreeSet(tree);
     treeset_destroy(tree, NULL);

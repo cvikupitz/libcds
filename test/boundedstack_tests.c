@@ -42,13 +42,13 @@ static void validateEmptyBoundedStack(BoundedStack *stack) {
     Iterator *iter;
     char *item;
 
-    CU_ASSERT_TRUE(boundedstack_peek(stack, (void **)&item) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE(boundedstack_pop(stack, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE(boundedstack_peek(stack, (void **)&item) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE(boundedstack_pop(stack, (void **)&item) == STRUCT_EMPTY );
     CU_ASSERT_TRUE( boundedstack_size(stack) == 0L );
     CU_ASSERT_TRUE( boundedstack_isEmpty(stack) == TRUE );
     CU_ASSERT_TRUE( boundedstack_isFull(stack) == FALSE );
-    CU_ASSERT_TRUE( boundedstack_iterator(stack, &iter) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( boundedstack_toArray(stack, &arr) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( boundedstack_iterator(stack, &iter) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( boundedstack_toArray(stack, &arr) == STRUCT_EMPTY );
 }
 
 static void testEmptyBoundedStack() {
@@ -57,7 +57,7 @@ static void testEmptyBoundedStack() {
     Status stat;
 
     stat = boundedstack_new(&stack, 0L);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testEmptyBoundedStack() - allocation failure");
 
     validateEmptyBoundedStack(stack);
@@ -73,19 +73,19 @@ static void testSingleItem() {
     char *item;
 
     stat = boundedstack_new(&stack, 1L);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testSingleItem() - allocation failure");
 
-    CU_ASSERT_TRUE( boundedstack_push(stack, singleItem) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( boundedstack_push(stack, singleItem) == OK );
     CU_ASSERT_TRUE( boundedstack_size(stack) == 1L );
     CU_ASSERT_TRUE( boundedstack_capacity(stack) == 1L );
     CU_ASSERT_TRUE( boundedstack_isEmpty(stack) == FALSE );
     CU_ASSERT_TRUE( boundedstack_isFull(stack) == TRUE );
-    CU_ASSERT_TRUE( boundedstack_peek(stack, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( boundedstack_peek(stack, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
-    CU_ASSERT_TRUE( boundedstack_pop(stack, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( boundedstack_pop(stack, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
-    CU_ASSERT_TRUE( boundedstack_pop(stack, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( boundedstack_pop(stack, (void **)&item) == STRUCT_EMPTY );
 
     validateEmptyBoundedStack(stack);
     boundedstack_destroy(stack, NULL);
@@ -102,20 +102,20 @@ static void testPushPop() {
     char *item;
 
     stat = boundedstack_new(&stack, 0L);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testPushPop() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        CU_ASSERT_TRUE( boundedstack_push(stack, array[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( boundedstack_push(stack, array[i]) == OK );
         CU_ASSERT_TRUE( boundedstack_size(stack) == (i + 1) );
         CU_ASSERT_TRUE( boundedstack_isEmpty(stack) == FALSE );
         CU_ASSERT_TRUE( boundedstack_isFull(stack) == FALSE );
-        CU_ASSERT_TRUE( boundedstack_peek(stack, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( boundedstack_peek(stack, (void **)&item) == OK );
         CU_ASSERT_TRUE( strcmp(item, array[i]) == 0 );
     }
 
     for (i = LEN - 1; i >= 0; i--) {
-        CU_ASSERT_TRUE(boundedstack_pop(stack, (void **)&item) == STAT_SUCCESS);
+        CU_ASSERT_TRUE(boundedstack_pop(stack, (void **)&item) == OK);
         CU_ASSERT_TRUE( strcmp(item, array[i]) == 0 );
         size = boundedstack_size(stack);
         CU_ASSERT_TRUE( size == i);
@@ -137,16 +137,16 @@ static void testCapacity() {
     long size;
 
     stat = boundedstack_new(&stack, CAPACITY);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testCapacity() - allocation failure");
 
     for (i = 0; i < LEN; i++) {
-        CU_ASSERT_TRUE( boundedstack_push(stack, array[i]) == (i < CAPACITY ? STAT_SUCCESS : STAT_STRUCT_FULL) );
+        CU_ASSERT_TRUE( boundedstack_push(stack, array[i]) == (i < CAPACITY ? OK : STRUCT_FULL) );
         size = boundedstack_size(stack);
         CU_ASSERT_TRUE( size == (i < CAPACITY ? (i + 1) : CAPACITY) );
         CU_ASSERT_TRUE( boundedstack_isEmpty(stack) == FALSE );
         CU_ASSERT_TRUE( boundedstack_isFull(stack) == (size < CAPACITY ? FALSE : TRUE) );
-        CU_ASSERT_TRUE( boundedstack_peek(stack, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( boundedstack_peek(stack, (void **)&item) == OK );
         CU_ASSERT_TRUE( strcmp(item, (size < CAPACITY) ? array[i] : array[CAPACITY - 1]) == 0 );
     }
 
@@ -163,12 +163,12 @@ static void testBoundedStackToArray() {
     int i, j;
 
     stat = boundedstack_new(&stack, 0L);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testBoundedStackToArray() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( boundedstack_push(stack, array[i]) == STAT_SUCCESS );
-    CU_ASSERT_TRUE( boundedstack_toArray(stack, &arr) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( boundedstack_push(stack, array[i]) == OK );
+    CU_ASSERT_TRUE( boundedstack_toArray(stack, &arr) == OK );
     CU_ASSERT_TRUE( arr->len == LEN );
 
     for (i = 0, j = LEN - 1; i < arr->len; i++, j--)
@@ -189,16 +189,16 @@ static void testBoundedStackIterator() {
     char *item;
 
     stat = boundedstack_new(&stack, 0L);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testBoundedStackIterator() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( boundedstack_push(stack, array[i]) == STAT_SUCCESS );
-    CU_ASSERT_TRUE( boundedstack_iterator(stack, &iter) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( boundedstack_push(stack, array[i]) == OK );
+    CU_ASSERT_TRUE( boundedstack_iterator(stack, &iter) == OK );
 
     i = LEN - 1;
     while (iterator_hasNext(iter) == TRUE) {
-        CU_ASSERT_TRUE( iterator_next(iter, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( iterator_next(iter, (void **)&item) == OK );
         CU_ASSERT_TRUE( strcmp(item, array[i--]) == 0 );
     }
 
@@ -215,11 +215,11 @@ static void testBoundedStackClear() {
     int i;
 
     stat = boundedstack_new(&stack, 0L);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testBoundedStackClear() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( boundedstack_push(stack, array[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( boundedstack_push(stack, array[i]) == OK );
 
     boundedstack_clear(stack, NULL);
     validateEmptyBoundedStack(stack);
