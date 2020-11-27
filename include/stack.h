@@ -46,8 +46,8 @@ typedef struct stack Stack;
  * Params:
  *    stack - The pointer address to store the new Stack instance.
  * Returns:
- *    STAT_SUCCESS - Stack was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Stack was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status stack_new(Stack **stack);
 
@@ -58,8 +58,8 @@ Status stack_new(Stack **stack);
  *    stack - The stack to operate on.
  *    item - The item to be pushed onto the stack.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status stack_push(Stack *stack, void *item);
 
@@ -71,8 +71,8 @@ Status stack_push(Stack *stack, void *item);
  *    stack - The stack to operate on.
  *    top - The pointer address to store the top element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Stack is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Stack is currently empty.
  */
 Status stack_peek(Stack *stack, void **top);
 
@@ -83,8 +83,8 @@ Status stack_peek(Stack *stack, void **top);
  *    stack - The stack to operate on.
  *    top - The pointer address to store the removed top element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Stack is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Stack is currently empty.
  */
 Status stack_pop(Stack *stack, void **top);
 
@@ -129,9 +129,9 @@ Boolean stack_isEmpty(Stack *stack);
  *    stack - The stack to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Stack is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Stack is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status stack_toArray(Stack *stack, Array **array);
 
@@ -144,9 +144,9 @@ Status stack_toArray(Stack *stack, Array **array);
  *    stack - The stack to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Stack is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Stack is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status stack_iterator(Stack *stack, Iterator **iter);
 

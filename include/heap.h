@@ -53,8 +53,8 @@ typedef struct heap Heap;
  *    capacity - The heap's starting capacity.
  *    comparator - Function for comparing two items in the heap.
  * Returns:
- *    STAT_SUCCESS - Heap was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Heap was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status heap_new(Heap **heap, long capacity, int (*comparator)(void *, void *));
 
@@ -65,8 +65,8 @@ Status heap_new(Heap **heap, long capacity, int (*comparator)(void *, void *));
  *    heap - The heap to operate on.
  *    item - The element to add.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status heap_insert(Heap *heap, void *item);
 
@@ -77,8 +77,8 @@ Status heap_insert(Heap *heap, void *item);
  *    heap - The heap to operate on.
  *    min - The pointer address to store the head element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Heap is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Heap is currently empty.
  */
 Status heap_peek(Heap *heap, void **min);
 
@@ -89,8 +89,8 @@ Status heap_peek(Heap *heap, void **min);
  *    heap - The heap to operate on.
  *    min - The pointer address to store the removed element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Heap is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Heap is currently empty.
  */
 Status heap_poll(Heap *heap, void **min);
 
@@ -135,9 +135,9 @@ Boolean heap_isEmpty(Heap *heap);
  *    heap - The heap to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Heap is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Heap is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status heap_toArray(Heap *heap, Array **array);
 
@@ -150,9 +150,9 @@ Status heap_toArray(Heap *heap, Array **array);
  *    heap - The heap to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Heap is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Heap is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status heap_iterator(Heap *heap, Iterator **iter);
 

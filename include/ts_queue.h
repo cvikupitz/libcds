@@ -46,8 +46,8 @@ typedef struct ts_queue ConcurrentQueue;
  * Params:
  *    queue - The pointer address to store the new Queue instance.
  * Returns:
- *    STAT_SUCCESS - Queue was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Queue was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_queue_new(ConcurrentQueue **queue);
 
@@ -79,8 +79,8 @@ void ts_queue_unlock(ConcurrentQueue *queue);
  *    queue - The queue to operate on.
  *    item - The item to be inserted into the queue.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_queue_add(ConcurrentQueue *queue, void *item);
 
@@ -92,8 +92,8 @@ Status ts_queue_add(ConcurrentQueue *queue, void *item);
  *    queue - The queue to operate on.
  *    first - The pointer address to store the first element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Queue is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Queue is currently empty.
  */
 Status ts_queue_peek(ConcurrentQueue *queue, void **first);
 
@@ -104,8 +104,8 @@ Status ts_queue_peek(ConcurrentQueue *queue, void **first);
  *    queue - The queue to operate on.
  *    first - The pointer address to store the removed first element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Queue is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Queue is currently empty.
  */
 Status ts_queue_poll(ConcurrentQueue *queue, void **first);
 
@@ -150,9 +150,9 @@ Boolean ts_queue_isEmpty(ConcurrentQueue *queue);
  *    queue - The queue to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Queue is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Queue is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_queue_toArray(ConcurrentQueue *queue, Array **array);
 
@@ -165,9 +165,9 @@ Status ts_queue_toArray(ConcurrentQueue *queue, Array **array);
  *    queue - The queue to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Queue is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Queue is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_queue_iterator(ConcurrentQueue *queue, ConcurrentIterator **iter);
 

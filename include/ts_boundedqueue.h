@@ -47,8 +47,8 @@ typedef struct ts_bounded_queue ConcurrentBoundedQueue;
  *    queue - The pointer address to store the new BoundedQueue instance.
  *    capacity - The queue's upper-bound capacity.
  * Returns:
- *    STAT_SUCCESS - Queue was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Queue was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_boundedqueue_new(ConcurrentBoundedQueue **queue, long capacity);
 
@@ -80,8 +80,8 @@ void ts_boundedqueue_unlock(ConcurrentBoundedQueue *queue);
  *    queue - The queue to operate on.
  *    item - The item to be inserted into the queue.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_FULL - Failed as the queue is currently full.
+ *    OK - Operation was successful.
+ *    STRUCT_FULL - Failed as the queue is currently full.
  */
 Status ts_boundedqueue_add(ConcurrentBoundedQueue *queue, void *item);
 
@@ -93,8 +93,8 @@ Status ts_boundedqueue_add(ConcurrentBoundedQueue *queue, void *item);
  *    queue - The queue to operate on.
  *    first - The pointer address to store the first element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Queue is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Queue is currently empty.
  */
 Status ts_boundedqueue_peek(ConcurrentBoundedQueue *queue, void **first);
 
@@ -105,8 +105,8 @@ Status ts_boundedqueue_peek(ConcurrentBoundedQueue *queue, void **first);
  *    queue - The queue to operate on.
  *    first - The pointer address to store the removed first element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Queue is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Queue is currently empty.
  */
 Status ts_boundedqueue_poll(ConcurrentBoundedQueue *queue, void **first);
 
@@ -171,9 +171,9 @@ Boolean ts_boundedqueue_isFull(ConcurrentBoundedQueue *queue);
  *    queue - The queue to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Queue is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Queue is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_boundedqueue_toArray(ConcurrentBoundedQueue *queue, Array **array);
 
@@ -186,9 +186,9 @@ Status ts_boundedqueue_toArray(ConcurrentBoundedQueue *queue, Array **array);
  *    queue - The queue to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Queue is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Queue is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_boundedqueue_iterator(ConcurrentBoundedQueue *queue, ConcurrentIterator **iter);
 

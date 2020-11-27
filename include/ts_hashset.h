@@ -57,8 +57,8 @@ typedef struct ts_hashset ConcurrentHashSet;
  *    capacity - The hashset's starting capacity.
  *    loadFactor - The hashset's assigned load factor.
  * Returns:
- *    STAT_SUCCESS - HashSet was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - HashSet was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_hashset_new(ConcurrentHashSet **set, long (*hash)(void *, long),
         int (*comparator)(void *, void *),
@@ -92,9 +92,9 @@ void ts_hashset_unlock(ConcurrentHashSet *set);
  *    set - The hashset to operate on.
  *    item - The element to add.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_KEY_ALREADY_EXISTS - Specified entry is already present.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALREADY_EXISTS - Specified entry is already present.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_hashset_add(ConcurrentHashSet *set, void *item);
 
@@ -118,9 +118,9 @@ Boolean ts_hashset_contains(ConcurrentHashSet *set, void *item);
  *    item - The element to remove.
  *    destructor - Function to operate on element after removal.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - HashSet is currently empty.
- *    STAT_NOT_FOUND - Entry with the specified key was not found.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - HashSet is currently empty.
+ *    NOT_FOUND - Entry with the specified key was not found.
  */
 Status ts_hashset_remove(ConcurrentHashSet *set, void *item, void (*destructor)(void *));
 
@@ -165,9 +165,9 @@ Boolean ts_hashset_isEmpty(ConcurrentHashSet *set);
  *    set - The hashset to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - HashSet is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - HashSet is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_hashset_toArray(ConcurrentHashSet *set, Array **array);
 
@@ -180,9 +180,9 @@ Status ts_hashset_toArray(ConcurrentHashSet *set, Array **array);
  *    set - The hashset to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - HashSet is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - HashSet is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_hashset_iterator(ConcurrentHashSet *set, ConcurrentIterator **iter);
 

@@ -47,8 +47,8 @@ typedef struct bounded_queue BoundedQueue;
  *    queue - The pointer address to store the new BoundedQueue instance.
  *    capacity - The queue's upper-bound capacity.
  * Returns:
- *    STAT_SUCCESS - Queue was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Queue was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status boundedqueue_new(BoundedQueue **queue, long capacity);
 
@@ -59,8 +59,8 @@ Status boundedqueue_new(BoundedQueue **queue, long capacity);
  *    queue - The queue to operate on.
  *    item - The item to be inserted into the queue.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_FULL - Failed as the queue is currently full.
+ *    OK - Operation was successful.
+ *    STRUCT_FULL - Failed as the queue is currently full.
  */
 Status boundedqueue_add(BoundedQueue *queue, void *item);
 
@@ -72,8 +72,8 @@ Status boundedqueue_add(BoundedQueue *queue, void *item);
  *    queue - The queue to operate on.
  *    first - The pointer address to store the first element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Queue is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Queue is currently empty.
  */
 Status boundedqueue_peek(BoundedQueue *queue, void **first);
 
@@ -84,8 +84,8 @@ Status boundedqueue_peek(BoundedQueue *queue, void **first);
  *    queue - The queue to operate on.
  *    first - The pointer address to store the removed first element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Queue is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Queue is currently empty.
  */
 Status boundedqueue_poll(BoundedQueue *queue, void **first);
 
@@ -150,9 +150,9 @@ Boolean boundedqueue_isFull(BoundedQueue *queue);
  *    queue - The queue to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Queue is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Queue is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status boundedqueue_toArray(BoundedQueue *queue, Array **array);
 
@@ -165,9 +165,9 @@ Status boundedqueue_toArray(BoundedQueue *queue, Array **array);
  *    queue - The queue to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Queue is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Queue is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status boundedqueue_iterator(BoundedQueue *queue, Iterator **iter);
 
