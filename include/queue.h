@@ -46,8 +46,8 @@ typedef struct queue Queue;
  * Params:
  *    queue - The pointer address to store the new Queue instance.
  * Returns:
- *    STAT_SUCCESS - Queue was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Queue was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status queue_new(Queue **queue);
 
@@ -58,8 +58,8 @@ Status queue_new(Queue **queue);
  *    queue - The queue to operate on.
  *    item - The item to be inserted into the queue.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status queue_add(Queue *queue, void *item);
 
@@ -71,8 +71,8 @@ Status queue_add(Queue *queue, void *item);
  *    queue - The queue to operate on.
  *    first - The pointer address to store the first element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Queue is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Queue is currently empty.
  */
 Status queue_peek(Queue *queue, void **first);
 
@@ -83,8 +83,8 @@ Status queue_peek(Queue *queue, void **first);
  *    queue - The queue to operate on.
  *    first - The pointer address to store the removed first element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Queue is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Queue is currently empty.
  */
 Status queue_poll(Queue *queue, void **first);
 
@@ -129,9 +129,9 @@ Boolean queue_isEmpty(Queue *queue);
  *    queue - The queue to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Queue is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Queue is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status queue_toArray(Queue *queue, Array **array);
 
@@ -144,9 +144,9 @@ Status queue_toArray(Queue *queue, Array **array);
  *    queue - The queue to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Queue is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Queue is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status queue_iterator(Queue *queue, Iterator **iter);
 

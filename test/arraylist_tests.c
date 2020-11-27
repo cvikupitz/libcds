@@ -42,13 +42,13 @@ static void validateEmptyArrayList(ArrayList *list) {
     Iterator *iter;
     char *item;
 
-    CU_ASSERT_TRUE( arraylist_get(list, 0L, (void **)&item) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( arraylist_set(list, 0L, singleItem, (void **)&item) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( arraylist_remove(list, 0L, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( arraylist_get(list, 0L, (void **)&item) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( arraylist_set(list, 0L, singleItem, (void **)&item) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( arraylist_remove(list, 0L, (void **)&item) == STRUCT_EMPTY );
     CU_ASSERT_TRUE( arraylist_size(list) == 0L );
     CU_ASSERT_TRUE( arraylist_isEmpty(list) == TRUE );
-    CU_ASSERT_TRUE( arraylist_iterator(list, &iter) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( arraylist_toArray(list, &arr) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( arraylist_iterator(list, &iter) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( arraylist_toArray(list, &arr) == STRUCT_EMPTY );
 }
 
 static void testEmptyArrayList() {
@@ -57,7 +57,7 @@ static void testEmptyArrayList() {
     Status stat;
 
     stat = arraylist_new(&list, CAPACITY);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testEmptyArrayList() - allocation failure");
 
     validateEmptyArrayList(list);
@@ -72,19 +72,19 @@ static void testSingleItem() {
     char *item;
 
     stat = arraylist_new(&list, CAPACITY);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testSingleItem() - allocation failure");
 
-    CU_ASSERT_TRUE( arraylist_add(list, singleItem) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_add(list, singleItem) == OK );
     CU_ASSERT_TRUE( arraylist_size(list) == 1L );
     CU_ASSERT_TRUE( arraylist_capacity(list) == CAPACITY );
     CU_ASSERT_TRUE( arraylist_isEmpty(list) == FALSE );
-    CU_ASSERT_TRUE( arraylist_get(list, 0L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_get(list, 0L, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
-    CU_ASSERT_TRUE( arraylist_remove(list, 99L, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( arraylist_remove(list, 0L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_remove(list, 99L, (void **)&item) == INVALID_INDEX );
+    CU_ASSERT_TRUE( arraylist_remove(list, 0L, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
-    CU_ASSERT_TRUE( arraylist_remove(list, 0L, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( arraylist_remove(list, 0L, (void **)&item) == STRUCT_EMPTY );
 
     validateEmptyArrayList(list);
     arraylist_destroy(list, NULL);
@@ -100,25 +100,25 @@ static void testInsertions() {
     char *item;
 
     stat = arraylist_new(&list, CAPACITY);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testInsertions() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( arraylist_add(list, array[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( arraylist_add(list, array[i]) == OK );
 
     for (i = 0L; i < LEN; i++) {
-        CU_ASSERT_TRUE( arraylist_get(list, i, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( arraylist_get(list, i, (void **)&item) == OK );
         CU_ASSERT_TRUE( strcmp(item, array[i]) == 0 );
     }
 
     (void)arraylist_insert(list, 0L, singleItem);
     (void)arraylist_insert(list, 3L, singleItem);
     (void)arraylist_insert(list, 6L, singleItem);
-    CU_ASSERT_TRUE( arraylist_get(list, 0L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_get(list, 0L, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
-    CU_ASSERT_TRUE( arraylist_get(list, 3L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_get(list, 3L, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
-    CU_ASSERT_TRUE( arraylist_get(list, 6L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_get(list, 6L, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
 
     arraylist_destroy(list, NULL);
@@ -134,24 +134,24 @@ static void testSetItem() {
     char *item;
 
     stat = arraylist_new(&list, CAPACITY);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testSetItem() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE(arraylist_add(list, array[i]) == STAT_SUCCESS);
+        CU_ASSERT_TRUE(arraylist_add(list, array[i]) == OK);
 
-    CU_ASSERT_TRUE( arraylist_set(list, 0L, singleItem, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_set(list, 0L, singleItem, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, array[0]) == 0 );
-    CU_ASSERT_TRUE( arraylist_set(list, 4L, singleItem, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_set(list, 4L, singleItem, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, array[4]) == 0 );
-    CU_ASSERT_TRUE( arraylist_set(list, 7L, singleItem, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_set(list, 7L, singleItem, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, array[7]) == 0 );
 
-    CU_ASSERT_TRUE( arraylist_get(list, 0L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_get(list, 0L, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
-    CU_ASSERT_TRUE( arraylist_get(list, 4L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_get(list, 4L, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
-    CU_ASSERT_TRUE( arraylist_get(list, 7L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_get(list, 7L, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
 
     arraylist_destroy(list, NULL);
@@ -167,14 +167,14 @@ static void testSequentialDelete() {
     char *item;
 
     stat = arraylist_new(&list, CAPACITY);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testSequentialDelete() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( arraylist_add(list, array[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( arraylist_add(list, array[i]) == OK );
 
     for (i = 0L; i < LEN; i++) {
-        CU_ASSERT_TRUE( arraylist_remove(list, 0L, (void **)&item) == STAT_SUCCESS);
+        CU_ASSERT_TRUE( arraylist_remove(list, 0L, (void **)&item) == OK);
         CU_ASSERT_TRUE( strcmp(item, array[i]) == 0 );
     }
 
@@ -191,17 +191,17 @@ static void testRandomDelete() {
     char *item;
 
     stat = arraylist_new(&list, CAPACITY);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testRandomDelete() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE(arraylist_add(list, array[i]) == STAT_SUCCESS);
+        CU_ASSERT_TRUE(arraylist_add(list, array[i]) == OK);
 
-    CU_ASSERT_TRUE( arraylist_remove(list, 7L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_remove(list, 7L, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, array[7]) == 0 );
-    CU_ASSERT_TRUE( arraylist_remove(list, 5L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_remove(list, 5L, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, array[5]) == 0 );
-    CU_ASSERT_TRUE( arraylist_remove(list, 1L, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_remove(list, 1L, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, array[1]) == 0 );
 
     arraylist_destroy(list, NULL);
@@ -215,13 +215,13 @@ static void testEnsureCapacity() {
     Status stat;
 
     stat = arraylist_new(&list, CAPACITY);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testEnsureCapacity() - allocation failure");
 
     CU_ASSERT_TRUE( arraylist_capacity(list) == CAPACITY );
-    CU_ASSERT_TRUE( arraylist_ensureCapacity(list, CAPACITY - 1) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_ensureCapacity(list, CAPACITY - 1) == OK );
     CU_ASSERT_TRUE( arraylist_capacity(list) == CAPACITY );
-    CU_ASSERT_TRUE( arraylist_ensureCapacity(list, CAPACITY + 20L) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_ensureCapacity(list, CAPACITY + 20L) == OK );
     CU_ASSERT_TRUE( arraylist_capacity(list) == (CAPACITY + 20L) );
 
     arraylist_destroy(list, NULL);
@@ -235,12 +235,12 @@ static void testTrimToSize() {
     Status stat;
 
     stat = arraylist_new(&list, CAPACITY);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testTrimToSize() - allocation failure");
 
-    CU_ASSERT_TRUE( arraylist_trimToSize(list) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( arraylist_add(list, singleItem) == STAT_SUCCESS );
-    CU_ASSERT_TRUE( arraylist_trimToSize(list) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( arraylist_trimToSize(list) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( arraylist_add(list, singleItem) == OK );
+    CU_ASSERT_TRUE( arraylist_trimToSize(list) == OK );
 
     arraylist_destroy(list, NULL);
     CU_PASS("testEnsureCapacity() - Test Passed");
@@ -254,24 +254,24 @@ static void testInvalidIndexAccess() {
     char *item;
 
     stat = arraylist_new(&list, CAPACITY);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testInvalidIndexAccess() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( arraylist_add(list, array[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( arraylist_add(list, array[i]) == OK );
 
-    CU_ASSERT_TRUE( arraylist_insert(list, LEN + 1L, singleItem) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( arraylist_insert(list, LEN + 1L, singleItem) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( arraylist_insert(list, LEN + 10L, singleItem) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( arraylist_get(list, -1, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( arraylist_get(list, LEN + 1L, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( arraylist_get(list, LEN + 10L, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( arraylist_set(list, -1, singleItem, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( arraylist_set(list, LEN + 1L, singleItem, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( arraylist_set(list, LEN + 10L, singleItem, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( arraylist_remove(list, -1, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( arraylist_remove(list, LEN + 1L, (void **)&item) == STAT_INVALID_INDEX );
-    CU_ASSERT_TRUE( arraylist_remove(list, LEN + 10L, (void **)&item) == STAT_INVALID_INDEX );
+    CU_ASSERT_TRUE( arraylist_insert(list, LEN + 1L, singleItem) == INVALID_INDEX );
+    CU_ASSERT_TRUE( arraylist_insert(list, LEN + 1L, singleItem) == INVALID_INDEX );
+    CU_ASSERT_TRUE( arraylist_insert(list, LEN + 10L, singleItem) == INVALID_INDEX );
+    CU_ASSERT_TRUE( arraylist_get(list, -1, (void **)&item) == INVALID_INDEX );
+    CU_ASSERT_TRUE( arraylist_get(list, LEN + 1L, (void **)&item) == INVALID_INDEX );
+    CU_ASSERT_TRUE( arraylist_get(list, LEN + 10L, (void **)&item) == INVALID_INDEX );
+    CU_ASSERT_TRUE( arraylist_set(list, -1, singleItem, (void **)&item) == INVALID_INDEX );
+    CU_ASSERT_TRUE( arraylist_set(list, LEN + 1L, singleItem, (void **)&item) == INVALID_INDEX );
+    CU_ASSERT_TRUE( arraylist_set(list, LEN + 10L, singleItem, (void **)&item) == INVALID_INDEX );
+    CU_ASSERT_TRUE( arraylist_remove(list, -1, (void **)&item) == INVALID_INDEX );
+    CU_ASSERT_TRUE( arraylist_remove(list, LEN + 1L, (void **)&item) == INVALID_INDEX );
+    CU_ASSERT_TRUE( arraylist_remove(list, LEN + 10L, (void **)&item) == INVALID_INDEX );
 
     arraylist_destroy(list, NULL);
 
@@ -286,12 +286,12 @@ static void testArrayListToArray() {
     int i;
 
     stat = arraylist_new(&list, LEN);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testArrayListToArray() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( arraylist_add(list, array[i]) == STAT_SUCCESS );
-    CU_ASSERT_TRUE( arraylist_toArray(list, &arr) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( arraylist_add(list, array[i]) == OK );
+    CU_ASSERT_TRUE( arraylist_toArray(list, &arr) == OK );
     CU_ASSERT_TRUE( arr->len == LEN );
 
     for (i = 0; i < arr->len; i++)
@@ -312,16 +312,16 @@ static void testArrayListIterator() {
     char *item;
 
     stat = arraylist_new(&list, LEN);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testArrayListIterator() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( arraylist_add(list, array[i]) == STAT_SUCCESS );
-    CU_ASSERT_TRUE( arraylist_iterator(list, &iter) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( arraylist_add(list, array[i]) == OK );
+    CU_ASSERT_TRUE( arraylist_iterator(list, &iter) == OK );
 
     i = 0;
     while (iterator_hasNext(iter) == TRUE) {
-        CU_ASSERT_TRUE( iterator_next(iter, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( iterator_next(iter, (void **)&item) == OK );
         CU_ASSERT_TRUE( strcmp(item, array[i++]) == 0 );
     }
 
@@ -338,11 +338,11 @@ static void testArrayListClear() {
     int i;
 
     stat = arraylist_new(&list, LEN);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testArrayListClear() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( arraylist_add(list, array[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( arraylist_add(list, array[i]) == OK );
     arraylist_clear(list, NULL);
     validateEmptyArrayList(list);
     arraylist_destroy(list, NULL);

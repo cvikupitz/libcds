@@ -49,11 +49,11 @@ Status ts_heap_new(ConcurrentHeap **heap, long capacity, int (*comparator)(void 
     /* Allocates memory for the heap */
     temp = (ConcurrentHeap *)malloc(sizeof(ConcurrentHeap));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates the internal heap instance */
     status = heap_new(&(temp->instance), capacity, comparator);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(temp);
         return status;
     }
@@ -65,7 +65,7 @@ Status ts_heap_new(ConcurrentHeap **heap, long capacity, int (*comparator)(void 
     pthread_mutexattr_destroy(&attr);
     *heap = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void ts_heap_lock(ConcurrentHeap *heap) {
@@ -145,14 +145,14 @@ Status ts_heap_iterator(ConcurrentHeap *heap, ConcurrentIterator **iter) {
     /* Creates the array of items and locks it */
     LOCK(heap);
     status = heap_toArray(heap->instance, &array);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         UNLOCK(heap);
         return status;
     }
 
     /* Creates the iterator */
     status = ts_iterator_new(iter, &(heap->lock), array->items, array->len);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         FREE_ARRAY(array);
         UNLOCK(heap);
     } else {

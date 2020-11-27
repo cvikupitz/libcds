@@ -43,8 +43,8 @@ typedef struct ts_circular_list ConcurrentCircularList;
  * Params:
  *    list - The pointer address to store the new CircularList instance.
  * Returns:
- *    STAT_SUCCESS - CircularList was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - CircularList was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_circularlist_new(ConcurrentCircularList **list);
 
@@ -76,8 +76,8 @@ void ts_circularlist_unlock(ConcurrentCircularList *list);
  *    list - The circular list to operate on.
  *    item - The element to insert.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_circularlist_addFirst(ConcurrentCircularList *list, void *item);
 
@@ -88,8 +88,8 @@ Status ts_circularlist_addFirst(ConcurrentCircularList *list, void *item);
  *    list - The circular list to operate on.
  *    item - The element to insert.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_circularlist_addLast(ConcurrentCircularList *list, void *item);
 
@@ -103,9 +103,9 @@ Status ts_circularlist_addLast(ConcurrentCircularList *list, void *item);
  *    i - The index at which the specified element is to be inserted.
  *    item - The element to be inserted.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_circularlist_insert(ConcurrentCircularList *list, long i, void *item);
 
@@ -117,8 +117,8 @@ Status ts_circularlist_insert(ConcurrentCircularList *list, long i, void *item);
  *    list - The circular list to operate on.
  *    first - The pointer address to store the first element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
  */
 Status ts_circularlist_first(ConcurrentCircularList *list, void **first);
 
@@ -130,8 +130,8 @@ Status ts_circularlist_first(ConcurrentCircularList *list, void **first);
  *    list - The circular list to operate on.
  *    last - The pointer address to store the last element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
  */
 Status ts_circularlist_last(ConcurrentCircularList *list, void **last);
 
@@ -144,9 +144,9 @@ Status ts_circularlist_last(ConcurrentCircularList *list, void **last);
  *    i - The index of the element to return.
  *    item - The pointer address to store the fetched element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
  */
 Status ts_circularlist_get(ConcurrentCircularList *list, long i, void **item);
 
@@ -161,9 +161,9 @@ Status ts_circularlist_get(ConcurrentCircularList *list, long i, void **item);
  *    previous - The pointer address to store the element previously at the specified
  *               position.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
  */
 Status ts_circularlist_set(ConcurrentCircularList *list, long i, void *item, void **previous);
 
@@ -175,8 +175,8 @@ Status ts_circularlist_set(ConcurrentCircularList *list, long i, void *item, voi
  *    list - The circular list to operate on.
  *    first - The pointer address to store the removed element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
  */
 Status ts_circularlist_removeFirst(ConcurrentCircularList *list, void **first);
 
@@ -188,8 +188,8 @@ Status ts_circularlist_removeFirst(ConcurrentCircularList *list, void **first);
  *    list - The circular list to operate on.
  *    first - The pointer address to store the removed element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
  */
 Status ts_circularlist_removeLast(ConcurrentCircularList *list, void **last);
 
@@ -203,9 +203,9 @@ Status ts_circularlist_removeLast(ConcurrentCircularList *list, void **last);
  *    i - The index of the element to remove.
  *    item - The pointer address to store the element previously at the specified position.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
  */
 Status ts_circularlist_remove(ConcurrentCircularList *list, long i, void **item);
 
@@ -274,9 +274,9 @@ Boolean ts_circularlist_isEmpty(ConcurrentCircularList *list);
  *    list - The circular list to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_circularlist_toArray(ConcurrentCircularList *list, Array **array);
 
@@ -289,9 +289,9 @@ Status ts_circularlist_toArray(ConcurrentCircularList *list, Array **array);
  *    list - The circular list to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_circularlist_iterator(ConcurrentCircularList *list, ConcurrentIterator **iter);
 

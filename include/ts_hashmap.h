@@ -49,8 +49,8 @@ typedef struct ts_hashmap ConcurrentHashMap;
  *    capacity - The hashmap's starting capacity.
  *    loadFactor - The hashmap's assigned load factor.
  * Returns:
- *    STAT_SUCCESS - HashMap was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - HashMap was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_hashmap_new(ConcurrentHashMap **map, long capacity, double loadFactor);
 
@@ -86,10 +86,10 @@ void ts_hashmap_unlock(ConcurrentHashMap *map);
  *    value - The value to be associated with the specified key.
  *    previous - The pointer address to store the previous value into.
  * Returns:
- *    STAT_ENTRY_INSERTED - Key and entry was inserted.
- *    STAT_ENTRY_REPLACED - Entry was updated in the hashmap, and the old entry was
- *                          stored into '*previous' due to the key already existing.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    ENTRY_INSERTED - Key and entry was inserted.
+ *    ENTRY_REPLACED - Entry was updated in the hashmap, and the old entry was stored into
+ *                      '*previous' due to the key already existing.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_hashmap_put(ConcurrentHashMap *map, char *key, void *value, void **previous);
 
@@ -114,9 +114,9 @@ Boolean ts_hashmap_containsKey(ConcurrentHashMap *map, char *key);
  *    key - The key whose associated value is to be returned.
  *    value - The pointer address to store the fetched value into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - HashMap is currently empty.
- *    STAT_NOT_FOUND - Entry with the specified key was not found.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - HashMap is currently empty.
+ *    NOT_FOUND - Entry with the specified key was not found.
  */
 Status ts_hashmap_get(ConcurrentHashMap *map, char *key, void **value);
 
@@ -128,9 +128,9 @@ Status ts_hashmap_get(ConcurrentHashMap *map, char *key, void **value);
  *    key - The key whose mapping is to be removed from the map.
  *    value - The pointer address to store the removed value into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - HashMap is currently empty.
- *    STAT_NOT_FOUND - Entry with the specified key was not found.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - HashMap is currently empty.
+ *    NOT_FOUND - Entry with the specified key was not found.
  */
 Status ts_hashmap_remove(ConcurrentHashMap *map, char *key, void **value);
 
@@ -175,9 +175,9 @@ Boolean ts_hashmap_isEmpty(ConcurrentHashMap *map);
  *    map - The hashmap to operate on.
  *    keys - Array where the keys will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - HashMap is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - HashMap is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_hashmap_keyArray(ConcurrentHashMap *map, Array **keys);
 
@@ -191,9 +191,9 @@ Status ts_hashmap_keyArray(ConcurrentHashMap *map, Array **keys);
  *    map - The hashmap to operate on.
  *    entries - Array where the entries will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - HashMap is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - HashMap is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_hashmap_entryArray(ConcurrentHashMap *map, Array **entries);
 
@@ -207,9 +207,9 @@ Status ts_hashmap_entryArray(ConcurrentHashMap *map, Array **entries);
  *    map - The hashmap to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - HashMap is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - HashMap is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_hashmap_iterator(ConcurrentHashMap *map, ConcurrentIterator **iter);
 

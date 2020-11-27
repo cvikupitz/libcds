@@ -53,8 +53,8 @@ typedef struct ts_heap ConcurrentHeap;
  *    capacity - The heap's starting capacity.
  *    comparator - Function for comparing two items in the heap.
  * Returns:
- *    STAT_SUCCESS - Heap was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Heap was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_heap_new(ConcurrentHeap **heap, long capacity, int (*comparator)(void *, void *));
 
@@ -86,8 +86,8 @@ void ts_heap_unlock(ConcurrentHeap *heap);
  *    heap - The heap to operate on.
  *    item - The element to add.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_heap_insert(ConcurrentHeap *heap, void *item);
 
@@ -98,8 +98,8 @@ Status ts_heap_insert(ConcurrentHeap *heap, void *item);
  *    heap - The heap to operate on.
  *    min - The pointer address to store the head element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Heap is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Heap is currently empty.
  */
 Status ts_heap_peek(ConcurrentHeap *heap, void **min);
 
@@ -110,8 +110,8 @@ Status ts_heap_peek(ConcurrentHeap *heap, void **min);
  *    heap - The heap to operate on.
  *    min - The pointer address to store the removed element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Heap is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Heap is currently empty.
  */
 Status ts_heap_poll(ConcurrentHeap *heap, void **min);
 
@@ -156,9 +156,9 @@ Boolean ts_heap_isEmpty(ConcurrentHeap *heap);
  *    heap - The heap to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Heap is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Heap is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_heap_toArray(ConcurrentHeap *heap, Array **array);
 
@@ -171,9 +171,9 @@ Status ts_heap_toArray(ConcurrentHeap *heap, Array **array);
  *    heap - The heap to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Heap is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Heap is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_heap_iterator(ConcurrentHeap *heap, ConcurrentIterator **iter);
 

@@ -40,7 +40,7 @@ Status ts_iterator_new(ConcurrentIterator **iter, pthread_mutex_t *lock, void **
     /* Allocates memory for the new iterator */
     ConcurrentIterator *temp = (ConcurrentIterator *)malloc(sizeof(ConcurrentIterator));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Initializes the remaining struct members */
     temp->lock = lock;
@@ -49,7 +49,7 @@ Status ts_iterator_new(ConcurrentIterator **iter, pthread_mutex_t *lock, void **
     temp->len = len;
     *iter = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Boolean ts_iterator_hasNext(ConcurrentIterator *iter) {
@@ -60,11 +60,11 @@ Status ts_iterator_next(ConcurrentIterator *iter, void **next) {
 
     /* Iteration already complete, return with status */
     if (iter->next == iter->len)
-        return STAT_ITERATION_END;
+        return ITER_END;
     /* Advances to next item in iteration */
     *next = iter->items[iter->next++];
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void ts_iterator_destroy(ConcurrentIterator *iter) {

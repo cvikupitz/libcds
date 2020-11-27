@@ -55,47 +55,47 @@ typedef enum {
     /**
      * Operation was successful and no additional checks are needed.
      */
-    STAT_SUCCESS = 0,
+    OK = 0,
 
     /**
      * Status reserved for the put() method for HashMap and TreeMap. Indicates that
      * the key-value insertion was successful.
      */
-    STAT_ENTRY_INSERTED = 1,
+    INSERTED = 1,
 
     /**
      * Status reserved for the put() method for HashMap and TreeMap. Indicates that
      * the key-value insertion was successful, but that the map already contains the
      * key and the previous value has been replaced with the new value.
      */
-    STAT_ENTRY_REPLACED = 2,
+    REPLACED = 2,
 
     /**
      * Operation could not be completed due to an already existing entry in the
      * structure. This is for set-like structures where only one of a kind elements
      * are allowed, but the caller has attempted to insert an identical item.
      */
-    STAT_KEY_ALREADY_EXISTS = 3,
+    ALREADY_EXISTS = 3,
 
     /**
      * Operation could not be completed due to an empty structure. This is most common
      * for retrieval and removal operations on empty structures that have no elements
      * to search, retrieve, or delete.
      */
-    STAT_STRUCT_EMPTY = 4,
+    STRUCT_EMPTY = 4,
 
     /**
      * Operation could not be completed due to a full structure. This is most common
      * for insertion operatons on structures that have a capacity on the number of
      * elements it may contain at once.
      */
-    STAT_STRUCT_FULL = 5,
+    STRUCT_FULL = 5,
 
     /**
      * The previous call to iterator_next() did not yield an item since the current
      * iteration has ended.
      */
-    STAT_ITERATION_END = 6,
+    ITER_END = 6,
 
     /**
      * Operation could not be completed due to an invalid index specified. This is for
@@ -103,21 +103,21 @@ typedef enum {
      * index a caller may specify could fall outside the valid range (i.e. the value is
      * below 0 or greater than the largest index allowed).
      */
-    STAT_INVALID_INDEX = 7,
+    INVALID_INDEX = 7,
 
     /**
      * Operation could not be completed due to a missing entry. This is for structure
      * operations where a caller may search for a specific item that does not exist. Think
      * of a key missing in a HashMap, an entry not found in a set, etc.
      */
-    STAT_NOT_FOUND = 8,
+    NOT_FOUND = 8,
 
     /**
      * A call to any of the dynamic memory allocator methods (i.e. malloc(), realloc(), etc.)
      * has failed during instantiation, additions, resizing, or any other operation that
      * requires allocating heap memory.
      */
-    STAT_ALLOC_FAILURE = 9
+    ALLOC_FAILURE = 9
 
 } Status;
 

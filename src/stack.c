@@ -46,14 +46,14 @@ Status stack_new(Stack **stack) {
     /* Allocates the struct, check for allocation failure */
     Stack *temp = (Stack *)malloc(sizeof(Stack));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Initializes the stack's struct members */
     temp->top = NULL;
     temp->size = 0L;
     *stack = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /* Macro to check if the stack is currently empty */
@@ -64,7 +64,7 @@ Status stack_push(Stack *stack, void *item) {
     /* Generate node for pushing item */
     Node *node = (Node *)malloc(sizeof(Node));
     if (node == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Links node to stack, store data into node */
     node->next = stack->top;
@@ -72,25 +72,25 @@ Status stack_push(Stack *stack, void *item) {
     stack->top = node;
     stack->size++;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status stack_peek(Stack *stack, void **top) {
 
     /* Checks if the stack is empty */
     if (IS_EMPTY(stack) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Extracts the top element, saves to pointer */
     *top = stack->top->data;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status stack_pop(Stack *stack, void **top) {
 
     /* Checks if the stack is empty */
     if (IS_EMPTY(stack) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Unlinks the node from stack */
     Node *temp = stack->top;
@@ -100,7 +100,7 @@ Status stack_pop(Stack *stack, void **top) {
     free(temp);
     stack->size--;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -162,18 +162,18 @@ Status stack_toArray(Stack *stack, Array **array) {
 
     /* Checks if the stack is empty */
     if (IS_EMPTY(stack) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generate the array of stack items */
     void **items = generateArray(stack);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Allocate memory for the array struct */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
     }
 
     /* Initialize the array struct members */
@@ -181,7 +181,7 @@ Status stack_toArray(Stack *stack, Array **array) {
     temp->len = stack->size;
     *array = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status stack_iterator(Stack *stack, Iterator **iter) {
@@ -190,22 +190,22 @@ Status stack_iterator(Stack *stack, Iterator **iter) {
 
     /* Checks if the stack is empty */
     if (IS_EMPTY(stack) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generates the array of items for iterator */
     void **items = generateArray(stack);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates a new iterator with the items */
     Status status = iterator_new(&temp, items, stack->size);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(items);
         return status;
     }
     *iter = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void stack_destroy(Stack *stack, void (*destructor)(void *)) {

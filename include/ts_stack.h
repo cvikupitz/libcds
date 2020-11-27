@@ -46,8 +46,8 @@ typedef struct ts_stack ConcurrentStack;
  * Params:
  *    stack - The pointer address to store the new Stack instance.
  * Returns:
- *    STAT_SUCCESS - Stack was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Stack was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_stack_new(ConcurrentStack **stack);
 
@@ -79,8 +79,8 @@ void ts_stack_unlock(ConcurrentStack *stack);
  *    stack - The stack to operate on.
  *    item - The item to be pushed onto the stack.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_stack_push(ConcurrentStack *stack, void *item);
 
@@ -92,8 +92,8 @@ Status ts_stack_push(ConcurrentStack *stack, void *item);
  *    stack - The stack to operate on.
  *    top - The pointer address to store the top element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Stack is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Stack is currently empty.
  */
 Status ts_stack_peek(ConcurrentStack *stack, void **top);
 
@@ -104,8 +104,8 @@ Status ts_stack_peek(ConcurrentStack *stack, void **top);
  *    stack - The stack to operate on.
  *    top - The pointer address to store the removed top element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Stack is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Stack is currently empty.
  */
 Status ts_stack_pop(ConcurrentStack *stack, void **top);
 
@@ -150,9 +150,9 @@ Boolean ts_stack_isEmpty(ConcurrentStack *stack);
  *    stack - The stack to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Stack is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Stack is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_stack_toArray(ConcurrentStack *stack, Array **array);
 
@@ -165,9 +165,9 @@ Status ts_stack_toArray(ConcurrentStack *stack, Array **array);
  *    stack - The stack to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Stack is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Stack is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_stack_iterator(ConcurrentStack *stack, ConcurrentIterator **iter);
 

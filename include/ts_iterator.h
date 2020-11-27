@@ -54,8 +54,8 @@ typedef struct ts_iterator ConcurrentIterator;
  *    items - The array of items to iterate through.
  *    len - The length of the array.
  * Returns:
- *    STAT_SUCCESS - Iterator was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Iterator was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_iterator_new(ConcurrentIterator **iter, pthread_mutex_t *lock, void **items, long len);
 
@@ -76,8 +76,8 @@ Boolean ts_iterator_hasNext(ConcurrentIterator *iter);
  *    iter - The iterator to operate on.
  *    next - The pointer address to store the next element into.
  * Returns:
- *    STAT_SUCCESS - Next iteration item was returned.
- *    STAT_ITERATION_END - The current iteration has already ended.
+ *    OK - Next iteration item was returned.
+ *    ITER_END - The current iteration has already ended.
  */
 Status ts_iterator_next(ConcurrentIterator *iter, void **next);
 

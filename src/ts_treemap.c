@@ -50,11 +50,11 @@ Status ts_treemap_new(ConcurrentTreeMap **tree, int (*keyComparator)(void *, voi
     /* Allocates memory for the new tree */
     temp = (ConcurrentTreeMap *)malloc(sizeof(ConcurrentTreeMap));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates the internal tree instance */
     status = treemap_new(&(temp->instance), keyComparator, keyDestructor);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(temp);
         return status;
     }
@@ -66,7 +66,7 @@ Status ts_treemap_new(ConcurrentTreeMap **tree, int (*keyComparator)(void *, voi
     pthread_mutexattr_destroy(&attr);
     *tree = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void ts_treemap_lock(ConcurrentTreeMap *tree) {
@@ -290,14 +290,14 @@ Status ts_treemap_iterator(ConcurrentTreeMap *tree, ConcurrentIterator **iter) {
     /* Creates the array of items and locks it */
     LOCK(tree);
     status = treemap_entryArray(tree->instance, &array);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         UNLOCK(tree);
         return status;
     }
 
     /* Creates the iterator */
     status = ts_iterator_new(iter, &(tree->lock), array->items, array->len);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         FREE_ARRAY(array);
         UNLOCK(tree);
     } else {

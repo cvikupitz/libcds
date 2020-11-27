@@ -43,8 +43,8 @@ typedef struct circular_list CircularList;
  * Params:
  *    list - The pointer address to store the new CircularList instance.
  * Returns:
- *    STAT_SUCCESS - CircularList was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - CircularList was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status circularlist_new(CircularList **list);
 
@@ -55,8 +55,8 @@ Status circularlist_new(CircularList **list);
  *    list - The circular list to operate on.
  *    item - The element to insert.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status circularlist_addFirst(CircularList *list, void *item);
 
@@ -67,8 +67,8 @@ Status circularlist_addFirst(CircularList *list, void *item);
  *    list - The circular list to operate on.
  *    item - The element to insert.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status circularlist_addLast(CircularList *list, void *item);
 
@@ -82,9 +82,9 @@ Status circularlist_addLast(CircularList *list, void *item);
  *    i - The index at which the specified element is to be inserted.
  *    item - The element to be inserted.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status circularlist_insert(CircularList *list, long i, void *item);
 
@@ -96,8 +96,8 @@ Status circularlist_insert(CircularList *list, long i, void *item);
  *    list - The circular list to operate on.
  *    first - The pointer address to store the first element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
  */
 Status circularlist_first(CircularList *list, void **first);
 
@@ -109,8 +109,8 @@ Status circularlist_first(CircularList *list, void **first);
  *    list - The circular list to operate on.
  *    last - The pointer address to store the last element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
  */
 Status circularlist_last(CircularList *list, void **last);
 
@@ -123,9 +123,9 @@ Status circularlist_last(CircularList *list, void **last);
  *    i - The index of the element to return.
  *    item - The pointer address to store the fetched element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
  */
 Status circularlist_get(CircularList *list, long i, void **item);
 
@@ -140,9 +140,9 @@ Status circularlist_get(CircularList *list, long i, void **item);
  *    previous - The pointer address to store the element previously at the specified
  *               position.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
  */
 Status circularlist_set(CircularList *list, long i, void *item, void **previous);
 
@@ -154,8 +154,8 @@ Status circularlist_set(CircularList *list, long i, void *item, void **previous)
  *    list - The circular list to operate on.
  *    first - The pointer address to store the removed element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
  */
 Status circularlist_removeFirst(CircularList *list, void **first);
 
@@ -167,8 +167,8 @@ Status circularlist_removeFirst(CircularList *list, void **first);
  *    list - The circular list to operate on.
  *    first - The pointer address to store the removed element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
  */
 Status circularlist_removeLast(CircularList *list, void **last);
 
@@ -182,9 +182,9 @@ Status circularlist_removeLast(CircularList *list, void **last);
  *    i - The index of the element to remove.
  *    item - The pointer address to store the element previously at the specified position.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
  */
 Status circularlist_remove(CircularList *list, long i, void **item);
 
@@ -253,9 +253,9 @@ Boolean circularlist_isEmpty(CircularList *list);
  *    list - The circular list to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status circularlist_toArray(CircularList *list, Array **array);
 
@@ -268,9 +268,9 @@ Status circularlist_toArray(CircularList *list, Array **array);
  *    list - The circular list to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Circular list is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Circular list is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status circularlist_iterator(CircularList *list, Iterator **iter);
 

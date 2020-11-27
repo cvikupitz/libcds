@@ -50,8 +50,8 @@ typedef struct treeset TreeSet;
  *    tree - The pointer address to store the new TreeSet instance.
  *    comparator - Function for comparing two items in the treeset.
  * Returns:
- *    STAT_SUCCESS - TreeSet was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - TreeSet was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status treeset_new(TreeSet **tree, int (*comparator)(void *, void *));
 
@@ -62,9 +62,9 @@ Status treeset_new(TreeSet **tree, int (*comparator)(void *, void *));
  *    tree - The treeset to operate on.
  *    item - The element to be added to the treeset.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_KEY_ALREADY_EXISTS - Specified entry is already present.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALREADY_EXISTS - Specified entry is already present.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status treeset_add(TreeSet *tree, void *item);
 
@@ -87,8 +87,8 @@ Boolean treeset_contains(TreeSet *tree, void *item);
  *    tree - The treeset to operate on.
  *    first - The pointer address to store the first element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
  */
 Status treeset_first(TreeSet *tree, void **first);
 
@@ -100,8 +100,8 @@ Status treeset_first(TreeSet *tree, void **first);
  *    tree - The treeset to operate on.
  *    last - The pointer address to store the last element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
  */
 Status treeset_last(TreeSet *tree, void **last);
 
@@ -114,9 +114,9 @@ Status treeset_last(TreeSet *tree, void **last);
  *    item - The element to match.
  *    floor - The pointer address to store the floor element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
- *    STAT_NOT_FOUND - No floor value exists.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
+ *    NOT_FOUND - No floor value exists.
  */
 Status treeset_floor(TreeSet *tree, void *item, void **floor);
 
@@ -129,9 +129,9 @@ Status treeset_floor(TreeSet *tree, void *item, void **floor);
  *    item - The element to match.
  *    ceiling - The pointer address to store the ceiling element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
- *    STAT_NOT_FOUND - No ceiling value exists.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
+ *    NOT_FOUND - No ceiling value exists.
  */
 Status treeset_ceiling(TreeSet *tree, void *item, void **ceiling);
 
@@ -144,9 +144,9 @@ Status treeset_ceiling(TreeSet *tree, void *item, void **ceiling);
  *    item - The element to match.
  *    lower - The pointer address to store the lower element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
- *    STAT_NOT_FOUND - No lower value exists.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
+ *    NOT_FOUND - No lower value exists.
  */
 Status treeset_lower(TreeSet *tree, void *item, void **lower);
 
@@ -159,9 +159,9 @@ Status treeset_lower(TreeSet *tree, void *item, void **lower);
  *    item - The element to match.
  *    higher - The pointer address to store the higher element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
- *    STAT_NOT_FOUND - No higher value exists.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
+ *    NOT_FOUND - No higher value exists.
  */
 Status treeset_higher(TreeSet *tree, void *item, void **higher);
 
@@ -173,8 +173,8 @@ Status treeset_higher(TreeSet *tree, void *item, void **higher);
  *    tree - The treeset to operate on.
  *    first - The pointer address to store the removed first element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
  */
 Status treeset_pollFirst(TreeSet *tree, void **first);
 
@@ -186,8 +186,8 @@ Status treeset_pollFirst(TreeSet *tree, void **first);
  *    tree - The treeset to operate on.
  *    last - The pointer address to store the removed last element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
  */
 Status treeset_pollLast(TreeSet *tree, void **last);
 
@@ -200,9 +200,9 @@ Status treeset_pollLast(TreeSet *tree, void **last);
  *    item - The element to be removed.
  *    destructor - Function to operate on element after removal.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
- *    STAT_NOT_FOUND - Entry was not found.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
+ *    NOT_FOUND - Entry was not found.
  */
 Status treeset_remove(TreeSet *tree, void *item, void (*destructor)(void *));
 
@@ -247,9 +247,9 @@ Boolean treeset_isEmpty(TreeSet *tree);
  *    tree - The treeset to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status treeset_toArray(TreeSet *tree, Array **array);
 
@@ -262,9 +262,9 @@ Status treeset_toArray(TreeSet *tree, Array **array);
  *    tree - The treeset to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status treeset_iterator(TreeSet *tree, Iterator **iter);
 

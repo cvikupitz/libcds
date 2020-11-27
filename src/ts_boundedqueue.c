@@ -49,11 +49,11 @@ Status ts_boundedqueue_new(ConcurrentBoundedQueue **queue, long capacity) {
     /* Allocates memory for the queue */
     temp = (ConcurrentBoundedQueue *)malloc(sizeof(ConcurrentBoundedQueue));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates the internal queue instance */
     status = boundedqueue_new(&(temp->instance), capacity);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(temp);
         return status;
     }
@@ -65,7 +65,7 @@ Status ts_boundedqueue_new(ConcurrentBoundedQueue **queue, long capacity) {
     pthread_mutexattr_destroy(&attr);
     *queue = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void ts_boundedqueue_lock(ConcurrentBoundedQueue *queue) {
@@ -163,14 +163,14 @@ Status ts_boundedqueue_iterator(ConcurrentBoundedQueue *queue, ConcurrentIterato
     /* Creates the array of items and locks it */
     LOCK(queue);
     status = boundedqueue_toArray(queue->instance, &array);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         UNLOCK(queue);
         return status;
     }
 
     /* Creates the iterator */
     status = ts_iterator_new(iter, &(queue->lock), array->items, array->len);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         FREE_ARRAY(array);
         UNLOCK(queue);
     } else {

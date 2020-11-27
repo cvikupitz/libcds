@@ -59,8 +59,8 @@ typedef struct ts_treemap ConcurrentTreeMap;
  *    comparator - Function for comparing two keys in the treemap.
  *    keyDestructor - Function for de-allocating the treemap's keys.
  * Returns:
- *    STAT_SUCCESS - TreeMap was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - TreeMap was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_treemap_new(ConcurrentTreeMap **tree, int (*keyComparator)(void *, void *),
         void (*keyDestructor)(void *));
@@ -97,10 +97,10 @@ void ts_treemap_unlock(ConcurrentTreeMap *tree);
  *    value - The value to be associated with the specified key.
  *    previous - The pointer address to store the previous value into.
  * Returns:
- *    STAT_ENTRY_INSERTED - Key and value was inserted.
- *    STAT_ENTRY_REPLACED - Value was updated in the treemap, and the old value was
- *                          stored into '*previous' due to the key already existing.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    INSERTED - Key and value was inserted.
+ *    REPLACED - Value was updated in the treemap, and the old value was stored into '*previous'
+ *               due to the key already existing.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_treemap_put(ConcurrentTreeMap *tree, void *key, void *value, void **previous);
 
@@ -112,8 +112,8 @@ Status ts_treemap_put(ConcurrentTreeMap *tree, void *key, void *value, void **pr
  *    tree - The treemap to operate on.
  *    firstKey - The pointer address to store the first key into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
  */
 Status ts_treemap_firstKey(ConcurrentTreeMap *tree, void **firstKey);
 
@@ -125,8 +125,8 @@ Status ts_treemap_firstKey(ConcurrentTreeMap *tree, void **firstKey);
  *    tree - The treemap to operate on.
  *    first - The pointer address to store the first entry into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
  */
 Status ts_treemap_first(ConcurrentTreeMap *tree, TmEntry **first);
 
@@ -138,8 +138,8 @@ Status ts_treemap_first(ConcurrentTreeMap *tree, TmEntry **first);
  *    tree - The treemap to operate on.
  *    lastKey - The pointer address to store the last key into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
  */
 Status ts_treemap_lastKey(ConcurrentTreeMap *tree, void **lastKey);
 
@@ -151,8 +151,8 @@ Status ts_treemap_lastKey(ConcurrentTreeMap *tree, void **lastKey);
  *    tree - The treemap to operate on.
  *    last - The pointer address to store the last entry into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
  */
 Status ts_treemap_last(ConcurrentTreeMap *tree, TmEntry **last);
 
@@ -165,9 +165,9 @@ Status ts_treemap_last(ConcurrentTreeMap *tree, TmEntry **last);
  *    key - The key to match.
  *    floorKey - The pointer address to store the floor key into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
- *    STAT_NOT_FOUND - No floor key exists.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
+ *    NOT_FOUND - No floor key exists.
  */
 Status ts_treemap_floorKey(ConcurrentTreeMap *tree, void *key, void **floorKey);
 
@@ -180,9 +180,9 @@ Status ts_treemap_floorKey(ConcurrentTreeMap *tree, void *key, void **floorKey);
  *    key - The key to match.
  *    floor - The pointer address to store the floor entry into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
- *    STAT_NOT_FOUND - No floor entry exists.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
+ *    NOT_FOUND - No floor entry exists.
  */
 Status ts_treemap_floor(ConcurrentTreeMap *tree, void *key, TmEntry **floor);
 
@@ -195,9 +195,9 @@ Status ts_treemap_floor(ConcurrentTreeMap *tree, void *key, TmEntry **floor);
  *    key - The key to match.
  *    ceilingKey - The pointer address to store the ceiling key into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
- *    STAT_NOT_FOUND - No ceiling key exists.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
+ *    NOT_FOUND - No ceiling key exists.
  */
 Status ts_treemap_ceilingKey(ConcurrentTreeMap *tree, void *key, void **ceilingKey);
 
@@ -210,9 +210,9 @@ Status ts_treemap_ceilingKey(ConcurrentTreeMap *tree, void *key, void **ceilingK
  *    key - The key to match.
  *    ceiling - The pointer address to store the ceiling entry into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
- *    STAT_NOT_FOUND - No ceiling entry exists.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
+ *    NOT_FOUND - No ceiling entry exists.
  */
 Status ts_treemap_ceiling(ConcurrentTreeMap *tree, void *key, TmEntry **ceiling);
 
@@ -225,9 +225,9 @@ Status ts_treemap_ceiling(ConcurrentTreeMap *tree, void *key, TmEntry **ceiling)
  *    key - The key to match.
  *    lowerKey - The pointer address to store the lower key into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
- *    STAT_NOT_FOUND - No lower key exists.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
+ *    NOT_FOUND - No lower key exists.
  */
 Status ts_treemap_lowerKey(ConcurrentTreeMap *tree, void *key, void **lowerKey);
 
@@ -240,9 +240,9 @@ Status ts_treemap_lowerKey(ConcurrentTreeMap *tree, void *key, void **lowerKey);
  *    key - The key to match.
  *    lowerKey - The pointer address to store the lower entry into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
- *    STAT_NOT_FOUND - No lower entry exists.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
+ *    NOT_FOUND - No lower entry exists.
  */
 Status ts_treemap_lower(ConcurrentTreeMap *tree, void *key, TmEntry **lower);
 
@@ -255,9 +255,9 @@ Status ts_treemap_lower(ConcurrentTreeMap *tree, void *key, TmEntry **lower);
  *    key - The key to match.
  *    higherKey - The pointer address to store the higher key into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
- *    STAT_NOT_FOUND - No higher key exists.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
+ *    NOT_FOUND - No higher key exists.
  */
 Status ts_treemap_higherKey(ConcurrentTreeMap *tree, void *key, void **higherKey);
 
@@ -270,9 +270,9 @@ Status ts_treemap_higherKey(ConcurrentTreeMap *tree, void *key, void **higherKey
  *    key - The key to match.
  *    higher - The pointer address to store the higher entry into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
- *    STAT_NOT_FOUND - No higher entry exists.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
+ *    NOT_FOUND - No higher entry exists.
  */
 Status ts_treemap_higher(ConcurrentTreeMap *tree, void *key, TmEntry **higher);
 
@@ -297,9 +297,9 @@ Boolean ts_treemap_containsKey(ConcurrentTreeMap *tree, void *key);
  *    key - The key whose associated value is to be returned.
  *    value - The pointer address to store the fetched value into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
- *    STAT_NOT_FOUND - Entry with the specified key was not found.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
+ *    NOT_FOUND - Entry with the specified key was not found.
  */
 Status ts_treemap_get(ConcurrentTreeMap *tree, void *key, void **value);
 
@@ -312,8 +312,8 @@ Status ts_treemap_get(ConcurrentTreeMap *tree, void *key, void **value);
  *    firstKey - The pointer address to store the removed first key into.
  *    firstValue - The pointer address to store the removed first value into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
  */
 Status ts_treemap_pollFirst(ConcurrentTreeMap *tree, void **firstKey, void **firstValue);
 
@@ -326,8 +326,8 @@ Status ts_treemap_pollFirst(ConcurrentTreeMap *tree, void **firstKey, void **fir
  *    lastKey - The pointer address to store the removed last key into.
  *    lastValue - The pointer address to store the removed last value into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
  */
 Status ts_treemap_pollLast(ConcurrentTreeMap *tree, void **lastKey, void **lastValue);
 
@@ -339,9 +339,9 @@ Status ts_treemap_pollLast(ConcurrentTreeMap *tree, void **lastKey, void **lastV
  *    key - The key whose mapping is to be removed from the map.
  *    value - The pointer address to store the removed value into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
- *    STAT_NOT_FOUND - Entry with the specified key was not found.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
+ *    NOT_FOUND - Entry with the specified key was not found.
  */
 Status ts_treemap_remove(ConcurrentTreeMap *tree, void *key, void **value);
 
@@ -386,9 +386,9 @@ Boolean ts_treemap_isEmpty(ConcurrentTreeMap *tree);
  *    tree - The treemap to operate on.
  *    keys - Array where the keys will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_treemap_keyArray(ConcurrentTreeMap *tree, Array **keys);
 
@@ -402,9 +402,9 @@ Status ts_treemap_keyArray(ConcurrentTreeMap *tree, Array **keys);
  *    tree - The treemap to operate on.
  *    entries - Address where the entries will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_treemap_entryArray(ConcurrentTreeMap *tree, Array **entries);
 
@@ -418,9 +418,9 @@ Status ts_treemap_entryArray(ConcurrentTreeMap *tree, Array **entries);
  *    tree - The treemap to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeMap is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeMap is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_treemap_iterator(ConcurrentTreeMap *tree, ConcurrentIterator **iter);
 

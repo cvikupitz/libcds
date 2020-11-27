@@ -47,7 +47,7 @@ Status queue_new(Queue **queue) {
     /* Allocate the struct, check for allocation failures */
     Queue *temp = (Queue *)malloc(sizeof(Queue));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Initializes the remaining struct members */
     temp->head = NULL;
@@ -55,7 +55,7 @@ Status queue_new(Queue **queue) {
     temp->size = 0L;
     *queue = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /* Macro to check if the queue is currently empty */
@@ -66,7 +66,7 @@ Status queue_add(Queue *queue, void *item) {
     /* Allocate the node for item insertion */
     Node *node = (Node *)malloc(sizeof(Node));
     if (node == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
     node->next = NULL;
     node->data = item;
 
@@ -79,25 +79,25 @@ Status queue_add(Queue *queue, void *item) {
     queue->tail = node;
     queue->size++;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status queue_peek(Queue *queue, void **first) {
 
     /* Checks of the queue is empty */
     if (IS_EMPTY(queue) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Extract the element, saves to pointer */
     *first = queue->head->data;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status queue_poll(Queue *queue, void **first) {
 
     /* Checks if the queue is empty */
     if (IS_EMPTY(queue) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Unlink the head node from the queue */
     Node *temp = queue->head;
@@ -112,7 +112,7 @@ Status queue_poll(Queue *queue, void **first) {
     *first = temp->data;
     free(temp);
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -176,18 +176,18 @@ Status queue_toArray(Queue *queue, Array **array) {
 
     /* Checks if the queue is empty */
     if (IS_EMPTY(queue) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generate the array of queue items */
     void **items = generateArray(queue);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Allocate memory for the array struct */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
     }
 
     /* Initialize the array struct members */
@@ -195,7 +195,7 @@ Status queue_toArray(Queue *queue, Array **array) {
     temp->len = queue->size;
     *array = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status queue_iterator(Queue *queue, Iterator **iter) {
@@ -204,22 +204,22 @@ Status queue_iterator(Queue *queue, Iterator **iter) {
 
     /* Checks if the queue is empty */
     if (IS_EMPTY(queue) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generates the array of items for iterator */
     void **items = generateArray(queue);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates a new iterator with the items */
     Status status = iterator_new(&temp, items, queue->size);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(items);
         return status;
     }
     *iter = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void queue_destroy(Queue *queue, void (*destructor)(void *)) {

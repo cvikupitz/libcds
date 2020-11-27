@@ -57,8 +57,8 @@ typedef struct hashmap HashMap;
  *    capacity - The hashmap's starting capacity.
  *    loadFactor - The hashmap's assigned load factor.
  * Returns:
- *    STAT_SUCCESS - HashMap was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - HashMap was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status hashmap_new(HashMap **map, long capacity, double loadFactor);
 
@@ -73,10 +73,10 @@ Status hashmap_new(HashMap **map, long capacity, double loadFactor);
  *    value - The value to be associated with the specified key.
  *    previous - The pointer address to store the previous value into.
  * Returns:
- *    STAT_ENTRY_INSERTED - Key and entry was inserted.
- *    STAT_ENTRY_REPLACED - Entry was updated in the hashmap, and the old entry was
+ *    INSERTED - Key and entry was inserted.
+ *    REPLACED - Entry was updated in the hashmap, and the old entry was
  *                          stored into '*previous' due to the key already existing.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status hashmap_put(HashMap *map, char *key, void *value, void **previous);
 
@@ -101,9 +101,9 @@ Boolean hashmap_containsKey(HashMap *map, char *key);
  *    key - The key whose associated value is to be returned.
  *    value - The pointer address to store the fetched value into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - HashMap is currently empty.
- *    STAT_NOT_FOUND - Entry with the specified key was not found.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - HashMap is currently empty.
+ *    NOT_FOUND - Entry with the specified key was not found.
  */
 Status hashmap_get(HashMap *map, char *key, void **value);
 
@@ -115,9 +115,9 @@ Status hashmap_get(HashMap *map, char *key, void **value);
  *    key - The key whose mapping is to be removed from the map.
  *    value - The pointer address to store the removed value into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - HashMap is currently empty.
- *    STAT_NOT_FOUND - Entry with the specified key was not found.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - HashMap is currently empty.
+ *    NOT_FOUND - Entry with the specified key was not found.
  */
 Status hashmap_remove(HashMap *map, char *key, void **value);
 
@@ -162,9 +162,9 @@ Boolean hashmap_isEmpty(HashMap *map);
  *    map - The hashmap to operate on.
  *    keys - Array where the keys will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - HashMap is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - HashMap is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status hashmap_keyArray(HashMap *map, Array **keys);
 
@@ -178,9 +178,9 @@ Status hashmap_keyArray(HashMap *map, Array **keys);
  *    map - The hashmap to operate on.
  *    entries - Array where the entries will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - HashMap is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - HashMap is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status hashmap_entryArray(HashMap *map, Array **entries);
 
@@ -194,9 +194,9 @@ Status hashmap_entryArray(HashMap *map, Array **entries);
  *    map - The hashmap to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - HashMap is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - HashMap is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status hashmap_iterator(HashMap *map, Iterator **iter);
 

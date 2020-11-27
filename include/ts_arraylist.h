@@ -46,8 +46,8 @@ typedef struct ts_arraylist ConcurrentArrayList;
  *    list - The pointer address to store the new ArrayList instance.
  *    capacity - The default capacity of the arraylist.
  * Returns:
- *    STAT_SUCCESS - ArrayList was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - ArrayList was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_arraylist_new(ConcurrentArrayList **list, long capacity);
 
@@ -79,8 +79,8 @@ void ts_arraylist_unlock(ConcurrentArrayList *list);
  *    list - The array list to operate on.
  *    item - The element to be appended to the array list.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_arraylist_add(ConcurrentArrayList *list, void *item);
 
@@ -94,9 +94,9 @@ Status ts_arraylist_add(ConcurrentArrayList *list, void *item);
  *    i - The index at which the specified element is to be inserted.
  *    item - The element to be inserted.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_arraylist_insert(ConcurrentArrayList *list, long i, void *item);
 
@@ -108,9 +108,9 @@ Status ts_arraylist_insert(ConcurrentArrayList *list, long i, void *item);
  *    i - The index of the element to retrieve.
  *    item - The pointer address to store the retrieved element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Array list is currently empty.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Array list is currently empty.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
  */
 Status ts_arraylist_get(ConcurrentArrayList *list, long i, void **item);
 
@@ -125,9 +125,9 @@ Status ts_arraylist_get(ConcurrentArrayList *list, long i, void **item);
  *    previous - The pointer address to store the element previously at the specified
  *               position.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Array list is currently empty.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Array list is currently empty.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
  */
 Status ts_arraylist_set(ConcurrentArrayList *list, long i, void *item, void **previous);
 
@@ -140,9 +140,9 @@ Status ts_arraylist_set(ConcurrentArrayList *list, long i, void *item, void **pr
  *    i - The index of the element to be removed.
  *    item - The pointer address to store the element that was removed from the list.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Array list is currently empty.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Array list is currently empty.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
  */
 Status ts_arraylist_remove(ConcurrentArrayList *list, long i, void **item);
 
@@ -154,8 +154,8 @@ Status ts_arraylist_remove(ConcurrentArrayList *list, long i, void **item);
  *    list - The array list to operate on.
  *    capacity - The desired minimum capacity.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_arraylist_ensureCapacity(ConcurrentArrayList *list, long capacity);
 
@@ -165,9 +165,9 @@ Status ts_arraylist_ensureCapacity(ConcurrentArrayList *list, long capacity);
  * Params:
  *    list - The array list to operate on.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - ArrayList is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - ArrayList is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_arraylist_trimToSize(ConcurrentArrayList *list);
 
@@ -223,9 +223,9 @@ Boolean ts_arraylist_isEmpty(ConcurrentArrayList *list);
  *    list - The array list to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Array list is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Array list is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_arraylist_toArray(ConcurrentArrayList *list, Array **array);
 
@@ -238,9 +238,9 @@ Status ts_arraylist_toArray(ConcurrentArrayList *list, Array **array);
  *    list - The array list to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Array list is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Array list is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_arraylist_iterator(ConcurrentArrayList *list, ConcurrentIterator **iter);
 

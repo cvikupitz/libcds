@@ -49,11 +49,11 @@ Status ts_stack_new(ConcurrentStack **stack) {
     /* Allocates memory for the stack */
     temp = (ConcurrentStack *)malloc(sizeof(ConcurrentStack));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates the internal instance of the stack */
     status = stack_new(&(temp->instance));
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(temp);
         return status;
     }
@@ -65,7 +65,7 @@ Status ts_stack_new(ConcurrentStack **stack) {
     pthread_mutexattr_destroy(&attr);
     *stack = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void ts_stack_lock(ConcurrentStack *stack) {
@@ -145,14 +145,14 @@ Status ts_stack_iterator(ConcurrentStack *stack, ConcurrentIterator **iter) {
     /* Creates the array of items and locks it */
     LOCK(stack);
     status = stack_toArray(stack->instance, &array);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         UNLOCK(stack);
         return status;
     }
 
     /* Creates the iterator */
     status = ts_iterator_new(iter, &(stack->lock), array->items, array->len);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         FREE_ARRAY(array);
         UNLOCK(stack);
     } else {

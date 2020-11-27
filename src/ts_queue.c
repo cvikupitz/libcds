@@ -49,11 +49,11 @@ Status ts_queue_new(ConcurrentQueue **queue) {
     /* Allocates memory for the new queue */
     temp = (ConcurrentQueue *)malloc(sizeof(ConcurrentQueue));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates the internal queue instance */
     status = queue_new(&(temp->instance));
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(temp);
         return status;
     }
@@ -65,7 +65,7 @@ Status ts_queue_new(ConcurrentQueue **queue) {
     pthread_mutexattr_destroy(&attr);
     *queue = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void ts_queue_lock(ConcurrentQueue *queue) {
@@ -145,14 +145,14 @@ Status ts_queue_iterator(ConcurrentQueue *queue, ConcurrentIterator **iter) {
     /* Creates array of items and locks it */
     LOCK(queue);
     status = queue_toArray(queue->instance, &array);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         UNLOCK(queue);
         return status;
     }
 
     /* Creates the iterator */
     status = ts_iterator_new(iter, &(queue->lock), array->items, array->len);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         FREE_ARRAY(array);
         UNLOCK(queue);
     } else {

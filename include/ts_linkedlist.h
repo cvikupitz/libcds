@@ -44,8 +44,8 @@ typedef struct ts_linkedlist ConcurrentLinkedList;
  * Params:
  *    None
  * Returns:
- *    STAT_SUCCESS - LinkedList was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - LinkedList was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_linkedlist_new(ConcurrentLinkedList **list);
 
@@ -77,8 +77,8 @@ void ts_linkedlist_unlock(ConcurrentLinkedList *list);
  *    list - The linked list to operate on.
  *    item - The element to add.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_linkedlist_addFirst(ConcurrentLinkedList *list, void *item);
 
@@ -89,8 +89,8 @@ Status ts_linkedlist_addFirst(ConcurrentLinkedList *list, void *item);
  *    list - The linked list to operate on.
  *    item - The element to add.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_linkedlist_addLast(ConcurrentLinkedList *list, void *item);
 
@@ -104,9 +104,9 @@ Status ts_linkedlist_addLast(ConcurrentLinkedList *list, void *item);
  *    i - The index at which the specified element is to be inserted.
  *    item - The element to be inserted.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_linkedlist_insert(ConcurrentLinkedList *list, long i, void *item);
 
@@ -118,8 +118,8 @@ Status ts_linkedlist_insert(ConcurrentLinkedList *list, long i, void *item);
  *    list - The linked list to operate on.
  *    first - The pointer address to store the first element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
  */
 Status ts_linkedlist_first(ConcurrentLinkedList *list, void **first);
 
@@ -131,8 +131,8 @@ Status ts_linkedlist_first(ConcurrentLinkedList *list, void **first);
  *    list - The linked list to operate on.
  *    last - The pointer address to store the last element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
  */
 Status ts_linkedlist_last(ConcurrentLinkedList *list, void **last);
 
@@ -145,9 +145,9 @@ Status ts_linkedlist_last(ConcurrentLinkedList *list, void **last);
  *    i - The index of the element to return.
  *    item - The pointer address to store the fetched element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
  */
 Status ts_linkedlist_get(ConcurrentLinkedList *list, long i, void **item);
 
@@ -162,9 +162,9 @@ Status ts_linkedlist_get(ConcurrentLinkedList *list, long i, void **item);
  *    previous - The pointer address to store the element previously at the specified
  *               position.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
  */
 Status ts_linkedlist_set(ConcurrentLinkedList *list, long i, void *item, void **previous);
 
@@ -175,8 +175,8 @@ Status ts_linkedlist_set(ConcurrentLinkedList *list, long i, void *item, void **
  *    list - The linked list to operate on.
  *    first - The pointer address to store the removed element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
  */
 Status ts_linkedlist_removeFirst(ConcurrentLinkedList *list, void **first);
 
@@ -187,8 +187,8 @@ Status ts_linkedlist_removeFirst(ConcurrentLinkedList *list, void **first);
  *    list - The linked list to operate on.
  *    last - The pointer address to store the removed element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
  */
 Status ts_linkedlist_removeLast(ConcurrentLinkedList *list, void **last);
 
@@ -202,9 +202,9 @@ Status ts_linkedlist_removeLast(ConcurrentLinkedList *list, void **last);
  *    i - The index of the element to remove.
  *    item - The pointer address to store the element previously at the specified position.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
  */
 Status ts_linkedlist_remove(ConcurrentLinkedList *list, long i, void **item);
 
@@ -249,9 +249,9 @@ Boolean ts_linkedlist_isEmpty(ConcurrentLinkedList *list);
  *    list - The linked list to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_linkedlist_toArray(ConcurrentLinkedList *list, Array **array);
 
@@ -264,9 +264,9 @@ Status ts_linkedlist_toArray(ConcurrentLinkedList *list, Array **array);
  *    list - The linked list to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_linkedlist_iterator(ConcurrentLinkedList *list, ConcurrentIterator **iter);
 

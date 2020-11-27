@@ -44,8 +44,8 @@ typedef struct linkedlist LinkedList;
  * Params:
  *    None
  * Returns:
- *    STAT_SUCCESS - LinkedList was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - LinkedList was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status linkedlist_new(LinkedList **list);
 
@@ -56,8 +56,8 @@ Status linkedlist_new(LinkedList **list);
  *    list - The linked list to operate on.
  *    item - The element to add.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status linkedlist_addFirst(LinkedList *list, void *item);
 
@@ -68,8 +68,8 @@ Status linkedlist_addFirst(LinkedList *list, void *item);
  *    list - The linked list to operate on.
  *    item - The element to add.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status linkedlist_addLast(LinkedList *list, void *item);
 
@@ -83,9 +83,9 @@ Status linkedlist_addLast(LinkedList *list, void *item);
  *    i - The index at which the specified element is to be inserted.
  *    item - The element to be inserted.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status linkedlist_insert(LinkedList *list, long i, void *item);
 
@@ -97,8 +97,8 @@ Status linkedlist_insert(LinkedList *list, long i, void *item);
  *    list - The linked list to operate on.
  *    first - The pointer address to store the first element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
  */
 Status linkedlist_first(LinkedList *list, void **first);
 
@@ -110,8 +110,8 @@ Status linkedlist_first(LinkedList *list, void **first);
  *    list - The linked list to operate on.
  *    last - The pointer address to store the last element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
  */
 Status linkedlist_last(LinkedList *list, void **last);
 
@@ -124,9 +124,9 @@ Status linkedlist_last(LinkedList *list, void **last);
  *    i - The index of the element to return.
  *    item - The pointer address to store the fetched element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
  */
 Status linkedlist_get(LinkedList *list, long i, void **item);
 
@@ -141,9 +141,9 @@ Status linkedlist_get(LinkedList *list, long i, void **item);
  *    previous - The pointer address to store the element previously at the specified
  *               position.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
  */
 Status linkedlist_set(LinkedList *list, long i, void *item, void **previous);
 
@@ -154,8 +154,8 @@ Status linkedlist_set(LinkedList *list, long i, void *item, void **previous);
  *    list - The linked list to operate on.
  *    first - The pointer address to store the removed element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
  */
 Status linkedlist_removeFirst(LinkedList *list, void **first);
 
@@ -166,8 +166,8 @@ Status linkedlist_removeFirst(LinkedList *list, void **first);
  *    list - The linked list to operate on.
  *    last - The pointer address to store the removed element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
  */
 Status linkedlist_removeLast(LinkedList *list, void **last);
 
@@ -181,9 +181,9 @@ Status linkedlist_removeLast(LinkedList *list, void **last);
  *    i - The index of the element to remove.
  *    item - The pointer address to store the element previously at the specified position.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
- *    STAT_INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
+ *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
  */
 Status linkedlist_remove(LinkedList *list, long i, void **item);
 
@@ -228,9 +228,9 @@ Boolean linkedlist_isEmpty(LinkedList *list);
  *    list - The linked list to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status linkedlist_toArray(LinkedList *list, Array **array);
 
@@ -243,9 +243,9 @@ Status linkedlist_toArray(LinkedList *list, Array **array);
  *    list - The linked list to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Linked list is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Linked list is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status linkedlist_iterator(LinkedList *list, Iterator **iter);
 

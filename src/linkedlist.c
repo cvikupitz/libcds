@@ -53,7 +53,7 @@ Status linkedlist_new(LinkedList **list) {
     /* Allocates the struct, checks for allocation failure */
     LinkedList *temp = (LinkedList *)malloc(sizeof(LinkedList));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Initializes the remaining struct members */
     HEADER(temp)->data = NULL;
@@ -65,7 +65,7 @@ Status linkedlist_new(LinkedList **list) {
     temp->size = 0L;
     *list = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /* Macro used to validate the given index i */
@@ -127,14 +127,14 @@ Status linkedlist_addFirst(LinkedList *list, void *item) {
     /* Allocates the node for insertion */
     Node *node = (Node *)malloc(sizeof(Node));
     if (node == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Inserts the node into the front of the list */
     node->data = item;
     linkNodes(node, HEADER(list), HEADER(list)->next);
     list->size++;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status linkedlist_addLast(LinkedList *list, void *item) {
@@ -142,21 +142,21 @@ Status linkedlist_addLast(LinkedList *list, void *item) {
     /* Allocates the node for insertion */
     Node *node = (Node *)malloc(sizeof(Node));
     if (node == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Inserts the node into the tail of the list */
     node->data = item;
     linkNodes(node, TRAILER(list)->prev, TRAILER(list));
     list->size++;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status linkedlist_insert(LinkedList *list, long i, void *item) {
 
     /* Check if the index is valid */
     if (INDEX_VALID(i, list->size) == FALSE)
-        return STAT_INVALID_INDEX;
+        return INVALID_INDEX;
 
     if (i == 0)         /* Same operation as addFirst() */
         return linkedlist_addFirst(list, item);
@@ -166,7 +166,7 @@ Status linkedlist_insert(LinkedList *list, long i, void *item) {
     /* Allocates the node for insertion */
     Node *node = (Node *)malloc(sizeof(Node));
     if (node == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Fetch the node at the current index, relink for insertion */
     node->data = item;
@@ -174,69 +174,69 @@ Status linkedlist_insert(LinkedList *list, long i, void *item) {
     linkNodes(node, temp->prev, temp);
     list->size++;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status linkedlist_first(LinkedList *list, void **first) {
 
     /* Checks if the list is empty */
     if (IS_EMPTY(list) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the first item, stores into pointer */
     *first = HEADER(list)->next->data;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status linkedlist_last(LinkedList *list, void **last) {
 
     /* Checks if the list is empty */
     if (IS_EMPTY(list) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the last item, stores into pointer */
     *last = TRAILER(list)->prev->data;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status linkedlist_get(LinkedList *list, long i, void **item) {
 
     /* Checks if the list is empty */
     if (IS_EMPTY(list) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Checks if the index is valid */
     if (INDEX_VALID(i, list->size) == FALSE)
-        return STAT_INVALID_INDEX;
+        return INVALID_INDEX;
 
     /* Fetches the item at the index, stores into pointer */
     Node *temp = fetchNode(list, i);
     *item = temp->data;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status linkedlist_set(LinkedList *list, long i, void *item, void **previous) {
 
     /* Checks if the list is empty */
     if (IS_EMPTY(list) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Checks if the index is valid */
     if (INDEX_VALID(i, list->size) == FALSE)
-        return STAT_INVALID_INDEX;
+        return INVALID_INDEX;
 
     /* Retrieve the node, swaps with new element */
     Node *temp = fetchNode(list, i);
     *previous = temp->data;
     temp->data = item;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status linkedlist_removeFirst(LinkedList *list, void **first) {
 
     /* Check if the list is empty */
     if (IS_EMPTY(list) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Fetches the first node, unlinks from list */
     Node *temp = HEADER(list)->next;
@@ -245,14 +245,14 @@ Status linkedlist_removeFirst(LinkedList *list, void **first) {
     free(temp);
     list->size--;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status linkedlist_removeLast(LinkedList *list, void **last) {
 
     /* Check if the list is empty */
     if (IS_EMPTY(list) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Fetches the last node, unlinks from list */
     Node *temp = TRAILER(list)->prev;
@@ -261,17 +261,17 @@ Status linkedlist_removeLast(LinkedList *list, void **last) {
     free(temp);
     list->size--;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status linkedlist_remove(LinkedList *list, long i, void **item) {
 
     /* Checks if the list is empty */
     if (IS_EMPTY(list) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Checks if the index is valid */
     if (INDEX_VALID(i, list->size) == FALSE)
-        return STAT_INVALID_INDEX;
+        return INVALID_INDEX;
 
     if (i == 0L)        /* Same operation as removeFirst() */
         return linkedlist_removeFirst(list, item);
@@ -285,7 +285,7 @@ Status linkedlist_remove(LinkedList *list, long i, void **item) {
     free(temp);
     list->size--;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -348,18 +348,18 @@ Status linkedlist_toArray(LinkedList *list, Array **array) {
 
     /* Does not create the array if empty */
     if (IS_EMPTY(list) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generate the array of linked list items */
     void **items = generateArray(list);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Allocate memory for the array struct */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
     }
 
     /* Initialize remaining struct members */
@@ -367,7 +367,7 @@ Status linkedlist_toArray(LinkedList *list, Array **array) {
     temp->len = list->size;
     *array = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status linkedlist_iterator(LinkedList *list, Iterator **iter) {
@@ -376,22 +376,22 @@ Status linkedlist_iterator(LinkedList *list, Iterator **iter) {
 
     /* Does not create the array if empty */
     if (IS_EMPTY(list) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generates the array of items for iterator */
     void **items = generateArray(list);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates a new iterator with the items */
     Status status = iterator_new(&temp, items, list->size);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(items);
         return status;
     }
     *iter = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void linkedlist_destroy(LinkedList *list, void (*destructor)(void *)) {

@@ -67,7 +67,7 @@ Status treeset_new(TreeSet **tree, int (*comparator)(void *, void *)) {
     /* Allocate the struct, check for allocation failures */
     TreeSet *temp = (TreeSet *)malloc(sizeof(TreeSet));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Initialize remaining struct members */
     temp->cmp = comparator;
@@ -75,7 +75,7 @@ Status treeset_new(TreeSet **tree, int (*comparator)(void *, void *)) {
     temp->size = 0L;
     *tree = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /* Macro to check if the treeset is currently empty */
@@ -256,18 +256,18 @@ Status treeset_add(TreeSet *tree, void *item) {
 
     /* Checks if the item is already present */
     if (findNode(tree, item) != NULL)
-        return STAT_KEY_ALREADY_EXISTS;
+        return ALREADY_EXISTS;
 
     /* Allocates memory for the new node */
     Node *node = allocNode(item);
     if (node == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Inserts the new item in the tree */
     insertNode(tree, node);
     insertFixup(tree, node);
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Boolean treeset_contains(TreeSet *tree, void *item) {
@@ -296,24 +296,24 @@ Status treeset_first(TreeSet *tree, void **first) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the first item, saves into pointer */
     Node *minNode = getMin(tree->root);
     *first = minNode->data;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treeset_last(TreeSet *tree, void **last) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the last item, saves into pointer */
     Node *maxNode = getMax(tree->root);
     *last = maxNode->data;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treeset_floor(TreeSet *tree, void *item, void **floor) {
@@ -323,7 +323,7 @@ Status treeset_floor(TreeSet *tree, void *item, void **floor) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     while (current != NULL) {
         int cmp = (*tree->cmp)(item, current->data);
@@ -343,10 +343,10 @@ Status treeset_floor(TreeSet *tree, void *item, void **floor) {
 
     /* If floor value found, save into pointer */
     if (temp == NULL)
-        return STAT_NOT_FOUND;
+        return NOT_FOUND;
     *floor = temp->data;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treeset_ceiling(TreeSet *tree, void *item, void **ceiling) {
@@ -356,7 +356,7 @@ Status treeset_ceiling(TreeSet *tree, void *item, void **ceiling) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     while (current != NULL) {
         int cmp = (*tree->cmp)(item, current->data);
@@ -376,10 +376,10 @@ Status treeset_ceiling(TreeSet *tree, void *item, void **ceiling) {
 
     /* If ceiling value found, save into pointer */
     if (temp == NULL)
-        return STAT_NOT_FOUND;
+        return NOT_FOUND;
     *ceiling = temp->data;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treeset_lower(TreeSet *tree, void *item, void **lower) {
@@ -389,7 +389,7 @@ Status treeset_lower(TreeSet *tree, void *item, void **lower) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     while (current != NULL) {
         int cmp = (*tree->cmp)(item, current->data);
@@ -404,10 +404,10 @@ Status treeset_lower(TreeSet *tree, void *item, void **lower) {
 
     /* If lower value found, save into pointer */
     if (temp == NULL)
-        return STAT_NOT_FOUND;
+        return NOT_FOUND;
     *lower = temp->data;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treeset_higher(TreeSet *tree, void *item, void **higher) {
@@ -417,7 +417,7 @@ Status treeset_higher(TreeSet *tree, void *item, void **higher) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     while (current != NULL) {
         int cmp = (*tree->cmp)(item, current->data);
@@ -432,10 +432,10 @@ Status treeset_higher(TreeSet *tree, void *item, void **higher) {
 
     /* If higher value found, save into pointer */
     if (temp == NULL)
-        return STAT_NOT_FOUND;
+        return NOT_FOUND;
     *higher = temp->data;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -573,7 +573,7 @@ Status treeset_pollFirst(TreeSet *tree, void **first) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Retrieves the minimum node, saves the item into pointer */
     Node *node = getMin(tree->root);
     *first = node->data;
@@ -583,14 +583,14 @@ Status treeset_pollFirst(TreeSet *tree, void **first) {
     deleteNode(tree, node, &temp);
     free(temp);
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treeset_pollLast(TreeSet *tree, void **last) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Retrieves the maximum node, saves the item into pointer */
     Node *node = getMax(tree->root);
     *last = node->data;
@@ -600,18 +600,18 @@ Status treeset_pollLast(TreeSet *tree, void **last) {
     deleteNode(tree, node, &temp);
     free(temp);
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treeset_remove(TreeSet *tree, void *item, void (*destructor)(void *)) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Checks if the item is present */
     Node *node = findNode(tree, item);
     if (node == NULL)
-        return STAT_NOT_FOUND;
+        return NOT_FOUND;
 
     /* Removed node from tree, free allocated memory */
     Node *temp;
@@ -621,7 +621,7 @@ Status treeset_remove(TreeSet *tree, void *item, void (*destructor)(void *)) {
         (*destructor)(toDelete);
     free(temp);
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -710,7 +710,7 @@ static void **generateArray(TreeSet *tree) {
 
     /* Create stack for iterative approach */
     long capacity = (long)( 2 * ceil( log2(tree->size + 1) ) );  /* Max depth should be <= 2*log2(N + 1) */
-    if (boundedstack_new(&stack, capacity) != STAT_SUCCESS) {
+    if (boundedstack_new(&stack, capacity) != OK) {
         free(items);
         return NULL;
     }
@@ -727,18 +727,18 @@ Status treeset_toArray(TreeSet *tree, Array **array) {
 
     /* Does not create the array if empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generate the array of treeset items */
     void **items = generateArray(tree);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Allocate memory for the array struct */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
     }
 
     /* Initialize the remaining struct members */
@@ -746,7 +746,7 @@ Status treeset_toArray(TreeSet *tree, Array **array) {
     temp->len = tree->size;
     *array = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treeset_iterator(TreeSet *tree, Iterator **iter) {
@@ -755,22 +755,22 @@ Status treeset_iterator(TreeSet *tree, Iterator **iter) {
 
     /* Does not create the array if empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generates the array of items for iterator */
     void **items = generateArray(tree);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates a new iterator with the items */
     Status status = iterator_new(&temp, items, tree->size);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(items);
         return status;
     }
     *iter = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void treeset_destroy(TreeSet *tree, void (*destructor)(void *)) {

@@ -47,8 +47,8 @@ typedef struct bounded_stack BoundedStack;
  *    stack - The pointer address to store the new BoundedStack instance.
  *    capacity - The stack's upper-bound capacity.
  * Returns:
- *    STAT_SUCCESS - Stack was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Stack was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status boundedstack_new(BoundedStack **stack, long capacity);
 
@@ -59,8 +59,8 @@ Status boundedstack_new(BoundedStack **stack, long capacity);
  *    stack - The stack to operate on.
  *    item - The item to be pushed onto the stack.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_FULL - Failed as the stack is currently full.
+ *    OK - Operation was successful.
+ *    STRUCT_FULL - Failed as the stack is currently full.
  */
 Status boundedstack_push(BoundedStack *stack, void *item);
 
@@ -72,8 +72,8 @@ Status boundedstack_push(BoundedStack *stack, void *item);
  *    stack - The stack to operate on.
  *    top - The pointer address to store the top element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Stack is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Stack is currently empty.
  */
 Status boundedstack_peek(BoundedStack *stack, void **top);
 
@@ -84,8 +84,8 @@ Status boundedstack_peek(BoundedStack *stack, void **top);
  *    stack - The stack to operate on.
  *    top - The pointer address to store the removed top element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Stack is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Stack is currently empty.
  */
 Status boundedstack_pop(BoundedStack *stack, void **top);
 
@@ -150,9 +150,9 @@ Boolean boundedstack_isFull(BoundedStack *stack);
  *    stack - The stack to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Stack is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Stack is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status boundedstack_toArray(BoundedStack *stack, Array **array);
 
@@ -165,9 +165,9 @@ Status boundedstack_toArray(BoundedStack *stack, Array **array);
  *    stack - The stack to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - Stack is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - Stack is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status boundedstack_iterator(BoundedStack *stack, Iterator **iter);
 

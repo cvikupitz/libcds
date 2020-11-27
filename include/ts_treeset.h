@@ -50,8 +50,8 @@ typedef struct ts_treeset ConcurrentTreeSet;
  *    tree - The pointer address to store the new TreeSet instance.
  *    comparator - Function for comparing two items in the treeset.
  * Returns:
- *    STAT_SUCCESS - TreeSet was successfully created.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - TreeSet was successfully created.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_treeset_new(ConcurrentTreeSet **tree, int (*comparator)(void *, void *));
 
@@ -83,9 +83,9 @@ void ts_treeset_unlock(ConcurrentTreeSet *tree);
  *    tree - The treeset to operate on.
  *    item - The element to be added to the treeset.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_KEY_ALREADY_EXISTS - Specified entry is already present.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    ALREADY_EXISTS - Specified entry is already present.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_treeset_add(ConcurrentTreeSet *tree, void *item);
 
@@ -108,8 +108,8 @@ Boolean ts_treeset_contains(ConcurrentTreeSet *tree, void *item);
  *    tree - The treeset to operate on.
  *    first - The pointer address to store the first element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
  */
 Status ts_treeset_first(ConcurrentTreeSet *tree, void **first);
 
@@ -121,8 +121,8 @@ Status ts_treeset_first(ConcurrentTreeSet *tree, void **first);
  *    tree - The treeset to operate on.
  *    last - The pointer address to store the last element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
  */
 Status ts_treeset_last(ConcurrentTreeSet *tree, void **last);
 
@@ -135,9 +135,9 @@ Status ts_treeset_last(ConcurrentTreeSet *tree, void **last);
  *    item - The element to match.
  *    floor - The pointer address to store the floor element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
- *    STAT_NOT_FOUND - No floor value exists.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
+ *    NOT_FOUND - No floor value exists.
  */
 Status ts_treeset_floor(ConcurrentTreeSet *tree, void *item, void **floor);
 
@@ -150,9 +150,9 @@ Status ts_treeset_floor(ConcurrentTreeSet *tree, void *item, void **floor);
  *    item - The element to match.
  *    ceiling - The pointer address to store the ceiling element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
- *    STAT_NOT_FOUND - No ceiling value exists.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
+ *    NOT_FOUND - No ceiling value exists.
  */
 Status ts_treeset_ceiling(ConcurrentTreeSet *tree, void *item, void **ceiling);
 
@@ -165,9 +165,9 @@ Status ts_treeset_ceiling(ConcurrentTreeSet *tree, void *item, void **ceiling);
  *    item - The element to match.
  *    lower - The pointer address to store the lower element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
- *    STAT_NOT_FOUND - No lower value exists.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
+ *    NOT_FOUND - No lower value exists.
  */
 Status ts_treeset_lower(ConcurrentTreeSet *tree, void *item, void **lower);
 
@@ -180,9 +180,9 @@ Status ts_treeset_lower(ConcurrentTreeSet *tree, void *item, void **lower);
  *    item - The element to match.
  *    higher - The pointer address to store the higher element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
- *    STAT_NOT_FOUND - No higher value exists.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
+ *    NOT_FOUND - No higher value exists.
  */
 Status ts_treeset_higher(ConcurrentTreeSet *tree, void *item, void **higher);
 
@@ -194,8 +194,8 @@ Status ts_treeset_higher(ConcurrentTreeSet *tree, void *item, void **higher);
  *    tree - The treeset to operate on.
  *    first - The pointer address to store the removed first element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
  */
 Status ts_treeset_pollFirst(ConcurrentTreeSet *tree, void **first);
 
@@ -207,8 +207,8 @@ Status ts_treeset_pollFirst(ConcurrentTreeSet *tree, void **first);
  *    tree - The treeset to operate on.
  *    last - The pointer address to store the removed last element into.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
  */
 Status ts_treeset_pollLast(ConcurrentTreeSet *tree, void **last);
 
@@ -221,9 +221,9 @@ Status ts_treeset_pollLast(ConcurrentTreeSet *tree, void **last);
  *    item - The element to be removed.
  *    destructor - Function to operate on element after removal.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
- *    STAT_NOT_FOUND - Entry was not found.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
+ *    NOT_FOUND - Entry was not found.
  */
 Status ts_treeset_remove(ConcurrentTreeSet *tree, void *item, void (*destructor)(void *));
 
@@ -268,9 +268,9 @@ Boolean ts_treeset_isEmpty(ConcurrentTreeSet *tree);
  *    tree - The treeset to operate on.
  *    array - Address where the new array will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_treeset_toArray(ConcurrentTreeSet *tree, Array **array);
 
@@ -283,9 +283,9 @@ Status ts_treeset_toArray(ConcurrentTreeSet *tree, Array **array);
  *    tree - The treeset to operate on.
  *    iter - Address where the new iterator will be stored.
  * Returns:
- *    STAT_SUCCESS - Operation was successful.
- *    STAT_STRUCT_EMPTY - TreeSet is currently empty.
- *    STAT_ALLOC_FAILURE - Failed to allocate enough memory from the heap.
+ *    OK - Operation was successful.
+ *    STRUCT_EMPTY - TreeSet is currently empty.
+ *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_treeset_iterator(ConcurrentTreeSet *tree, ConcurrentIterator **iter);
 

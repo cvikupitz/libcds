@@ -50,12 +50,12 @@ static void validateEmptyHeap(Heap *heap) {
     Iterator *iter;
     char *item;
 
-    CU_ASSERT_TRUE( heap_peek(heap, (void **)&item) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( heap_poll(heap, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( heap_peek(heap, (void **)&item) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( heap_poll(heap, (void **)&item) == STRUCT_EMPTY );
     CU_ASSERT_TRUE( heap_size(heap) == 0L );
     CU_ASSERT_TRUE( heap_isEmpty(heap) == TRUE );
-    CU_ASSERT_TRUE( heap_iterator(heap, &iter) == STAT_STRUCT_EMPTY );
-    CU_ASSERT_TRUE( heap_toArray(heap, &arr) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( heap_iterator(heap, &iter) == STRUCT_EMPTY );
+    CU_ASSERT_TRUE( heap_toArray(heap, &arr) == STRUCT_EMPTY );
 }
 
 static void testEmptyHeap() {
@@ -64,7 +64,7 @@ static void testEmptyHeap() {
     Status stat;
 
     stat = heap_new(&heap, CAPACITY, heapCmp);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testEmptyHeap() - allocation failure");
 
     validateEmptyHeap(heap);
@@ -80,17 +80,17 @@ static void testSingleItem() {
     char *item;
 
     stat = heap_new(&heap, CAPACITY, heapCmp);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testSingleItem() - allocation failure");
 
-    CU_ASSERT_TRUE( heap_insert(heap, singleItem) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( heap_insert(heap, singleItem) == OK );
     CU_ASSERT_TRUE( heap_size(heap) == 1L );
     CU_ASSERT_TRUE( heap_isEmpty(heap) == FALSE );
-    CU_ASSERT_TRUE( heap_peek(heap, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( heap_peek(heap, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
-    CU_ASSERT_TRUE( heap_poll(heap, (void **)&item) == STAT_SUCCESS );
+    CU_ASSERT_TRUE( heap_poll(heap, (void **)&item) == OK );
     CU_ASSERT_TRUE( strcmp(item, singleItem) == 0 );
-    CU_ASSERT_TRUE( heap_poll(heap, (void **)&item) == STAT_STRUCT_EMPTY );
+    CU_ASSERT_TRUE( heap_poll(heap, (void **)&item) == STRUCT_EMPTY );
 
     validateEmptyHeap(heap);
     heap_destroy(heap, NULL);
@@ -106,16 +106,16 @@ static void testUnorderedSet() {
     int i;
 
     stat = heap_new(&heap, CAPACITY, heapCmp);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testUnorderedSet() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE(heap_insert(heap, array[i]) == STAT_SUCCESS);
+        CU_ASSERT_TRUE(heap_insert(heap, array[i]) == OK);
 
     for (i = 0; i < LEN; i++) {
-        CU_ASSERT_TRUE( heap_peek(heap, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( heap_peek(heap, (void **)&item) == OK );
         CU_ASSERT_TRUE( strcmp(item, orderedArray[i]) == 0 );
-        CU_ASSERT_TRUE( heap_poll(heap, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( heap_poll(heap, (void **)&item) == OK );
         CU_ASSERT_TRUE( strcmp(item, orderedArray[i]) == 0 );
     }
 
@@ -132,16 +132,16 @@ static void testOrderedSet() {
     int i;
 
     stat = heap_new(&heap, CAPACITY, heapCmp);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testOrderedSet() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( heap_insert(heap, orderedArray[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( heap_insert(heap, orderedArray[i]) == OK );
 
     for (i = 0; i < LEN; i++) {
-        CU_ASSERT_TRUE( heap_peek(heap, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( heap_peek(heap, (void **)&item) == OK );
         CU_ASSERT_TRUE( strcmp(item, orderedArray[i]) == 0 );
-        CU_ASSERT_TRUE( heap_poll(heap, (void **)&item) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( heap_poll(heap, (void **)&item) == OK );
         CU_ASSERT_TRUE( strcmp(item, orderedArray[i]) == 0 );
     }
 
@@ -157,11 +157,11 @@ static void testHeapClear() {
     int i;
 
     stat = heap_new(&heap, CAPACITY, heapCmp);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testHeapClear() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( heap_insert(heap, array[i]) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( heap_insert(heap, array[i]) == OK );
 
     heap_clear(heap, NULL);
     validateEmptyHeap(heap);
@@ -178,12 +178,12 @@ static void testHeapToArray() {
     int i;
 
     stat = heap_new(&heap, CAPACITY, heapCmp);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testHeapToArray() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( heap_insert(heap, array[i]) == STAT_SUCCESS );
-    CU_ASSERT_TRUE( heap_toArray(heap, &arr) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( heap_insert(heap, array[i]) == OK );
+    CU_ASSERT_TRUE( heap_toArray(heap, &arr) == OK );
     CU_ASSERT_TRUE( arr->len == LEN );
 
     FREE_ARRAY(arr)
@@ -200,12 +200,12 @@ static void testHeapIterator() {
     int i;
 
     stat = heap_new(&heap, CAPACITY, heapCmp);
-    if (stat != STAT_SUCCESS)
+    if (stat != OK)
         CU_FAIL_FATAL("ERROR: testHeapIterator() - allocation failure");
 
     for (i = 0; i < LEN; i++)
-        CU_ASSERT_TRUE( heap_insert(heap, array[i]) == STAT_SUCCESS );
-    CU_ASSERT_TRUE( heap_iterator(heap, &iter) == STAT_SUCCESS );
+        CU_ASSERT_TRUE( heap_insert(heap, array[i]) == OK );
+    CU_ASSERT_TRUE( heap_iterator(heap, &iter) == OK );
 
     iterator_destroy(iter);
     heap_destroy(heap, NULL);

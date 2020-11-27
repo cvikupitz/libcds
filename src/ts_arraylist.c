@@ -49,11 +49,11 @@ Status ts_arraylist_new(ConcurrentArrayList **list, long capacity) {
     /* Allocates memory for the arraylist */
     temp = (ConcurrentArrayList *)malloc(sizeof(ConcurrentArrayList));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates new internal arraylist instance */
     status = arraylist_new(&(temp->instance), capacity);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(temp);
         return status;
     }
@@ -65,7 +65,7 @@ Status ts_arraylist_new(ConcurrentArrayList **list, long capacity) {
     pthread_mutexattr_destroy(&attr);
     *list = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void ts_arraylist_lock(ConcurrentArrayList *list) {
@@ -190,14 +190,14 @@ Status ts_arraylist_iterator(ConcurrentArrayList *list, ConcurrentIterator **ite
     /* Creates the array of items and locks the instance */
     LOCK(list);
     status = arraylist_toArray(list->instance, &array);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         UNLOCK(list);
         return status;
     }
 
     /* Creates the iterator */
     status = ts_iterator_new(iter, &(list->lock), array->items, array->len);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         FREE_ARRAY(array);
         UNLOCK(list);
     } else {

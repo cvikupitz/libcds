@@ -49,11 +49,11 @@ Status ts_hashmap_new(ConcurrentHashMap **map, long capacity, double loadFactor)
     /* Allocates memory for the new hashmap */
     temp = (ConcurrentHashMap *)malloc(sizeof(ConcurrentHashMap));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates the internal hashmap */
     status = hashmap_new(&(temp->instance), capacity, loadFactor);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(temp);
         return status;
     }
@@ -65,7 +65,7 @@ Status ts_hashmap_new(ConcurrentHashMap **map, long capacity, double loadFactor)
     pthread_mutexattr_destroy(&attr);
     *map = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void ts_hashmap_lock(ConcurrentHashMap *map) {
@@ -163,14 +163,14 @@ Status ts_hashmap_iterator(ConcurrentHashMap *map, ConcurrentIterator **iter) {
     /* Creates the array of items and locks it */
     LOCK(map);
     status = hashmap_entryArray(map->instance, &array);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         UNLOCK(map);
         return status;
     }
 
     /* Creates the iterator */
     status = ts_iterator_new(iter, &(map->lock), array->items, array->len);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         FREE_ARRAY(array);
         UNLOCK(map);
     } else {
