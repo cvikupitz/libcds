@@ -49,11 +49,11 @@ Status ts_linkedlist_new(ConcurrentLinkedList **list) {
     /* Allocates memory for the linkedlist */
     temp = (ConcurrentLinkedList *)malloc(sizeof(ConcurrentLinkedList));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates internal instance of linked list */
     status = linkedlist_new(&(temp->instance));
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(temp);
         return status;
     }
@@ -65,7 +65,7 @@ Status ts_linkedlist_new(ConcurrentLinkedList **list) {
     pthread_mutexattr_destroy(&attr);
     *list = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void ts_linkedlist_lock(ConcurrentLinkedList *list) {
@@ -208,14 +208,14 @@ Status ts_linkedlist_iterator(ConcurrentLinkedList *list, ConcurrentIterator **i
     /* Creates the array of items and locks it */
     LOCK(list);
     status = linkedlist_toArray(list->instance, &array);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         UNLOCK(list);
         return status;
     }
 
     /* Creates the iterator */
     status = ts_iterator_new(iter, &(list->lock), array->items, array->len);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         FREE_ARRAY(array);
         UNLOCK(list);
     } else {

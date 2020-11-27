@@ -42,7 +42,7 @@ Status boundedstack_new(BoundedStack **stack, long capacity) {
     /* Allocate the struct, check for allocation failures */
     BoundedStack *temp = (BoundedStack *)malloc(sizeof(BoundedStack));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Initialize capacity, sets up remaining structure members */
     long cap = ( capacity <= 0L ) ? DEFAULT_CAPACITY : capacity;
@@ -52,7 +52,7 @@ Status boundedstack_new(BoundedStack **stack, long capacity) {
     /* Check for allocation failures */
     if (array == NULL) {
         free(temp);
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
     }
 
     /* Initialize the remaining struct members */
@@ -61,7 +61,7 @@ Status boundedstack_new(BoundedStack **stack, long capacity) {
     temp->capacity = cap;
     *stack = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /* Macro to check if the stack is currently empty */
@@ -73,33 +73,33 @@ Status boundedstack_push(BoundedStack *stack, void *item) {
 
     /* Checks if the stack is full */
     if (IS_FULL(stack) == TRUE)
-        return STAT_STRUCT_FULL;
+        return STRUCT_FULL;
     /* Inserts item into the stack */
     stack->data[stack->size++] = item;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status boundedstack_peek(BoundedStack *stack, void **top) {
 
     /* Checks if the stack is empty */
     if (IS_EMPTY(stack) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Extracts the top element, saves into pointer */
     *top = stack->data[stack->size - 1];
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status boundedstack_pop(BoundedStack *stack, void **top) {
 
     /* Checks if the stack is empty */
     if (IS_EMPTY(stack) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Removes the item, saves into pointer */
     *top = stack->data[--stack->size];
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -160,18 +160,18 @@ Status boundedstack_toArray(BoundedStack *stack, Array **array) {
 
     /* Does not create array if currently empty */
     if (IS_EMPTY(stack) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generate the array of stack items */
     void **items = generateArray(stack);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Allocate memory for the array struct */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
     }
 
     /* Initialize the remainder of the struct members */
@@ -179,7 +179,7 @@ Status boundedstack_toArray(BoundedStack *stack, Array **array) {
     temp->len = stack->size;
     *array = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status boundedstack_iterator(BoundedStack *stack, Iterator **iter) {
@@ -188,22 +188,22 @@ Status boundedstack_iterator(BoundedStack *stack, Iterator **iter) {
 
     /* Does not create array if currently empty */
     if (boundedstack_isEmpty(stack) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generates the array of items for iterator */
     void **items = generateArray(stack);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates a new iterator with th items */
     Status status = iterator_new(&temp, items, stack->size);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(items);
         return status;
     }
     *iter = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void boundedstack_destroy(BoundedStack *stack, void (*destructor)(void *)) {

@@ -39,7 +39,7 @@ Status iterator_new(Iterator **iter, void **items, long len) {
     /* Allocate memory for the struct, check for malloc() errors */
     Iterator *temp = (Iterator *)malloc(sizeof(Iterator));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Initialize the rest of iterator members */
     temp->items = items;
@@ -47,7 +47,7 @@ Status iterator_new(Iterator **iter, void **items, long len) {
     temp->len = len;
     *iter = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Boolean iterator_hasNext(Iterator *iter) {
@@ -58,11 +58,11 @@ Status iterator_next(Iterator *iter, void **next) {
 
     /* Return status is the current iteration has already ended */
     if (iter->next == iter->len)
-        return STAT_ITERATION_END;
+        return ITER_END;
     /* Advances to next item in iteration */
     *next = iter->items[iter->next++];
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void iterator_destroy(Iterator *iter) {

@@ -49,11 +49,11 @@ Status ts_treeset_new(ConcurrentTreeSet **tree, int (*comparator)(void *, void *
     /* Allocates memory for the treeset */
     temp = (ConcurrentTreeSet *)malloc(sizeof(ConcurrentTreeSet));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates the internal treeset instance */
     status = treeset_new(&(temp->instance), comparator);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(temp);
         return status;
     }
@@ -65,7 +65,7 @@ Status ts_treeset_new(ConcurrentTreeSet **tree, int (*comparator)(void *, void *
     pthread_mutexattr_destroy(&attr);
     *tree = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void ts_treeset_lock(ConcurrentTreeSet *tree) {
@@ -217,14 +217,14 @@ Status ts_treeset_iterator(ConcurrentTreeSet *tree, ConcurrentIterator **iter) {
     /* Creates the array of items and locks it */
     LOCK(tree);
     status = treeset_toArray(tree->instance, &array);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         UNLOCK(tree);
         return status;
     }
 
     /* Creates the iterator */
     status = ts_iterator_new(iter, &(tree->lock), array->items, array->len);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         FREE_ARRAY(array);
         UNLOCK(tree);
     } else {

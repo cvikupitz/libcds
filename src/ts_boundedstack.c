@@ -49,11 +49,11 @@ Status ts_boundedstack_new(ConcurrentBoundedStack **stack, long capacity) {
     /* Allocates memory for the new stack */
     temp = (ConcurrentBoundedStack *)malloc(sizeof(ConcurrentBoundedStack));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates the internal stack instance */
     status = boundedstack_new(&(temp->instance), capacity);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(temp);
         return status;
     }
@@ -65,7 +65,7 @@ Status ts_boundedstack_new(ConcurrentBoundedStack **stack, long capacity) {
     pthread_mutexattr_destroy(&attr);
     *stack = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void ts_boundedstack_lock(ConcurrentBoundedStack *stack) {
@@ -163,14 +163,14 @@ Status ts_boundedstack_iterator(ConcurrentBoundedStack *stack, ConcurrentIterato
     /* Creates the array of items and locks it */
     LOCK(stack);
     status = boundedstack_toArray(stack->instance, &array);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         UNLOCK(stack);
         return status;
     }
 
     /* Creates the iterator */
     status = ts_iterator_new(iter, &(stack->lock), array->items, array->len);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         FREE_ARRAY(array);
         UNLOCK(stack);
     } else {

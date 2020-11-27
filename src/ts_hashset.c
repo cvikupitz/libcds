@@ -50,11 +50,11 @@ Status ts_hashset_new(ConcurrentHashSet **set, long (*hash)(void *, long),
     /* Allocates memory for the hashset */
     temp = (ConcurrentHashSet *)malloc(sizeof(ConcurrentHashSet));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates internal instance of hashset */
     status = hashset_new(&(temp->instance), hash, comparator, capacity, loadFactor);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(temp);
         return status;
     }
@@ -66,7 +66,7 @@ Status ts_hashset_new(ConcurrentHashSet **set, long (*hash)(void *, long),
     pthread_mutexattr_destroy(&attr);
     *set = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void ts_hashset_lock(ConcurrentHashSet *set) {
@@ -146,14 +146,14 @@ Status ts_hashset_iterator(ConcurrentHashSet *set, ConcurrentIterator **iter) {
     /* Creates array of items and locks it */
     LOCK(set);
     status = hashset_toArray(set->instance, &array);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         UNLOCK(set);
         return status;
     }
 
     /* Creates the iterator */
     status = ts_iterator_new(iter, &(set->lock), array->items, array->len);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         FREE_ARRAY(array);
         UNLOCK(set);
     } else {

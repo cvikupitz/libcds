@@ -49,11 +49,11 @@ Status ts_circularlist_new(ConcurrentCircularList **list) {
     /* Allocates memory for the new list */
     temp = (ConcurrentCircularList *)malloc(sizeof(ConcurrentCircularList));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates the internal list instance */
     status = circularlist_new(&(temp->instance));
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(temp);
         return status;
     }
@@ -65,7 +65,7 @@ Status ts_circularlist_new(ConcurrentCircularList **list) {
     pthread_mutexattr_destroy(&attr);
     *list = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void ts_circularlist_lock(ConcurrentCircularList *list) {
@@ -219,14 +219,14 @@ Status ts_circularlist_iterator(ConcurrentCircularList *list, ConcurrentIterator
     /* Creates the array of items and locks it */
     LOCK(list);
     status = circularlist_toArray(list->instance, &array);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         UNLOCK(list);
         return status;
     }
 
     /* Creates the iterator */
     status = ts_iterator_new(iter, &(list->lock), array->items, array->len);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         FREE_ARRAY(array);
         UNLOCK(list);
     } else {

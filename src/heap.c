@@ -43,7 +43,7 @@ Status heap_new(Heap **heap, long capacity, int (*comparator)(void *, void *)) {
     /* Allocate the struct, check for allocation failure */
     Heap *temp = (Heap *)malloc(sizeof(Heap));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Evaluate the capacity, initialize the remaining members */
     long cap = (capacity <= 0L) ? DEFAULT_CAPACITY : capacity;
@@ -53,7 +53,7 @@ Status heap_new(Heap **heap, long capacity, int (*comparator)(void *, void *)) {
     /* Checks for allocation failures */
     if (array == NULL) {
         free(heap);
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
     }
 
     /* Initializes the remainder of struct members */
@@ -63,7 +63,7 @@ Status heap_new(Heap **heap, long capacity, int (*comparator)(void *, void *)) {
     temp->cmp = comparator;
     *heap = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /* Returns the left child index of i */
@@ -152,31 +152,31 @@ Status heap_insert(Heap *heap, void *item) {
     /* Checks the capacity, extend if needed */
     if (heap->size == heap->capacity)
         if (ensureCapacity(heap) == FALSE)
-            return STAT_ALLOC_FAILURE;
+            return ALLOC_FAILURE;
 
     heap->data[heap->size++] = item;
     /* Upheap to update the heap */
     upheap(heap);
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status heap_peek(Heap *heap, void **min) {
 
     /* Checks if the heap is empty */
     if (IS_EMPTY(heap) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Retrieves the min item, saves into pointer */
     *min = heap->data[0];
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status heap_poll(Heap *heap, void **min) {
 
     /* Checks if the heap is empty */
     if (IS_EMPTY(heap) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Retrieves the min item, saves into pointer */
     *min = heap->data[0];
@@ -184,7 +184,7 @@ Status heap_poll(Heap *heap, void **min) {
     /* Downheap to update the heap */
     downheap(heap);
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -239,18 +239,18 @@ Status heap_toArray(Heap *heap, Array **array) {
 
     /* Do not create the array if currently empty */
     if (IS_EMPTY(heap) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generate the array of heap items */
     void **items = generateArray(heap);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Allocates memory for the array struct */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
     }
 
     /* Initializes the remaining struct members */
@@ -258,7 +258,7 @@ Status heap_toArray(Heap *heap, Array **array) {
     temp->len = heap->size;
     *array = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status heap_iterator(Heap *heap, Iterator **iter) {
@@ -267,22 +267,22 @@ Status heap_iterator(Heap *heap, Iterator **iter) {
 
     /* Does not create the array if currently empty */
     if (IS_EMPTY(heap) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generates the array of items for iterator */
     void **items = generateArray(heap);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates a new iterator with the items */
     Status status = iterator_new(&temp, items, heap->size);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(items);
         return status;
     }
     *iter = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void heap_destroy(Heap *heap, void (*destructor)(void *)) {

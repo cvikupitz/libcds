@@ -43,7 +43,7 @@ Status boundedqueue_new(BoundedQueue **queue, long capacity) {
     /* Allocate the struct, check for allocation failures */
     BoundedQueue *temp = (BoundedQueue *)malloc(sizeof(BoundedQueue));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Sets up capacity, sets up reminaing struct members */
     long cap = ( capacity <= 0L ) ? DEFAULT_CAPACITY : capacity;
@@ -53,7 +53,7 @@ Status boundedqueue_new(BoundedQueue **queue, long capacity) {
     /* Checks for allocation failures */
     if (array == NULL) {
         free(temp);
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
     }
 
     /* Initialize the remainder of the struct members */
@@ -63,7 +63,7 @@ Status boundedqueue_new(BoundedQueue **queue, long capacity) {
     temp->capacity = cap;
     *queue = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /* Macro to check if the queue is currently empty */
@@ -75,32 +75,32 @@ Status boundedqueue_add(BoundedQueue *queue, void *item) {
 
     /* Checks if the queue is full */
     if (IS_FULL(queue) == TRUE)
-        return STAT_STRUCT_FULL;
+        return STRUCT_FULL;
 
     /* Computes the next index to insert item at */
     long index = ( queue->front + queue->size ) % queue->capacity;
     queue->data[index] = item;
     queue->size++;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status boundedqueue_peek(BoundedQueue *queue, void **front) {
 
     /* Checks if the queue is empty */
     if (IS_EMPTY(queue) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Extracts the front item, saves into pointer */
     *front = queue->data[queue->front];
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status boundedqueue_poll(BoundedQueue *queue, void **front) {
 
     /* Checks if the queue is empty */
     if (IS_EMPTY(queue) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Extracts the front item, saves into pointer */
     *front = queue->data[queue->front];
@@ -108,7 +108,7 @@ Status boundedqueue_poll(BoundedQueue *queue, void **front) {
     queue->front = (queue->front + 1) % queue->capacity;
     queue->size--;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -171,18 +171,18 @@ Status boundedqueue_toArray(BoundedQueue *queue, Array **array) {
 
     /* Does not create array if currently empty */
     if (boundedqueue_isEmpty(queue) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generate the array of queue items */
     void **items = generateArray(queue);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Allocate memory for the array struct */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
     }
 
     /* Initialize the remainder of the struct members */
@@ -190,7 +190,7 @@ Status boundedqueue_toArray(BoundedQueue *queue, Array **array) {
     temp->len = queue->size;
     *array = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status boundedqueue_iterator(BoundedQueue *queue, Iterator **iter) {
@@ -199,22 +199,22 @@ Status boundedqueue_iterator(BoundedQueue *queue, Iterator **iter) {
 
     /* Does not create array if currently empty */
     if (boundedqueue_isEmpty(queue) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generates the array of items for iterator */
     void **items = generateArray(queue);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates a new iterator with the items */
     Status status = iterator_new(&temp, items, queue->size);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(items);
         return status;
     }
     *iter = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void boundedqueue_destroy(BoundedQueue *queue, void (*destructor)(void *)) {

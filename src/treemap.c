@@ -76,7 +76,7 @@ Status treemap_new(TreeMap **tree, int (*keyComparator)(void *, void *), void (*
     /* Allocate the struct, check for allocation failures */
     TreeMap *temp = (TreeMap *)malloc(sizeof(TreeMap));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Initialize remaining struct members */
     temp->keyCmp = keyComparator;
@@ -85,7 +85,7 @@ Status treemap_new(TreeMap **tree, int (*keyComparator)(void *, void *), void (*
     temp->size = 0L;
     *tree = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /* Macro to check if the treemap is currently empty */
@@ -282,19 +282,19 @@ Status treemap_put(TreeMap *tree, void *key, void *value, void **previous) {
         /* Replaces the old value with the new value */
         *previous = node->entry->value;
         node->entry->value = value;
-        return STAT_ENTRY_REPLACED;
+        return REPLACED;
     }
 
     /* Allocates memory for the new node */
     Node *temp = allocNode(key, value);
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Inserts the new entry in the tree */
     insertNode(tree, temp);
     insertFix(tree, temp);
 
-    return STAT_ENTRY_INSERTED;
+    return INSERTED;
 }
 
 /*
@@ -319,48 +319,48 @@ Status treemap_firstKey(TreeMap *tree, void **firstKey) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the first key, saves into pointer */
     Node *node = getMin(tree->root);
     *firstKey = node->entry->key;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treemap_first(TreeMap *tree, TmEntry **first) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the first entry, saves into pointer */
     Node *node = getMin(tree->root);
     *first = node->entry;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treemap_lastKey(TreeMap *tree, void **lastKey) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the last key, saves into pointer */
     Node *node = getMax(tree->root);
     *lastKey = node->entry->key;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treemap_last(TreeMap *tree, TmEntry **last) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the last entry, saves into pointer */
     Node *node = getMax(tree->root);
     *last = node->entry;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -394,30 +394,30 @@ Status treemap_floorKey(TreeMap *tree, void *key, void **floorKey) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the floor node */
     Node *node = getFloorNode(tree, key);
     if (node == NULL)
-        return STAT_NOT_FOUND;
+        return NOT_FOUND;
     /* Extracts the floor key, saves into pointer */
     *floorKey = node->entry->key;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treemap_floor(TreeMap *tree, void *key, TmEntry **floor) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the floor node */
     Node *node = getFloorNode(tree, key);
     if (node == NULL)
-        return STAT_NOT_FOUND;
+        return NOT_FOUND;
     /* Extracts the floor entry, saves into pointer */
     *floor = node->entry;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -451,30 +451,30 @@ Status treemap_ceilingKey(TreeMap *tree, void *key, void **ceilingKey) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the ceiling node */
     Node *node = getCeilingNode(tree, key);
     if (node == NULL)
-        return STAT_NOT_FOUND;
+        return NOT_FOUND;
     /* Extracts the ceiling key, saves into pointer */
     *ceilingKey = node->entry->key;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treemap_ceiling(TreeMap *tree, void *key, TmEntry **ceiling) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the ceiling node */
     Node *node = getCeilingNode(tree, key);
     if (node == NULL)
-        return STAT_NOT_FOUND;
+        return NOT_FOUND;
     /* Extracts the ceiling entry, saves into pointer */
     *ceiling = node->entry;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -503,30 +503,30 @@ Status treemap_lowerKey(TreeMap *tree, void *key, void **lowerKey) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the lower node */
     Node *node = getLowerNode(tree, key);
     if (node == NULL)
-        return STAT_NOT_FOUND;
+        return NOT_FOUND;
     /* Extracts the lower key, saves into pointer */
     *lowerKey = node->entry->key;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treemap_lower(TreeMap *tree, void *key, TmEntry **lower) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the lower node */
     Node *node = getLowerNode(tree, key);
     if (node == NULL)
-        return STAT_NOT_FOUND;
+        return NOT_FOUND;
     /* Extracts the lower entry, saves into pointer */
     *lower = node->entry;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -555,30 +555,30 @@ Status treemap_higherKey(TreeMap *tree, void *key, void **higherKey) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the higher node */
     Node *node = getHigherNode(tree, key);
     if (node == NULL)
-        return STAT_NOT_FOUND;
+        return NOT_FOUND;
     /* Extracts the higher key, saves into pointer */
     *higherKey = node->entry->key;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treemap_higher(TreeMap *tree, void *key, TmEntry **higher) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the higher node */
     Node *node = getHigherNode(tree, key);
     if (node == NULL)
-        return STAT_NOT_FOUND;
+        return NOT_FOUND;
     /* Extracts the higher entry, saves into pointer */
     *higher = node->entry;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Boolean treemap_containsKey(TreeMap *tree, void *key) {
@@ -589,15 +589,15 @@ Status treemap_get(TreeMap *tree, void *key, void **value) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the node with the specified key */
     Node *node = findNode(tree, key);
     if (node == NULL)
-        return STAT_NOT_FOUND;
+        return NOT_FOUND;
     /* Retrieves the value, saves into pointer */
     *value = node->entry->value;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -736,7 +736,7 @@ Status treemap_pollFirst(TreeMap *tree, void **firstKey, void **firstValue) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Retrieves the minimum node, saves the data into the pointers */
     Node *node = getMin(tree->root);
     *firstKey = node->entry->key;
@@ -748,14 +748,14 @@ Status treemap_pollFirst(TreeMap *tree, void **firstKey, void **firstValue) {
     free(temp->entry);
     free(temp);
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treemap_pollLast(TreeMap *tree, void **lastKey, void **lastValue) {
 
     /* Checks if the tree is currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Retrieves the maximum node, saves the data into the pointers */
     Node *node = getMax(tree->root);
     *lastKey = node->entry->key;
@@ -767,18 +767,18 @@ Status treemap_pollLast(TreeMap *tree, void **lastKey, void **lastValue) {
     free(temp->entry);
     free(temp);
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treemap_remove(TreeMap *tree, void *key, void **value) {
 
     /* Checks if the tree is currently empty */
     if (treemap_isEmpty(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
     /* Fetches the node from the tree, saves the value into the pointer */
     Node *node = findNode(tree, key);
     if (node == NULL)
-        return STAT_NOT_FOUND;
+        return NOT_FOUND;
     *value = node->entry->value;
 
     /* Removes the node from the tree, frees the allocated memory */
@@ -790,7 +790,7 @@ Status treemap_remove(TreeMap *tree, void *key, void **value) {
     free(temp->entry);
     free(temp);
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -873,27 +873,27 @@ Status treemap_keyArray(TreeMap *tree, Array **keys) {
 
     /* Does not create array if currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Allocates memory for the array */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Allocates memory for the internal array of keys */
     bytes = ( tree->size * sizeof(void *) );
     items = (void **)malloc(bytes);
     if (items == NULL) {
         free(temp);
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
     }
 
     /* Create stack for iterative approach */
     long capacity = (long)( 2 * ceil( log2(tree->size + 1) ) );  /* Max depth should be <= 2*log2(N + 1) */
-    if (boundedstack_new(&stack, capacity) != STAT_SUCCESS) {
+    if (boundedstack_new(&stack, capacity) != OK) {
         free(items);
         free(temp);
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
     }
 
     /* Populates the iterator with the key, saves the results into pointer */
@@ -904,7 +904,7 @@ Status treemap_keyArray(TreeMap *tree, Array **keys) {
     *keys = temp;
     boundedstack_destroy(stack, NULL);
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -945,7 +945,7 @@ static TmEntry **generateEntryArray(TreeMap *tree) {
 
     /* Create stack for iterative approach */
     long capacity = (long)( 2 * ceil( log2(tree->size + 1) ) );  /* Max depth should be <= 2*log2(N + 1) */
-    if (boundedstack_new(&stack, capacity) != STAT_SUCCESS) {
+    if (boundedstack_new(&stack, capacity) != OK) {
         free(items);
         return NULL;
     }
@@ -962,18 +962,18 @@ Status treemap_entryArray(TreeMap *tree, Array **entries) {
 
     /* Does not create array if currently empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generates the array of treemap items */
     TmEntry **items = generateEntryArray(tree);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Allocates memory for the array struct */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
     }
 
     /* Initializes the remaining struct members */
@@ -981,7 +981,7 @@ Status treemap_entryArray(TreeMap *tree, Array **entries) {
     temp->len = tree->size;
     *entries = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status treemap_iterator(TreeMap *tree, Iterator **iter) {
@@ -990,22 +990,22 @@ Status treemap_iterator(TreeMap *tree, Iterator **iter) {
 
     /* Does not create the array if empty */
     if (IS_EMPTY(tree) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generates the array of items for iterator */
     TmEntry **items = generateEntryArray(tree);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates a new iterator with the items */
     Status status = iterator_new(&temp, (void **)items, tree->size);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(items);
         return status;
     }
     *iter = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void treemap_destroy(TreeMap *tree, void (*valueDestructor)(void *)) {

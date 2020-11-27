@@ -61,7 +61,7 @@ Status hashset_new(HashSet **set, long (*hash)(void *, long),
     /* Allocate the struct, check for allocation failure */
     HashSet *temp = (HashSet *)malloc(sizeof(HashSet));
     if (temp == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Initialize the remaining struct memebers */
     long cap = ( capacity <= 0L ) ? DEFAULT_CAPACITY : capacity;
@@ -74,7 +74,7 @@ Status hashset_new(HashSet **set, long (*hash)(void *, long),
     /* Checks for allocation failures */
     if (buckets == NULL) {
         free(temp);
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
     }
 
     /* Initializes the remaining struct members */
@@ -93,7 +93,7 @@ Status hashset_new(HashSet **set, long (*hash)(void *, long),
         temp->buckets[i] = NULL;
     *set = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -195,12 +195,12 @@ Status hashset_add(HashSet *set, void *item) {
             set->changes++;
             set->load += set->delta;
             set->size++;
-            status = STAT_SUCCESS;
+            status = OK;
         } else {
-            status = STAT_ALLOC_FAILURE;
+            status = ALLOC_FAILURE;
         }
     } else {
-        status = STAT_KEY_ALREADY_EXISTS;
+        status = ALREADY_EXISTS;
     }
 
     return status;
@@ -215,13 +215,13 @@ Status hashset_remove(HashSet *set, void *item, void (*destructor)(void *)) {
 
     /* Checks if the set is currently empty */
     if (IS_EMPTY(set) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     long i;
     HsEntry *temp = fetchEntry(set, item, &i);
     /* Entry is not present */
     if (temp == NULL)
-        return STAT_NOT_FOUND;
+        return NOT_FOUND;
 
     /* Fetches the entry from the hashset */
     HsEntry *prev = NULL, *curr = set->buckets[i];
@@ -243,7 +243,7 @@ Status hashset_remove(HashSet *set, void *item, void (*destructor)(void *)) {
     set->load -= set->delta;
     set->size--;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 /*
@@ -312,18 +312,18 @@ Status hashset_toArray(HashSet *set, Array **array) {
 
     /* Do not create the array if currently empty */
     if (IS_EMPTY(set) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generate the array of hashset items */
     void **items = generateArray(set);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Allocate memory for the array struct */
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
     }
 
     /* Initializes the remaining struct members */
@@ -331,7 +331,7 @@ Status hashset_toArray(HashSet *set, Array **array) {
     temp->len = set->size;
     *array = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 Status hashset_iterator(HashSet *set, Iterator **iter) {
@@ -340,22 +340,22 @@ Status hashset_iterator(HashSet *set, Iterator **iter) {
 
     /* Do not create the array if currently empty */
     if (IS_EMPTY(set) == TRUE)
-        return STAT_STRUCT_EMPTY;
+        return STRUCT_EMPTY;
 
     /* Generates the array of items for iterator */
     void **items = generateArray(set);
     if (items == NULL)
-        return STAT_ALLOC_FAILURE;
+        return ALLOC_FAILURE;
 
     /* Creates a new iterator with the items */
     Status status = iterator_new(&temp, items, set->size);
-    if (status != STAT_SUCCESS) {
+    if (status != OK) {
         free(items);
         return status;
     }
     *iter = temp;
 
-    return STAT_SUCCESS;
+    return OK;
 }
 
 void hashset_destroy(HashSet *set, void (*destructor)(void *)) {
