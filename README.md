@@ -30,20 +30,17 @@ $ make uninstall
 To compile and link the library together with your own project, you will need to reference the library name *cds* with the compiler's *-l* flag as shown below:
 
 ```c
-// test.c
-// Author: Some Name
-
 #include <stdlib.h>
 #include <libcds/stack.h>
 
 int main() {
 
-	Stack *st;
-	(void)stack_new(&st);
-	
-	// do some work here...
-	destroy_stack(st, NULL);
-	return 0;
+    Stack *st;
+    (void)stack_new(&st);
+
+    // do some work here...
+    destroy_stack(st, NULL);
+    return 0;
 }
 ```
 
@@ -86,7 +83,7 @@ int main(int argc, char **argv) {
     Status stat;
 
     /* Creates the new stack */
-    if ((stat = stack_new(&stack)) != STAT_SUCCESS) {
+    if ((stat = stack_new(&stack)) != OK) {
         fprintf(stderr, "Failed to allocate memory.\n");
         return -1;
     }
@@ -129,7 +126,7 @@ static void testArray(Stack *stack) {
     long i;
 
     /* Creates an Array object from stack's toArray() invocation */
-    if ((stat = stack_toArray(stack, &array)) != STAT_SUCCESS) {
+    if ((stat = stack_toArray(stack, &array)) != OK) {
         fprintf(stderr, "Failed to allocate memory.\n");
         exit(1);
     }
@@ -159,7 +156,7 @@ static void testIterate(Stack *stack) {
     Status status;
 
     /* Creates the Iterator from the iterator() call */
-    if ((stat = stack_iterator(stack, &iter)) != STAT_SUCCESS) {
+    if ((stat = stack_iterator(stack, &iter)) != OK) {
         fprintf(stderr, "Failed to allocate memory.\n");
         exit(1);
     }
