@@ -173,6 +173,14 @@ static void testIterate(Stack *stack) {
 }
 ```
 
+### Documentation
+
+For more in-depth documentation, check out the project wiki [here](https://github.com/cvikupitz/libcds/wiki).
+
+### Contributing
+
+If you'd like to contribute, feel free to fork and provide a new feature. If you find any bugs, you can either submit one under *Issues*, or you can also fork and provide a fix yourself.
+
 ### License
 
 This project is licensed under the terms of the MIT license.
