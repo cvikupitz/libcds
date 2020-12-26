@@ -12,7 +12,7 @@ $ git clone https://github.com/cvikupitz/libcds.git
 
 Navigate to the root of the of the repository, and open the Makefile. Locate the macro *INSTALL_PATH* which specifies where the project libraries, headers, and other files will be installed to. Ensure that the root directory specified is appropriate for you (if you have write access to these directories). Then run the following make commands to install the libraries:
 
-```sh
+```shell
 $ make
 $ make install
 ```
