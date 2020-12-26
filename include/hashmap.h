@@ -39,10 +39,9 @@ typedef struct hm_entry HmEntry;
 /**
  * Declaration for the HashMap ADT.
  *
- * Hashmap based implementation; holds elements based on key-value pairings. Allows
- * for null values, but does not permit null keys.
+ * Hashmap based implementation; holds elements based on key-value pairings.
  *
- * Modeled after the Java 7 HashMap interface with string keys.
+ * Modeled after the Java 7 HashMap interface.
  */
 typedef struct hashmap HashMap;
 
@@ -52,15 +51,42 @@ typedef struct hashmap HashMap;
  * <= 0, a default capacity is assigned. If the load factor specified is <= 0.0, a
  * default load factor is assigned.
  *
+ * The hash function specified will be used by the hashmap to compute the bucket
+ * placement for each entry in the hashmap, such that hash(a,N) will return a value
+ * in the range [0, N-1]. For example, if using char * keys, you might define a hash
+ * function like this:
+ *
+ *    #define PRIME 7L
+ *    long hash(void *key, long N) {
+ *        long val = 0L;
+ *        char *ch;
+ *        for (ch = (char *)key; *ch != '\0'; ch++)
+ *        val = (*ch + (val * PRIME)) % N;
+ *        return val;
+ *    }
+ *
+ * The comparator function specified should return an integer comparing the two
+ * specified keys, such that cmp(a, b) returns 0 when a == b, or !0 when a != b.
+ *
+ * The key destructor function should be a function that performs any de-allocation
+ * needed on the treemap's keys (if applicable). This function will be invoked on
+ * the entry's key prior to being removed, the treemap being cleared, or the treemap
+ * being destructed. If no de-allocation/destructor for the custom keys is required,
+ * you may pass NULL as this parameter.
+ *
  * Params:
  *    map - The pointer address to store the new HashMap instance.
+ *    hash - The hashing function the map will use to compute the bucket placement.
+ *    comparator - Function for comparing two keys in the treemap.
  *    capacity - The hashmap's starting capacity.
  *    loadFactor - The hashmap's assigned load factor.
+ *    keyDestructor - Function for de-allocating the treemap's keys.
  * Returns:
  *    OK - HashMap was successfully created.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status hashmap_new(HashMap **map, long capacity, double loadFactor);
+Status hashmap_new(HashMap **map, long (*hash)(void *, long), int (*keyComparator)(void *, void *),
+        long capacity, double loadFactor, void (*keyDestructor)(void *));
 
 /**
  * Associates the specified value with the specified key in the hashmap. If the
@@ -75,10 +101,10 @@ Status hashmap_new(HashMap **map, long capacity, double loadFactor);
  * Returns:
  *    INSERTED - Key and entry was inserted.
  *    REPLACED - Entry was updated in the hashmap, and the old entry was
- *                          stored into '*previous' due to the key already existing.
+ *               stored into '*previous' due to the key already existing.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status hashmap_put(HashMap *map, char *key, void *value, void **previous);
+Status hashmap_put(HashMap *map, void *key, void *value, void **previous);
 
 /**
  * Returns TRUE if the hashmap contains a mapping for the specified key, false if
@@ -90,7 +116,7 @@ Status hashmap_put(HashMap *map, char *key, void *value, void **previous);
  * Returns:
  *    TRUE if a mapping exists with the key, FALSE if not.
  */
-Boolean hashmap_containsKey(HashMap *map, char *key);
+Boolean hashmap_containsKey(HashMap *map, void *key);
 
 /**
  * Fetches the value to which the specified key is mapped, and stores the result
@@ -105,7 +131,7 @@ Boolean hashmap_containsKey(HashMap *map, char *key);
  *    STRUCT_EMPTY - HashMap is currently empty.
  *    NOT_FOUND - Entry with the specified key was not found.
  */
-Status hashmap_get(HashMap *map, char *key, void **value);
+Status hashmap_get(HashMap *map, void *key, void **value);
 
 /**
  * Removes the mapping for the specified key from the hashmap if present.
@@ -119,7 +145,7 @@ Status hashmap_get(HashMap *map, char *key, void **value);
  *    STRUCT_EMPTY - HashMap is currently empty.
  *    NOT_FOUND - Entry with the specified key was not found.
  */
-Status hashmap_remove(HashMap *map, char *key, void **value);
+Status hashmap_remove(HashMap *map, void *key, void **value);
 
 /**
  * Removes all elements from the hashmap. If 'destructor' is not NULL, it will be
@@ -127,11 +153,11 @@ Status hashmap_remove(HashMap *map, char *key, void **value);
  *
  * Params:
  *    map - The hashmap to operate on.
- *    destructor - Function to operate on each element after removal.
+ *    destructor - Function to operate on each entry value after removal.
  * Returns:
  *    None
  */
-void hashmap_clear(HashMap *map, void (*destructor)(void *));
+void hashmap_clear(HashMap *map, void (*valueDestructor)(void *));
 
 /**
  * Returns the number of elements in the hashmap.
@@ -206,11 +232,11 @@ Status hashmap_iterator(HashMap *map, Iterator **iter);
  *
  * Params:
  *    map - The hashmap to destroy.
- *    destructor - Function to operate on each element prior to hashmap destruction.
+ *    valueDestructor - Function to operate on each element prior to hashmap destruction.
  * Returns:
  *    None
  */
-void hashmap_destroy(HashMap *map, void (*destructor)(void *));
+void hashmap_destroy(HashMap *map, void (*valueDestructor)(void *));
 
 /**
  * Returns the hashmap entry's stored key.
@@ -220,7 +246,7 @@ void hashmap_destroy(HashMap *map, void (*destructor)(void *));
  * Returns:
  *    The entry's key.
  */
-char *hmentry_getKey(HmEntry *entry);
+void *hmentry_getKey(HmEntry *entry);
 
 /**
  * Returns the hashmap entry's stored value.
