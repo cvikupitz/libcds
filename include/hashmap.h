@@ -232,7 +232,7 @@ Status hashmap_iterator(HashMap *map, Iterator **iter);
  *
  * Params:
  *    map - The hashmap to destroy.
- *    valueDestructor - Function to operate on each element prior to hashmap destruction.
+ *    valueDestructor - Function to operate on each entry value prior to hashmap destruction.
  * Returns:
  *    None
  */
