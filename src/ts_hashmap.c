@@ -40,7 +40,9 @@ struct ts_hashmap {
 /* Macro used for unlocking the map */
 #define UNLOCK(x)  pthread_mutex_unlock( &((x)->lock) )
 
-Status ts_hashmap_new(ConcurrentHashMap **map, long capacity, double loadFactor) {
+Status ts_hashmap_new(ConcurrentHashMap **map, long (*hash)(void *, long),
+        int (*keyComparator)(void *, void *), long capacity, double loadFactor,
+        void (*keyDestructor)(void *)) {
 
     ConcurrentHashMap *temp;
     Status status;
@@ -52,7 +54,7 @@ Status ts_hashmap_new(ConcurrentHashMap **map, long capacity, double loadFactor)
         return ALLOC_FAILURE;
 
     /* Creates the internal hashmap */
-    status = hashmap_new(&(temp->instance), capacity, loadFactor);
+    status = hashmap_new(&(temp->instance), hash, keyComparator, capacity, loadFactor, keyDestructor);
     if (status != OK) {
         free(temp);
         return status;
@@ -76,7 +78,7 @@ void ts_hashmap_unlock(ConcurrentHashMap *map) {
     UNLOCK(map);
 }
 
-Status ts_hashmap_put(ConcurrentHashMap *map, char *key, void *value, void **previous) {
+Status ts_hashmap_put(ConcurrentHashMap *map, void *key, void *value, void **previous) {
 
     LOCK(map);
     Status status = hashmap_put(map->instance, key, value, previous);
@@ -85,7 +87,7 @@ Status ts_hashmap_put(ConcurrentHashMap *map, char *key, void *value, void **pre
     return status;
 }
 
-Boolean ts_hashmap_containsKey(ConcurrentHashMap *map, char *key) {
+Boolean ts_hashmap_containsKey(ConcurrentHashMap *map, void *key) {
 
     LOCK(map);
     Boolean containsKey = hashmap_containsKey(map->instance, key);
@@ -94,7 +96,7 @@ Boolean ts_hashmap_containsKey(ConcurrentHashMap *map, char *key) {
     return containsKey;
 }
 
-Status ts_hashmap_get(ConcurrentHashMap *map, char *key, void **value) {
+Status ts_hashmap_get(ConcurrentHashMap *map, void *key, void **value) {
 
     LOCK(map);
     Status status = hashmap_get(map->instance, key, value);
@@ -103,7 +105,7 @@ Status ts_hashmap_get(ConcurrentHashMap *map, char *key, void **value) {
     return status;
 }
 
-Status ts_hashmap_remove(ConcurrentHashMap *map, char *key, void **value) {
+Status ts_hashmap_remove(ConcurrentHashMap *map, void *key, void **value) {
 
     LOCK(map);
     Status status = hashmap_remove(map->instance, key, value);
@@ -112,10 +114,10 @@ Status ts_hashmap_remove(ConcurrentHashMap *map, char *key, void **value) {
     return status;
 }
 
-void ts_hashmap_clear(ConcurrentHashMap *map, void (*destructor)(void *)) {
+void ts_hashmap_clear(ConcurrentHashMap *map, void (*valueDestructor)(void *)) {
 
     LOCK(map);
-    hashmap_clear(map->instance, destructor);
+    hashmap_clear(map->instance, valueDestructor);
     UNLOCK(map);
 }
 
@@ -180,10 +182,10 @@ Status ts_hashmap_iterator(ConcurrentHashMap *map, ConcurrentIterator **iter) {
     return status;
 }
 
-void ts_hashmap_destroy(ConcurrentHashMap *map, void (*destructor)(void *)) {
+void ts_hashmap_destroy(ConcurrentHashMap *map, void (*valueDestructor)(void *)) {
 
     LOCK(map);
-    hashmap_destroy(map->instance, destructor);
+    hashmap_destroy(map->instance, valueDestructor);
     UNLOCK(map);
     pthread_mutex_destroy(&(map->lock));
     free(map);

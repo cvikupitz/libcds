@@ -23,7 +23,6 @@
  */
 
 #include <stdlib.h>
-#include <string.h>
 #include "hashmap.h"
 
 /*
@@ -31,21 +30,24 @@
  */
 struct hm_entry {
     HmEntry *next;      /* Pointer to the next bucket */
-    char *key;          /* The entry's associated key */
-    void *payload;      /* The entry's associated value */
+    void *key;          /* The entry's associated key */
+    void *value;        /* The entry's associated value */
 };
 
 /*
  * Struct for the hashmap ADT.
  */
 struct hashmap {
-    HmEntry **buckets;  /* Array of buckets containing the entries */
-    long size;          /* The hashmap's current size */
-    long capacity;      /* The hashmap's current capacity */
-    long changes;       /* Number of changes since last trigger */
-    double load;        /* The hashmap's current load */
-    double loadFactor;  /* The hashmap's load factor */
-    double delta;       /* Increment applied for every insertion/deletion */
+    long (*hash)(void *, long);         /* Hashing function for computing bucket placement */
+    int (*keyCmp)(void *, void *);      /* Function for comparing keys in the tree */
+    void (*keyDxn)(void *);             /* Function for destroying treemap keys */
+    HmEntry **buckets;                  /* Array of buckets containing the entries */
+    long size;                          /* The hashmap's current size */
+    long capacity;                      /* The hashmap's current capacity */
+    long changes;                       /* Number of changes since last trigger */
+    double load;                        /* The hashmap's current load */
+    double loadFactor;                  /* The hashmap's load factor */
+    double delta;                       /* Increment applied for every insertion/deletion */
 };
 
 /* Default capacity to assign when capacity supplied is invalid */
@@ -55,7 +57,9 @@ struct hashmap {
 /* Maximum amount of buckets map can hold at once */
 #define MAX_CAPACITY 147483647L
 
-Status hashmap_new(HashMap **map, long capacity, double loadFactor) {
+Status hashmap_new(HashMap **map, long (*hash)(void *, long),
+        int (*keyComparator)(void *, void *), long capacity, double loadFactor,
+        void (*keyDestructor)(void *)) {
 
     /* Allocates the struct, checks for allocation failure */
     HashMap *temp = (HashMap *)malloc(sizeof(HashMap));
@@ -77,6 +81,9 @@ Status hashmap_new(HashMap **map, long capacity, double loadFactor) {
     }
 
     /* Initializes the remaining struct members */
+    temp->hash = hash;
+    temp->keyCmp = keyComparator;
+    temp->keyDxn = keyDestructor;
     temp->buckets = buckets;
     temp->size = 0L;
     temp->capacity = cap;
@@ -94,33 +101,17 @@ Status hashmap_new(HashMap **map, long capacity, double loadFactor) {
 }
 
 /*
- * Hashing function for the hashmap.
- *
- * Performs hashing via the djb2 algorithm.
- */
-#define PRIME 7L    /* Prime used in algorithm */
-static long djb2(char *key, long N) {
-
-    long val = 0L;
-    char *ch;
-
-    for (ch = key; *ch != '\0'; ch++)
-        val = (*ch + (val * PRIME)) % N;
-    return val;
-}
-
-/*
  * Fetches the entry from the map and returns it.
  */
-static HmEntry *fetchEntry(HashMap *map, char *key, long *index) {
+static HmEntry *fetchEntry(HashMap *map, void *key, long *index) {
 
     HmEntry *temp;
-    long i = djb2(key, map->capacity);
+    long i = map->hash(key, map->capacity);
     *index = i;
 
     /* Traverses down to bucket with key */
     for (temp = map->buckets[i]; temp != NULL; temp = temp->next)
-        if (!strcmp(key, temp->key))
+        if (map->keyCmp(key, temp->key) == 0)
             break;
     return temp;
 }
@@ -132,15 +123,9 @@ static HmEntry *mallocEntry(char *key, void *value) {
 
     HmEntry *entry = (HmEntry *)malloc(sizeof(HmEntry));
     if (entry != NULL) {
-        char *temp = strdup(key);
-        if (temp != NULL) {
-            entry->key = temp;
-            entry->payload = value;
-            entry->next = NULL;
-        } else {
-            free(entry);
-            entry = NULL;
-        }
+        entry->key = key;
+        entry->value = value;
+        entry->next = NULL;
     }
 
     return entry;
@@ -171,7 +156,7 @@ static void resizeMap(HashMap *map) {
         temp = map->buckets[i];
         while (temp != NULL) {
             next = temp->next;
-            index = djb2(temp->key, cap);
+            index = map->hash(temp->key, cap);
             temp->next = buckets[index];
             buckets[index] = temp;
             temp = next;
@@ -193,7 +178,7 @@ static void resizeMap(HashMap *map) {
 /* Macro to check if the map is currently empty */
 #define IS_EMPTY(x)  ( ((x)->size == 0L) ? TRUE : FALSE )
 
-Status hashmap_put(HashMap *map, char *key, void *value, void **previous) {
+Status hashmap_put(HashMap *map, void *key, void *value, void **previous) {
 
     Status status;
 
@@ -208,8 +193,8 @@ Status hashmap_put(HashMap *map, char *key, void *value, void **previous) {
     HmEntry *temp = fetchEntry(map, key, &i);
     if (temp != NULL) {
         /* Entry already exists, replace the existing entry */
-        *previous = temp->payload;
-        temp->payload = value;
+        *previous = temp->value;
+        temp->value = value;
         map->changes++;
         status = REPLACED;
     } else {
@@ -231,12 +216,12 @@ Status hashmap_put(HashMap *map, char *key, void *value, void **previous) {
     return status;
 }
 
-Boolean hashmap_containsKey(HashMap *map, char *key) {
+Boolean hashmap_containsKey(HashMap *map, void *key) {
     long i;
     return ( fetchEntry(map, key, &i) != NULL ) ? TRUE : FALSE;
 }
 
-Status hashmap_get(HashMap *map, char *key, void **value) {
+Status hashmap_get(HashMap *map, void *key, void **value) {
 
     /* Checks if the map is currently empty */
     if (IS_EMPTY(map) == TRUE)
@@ -248,12 +233,12 @@ Status hashmap_get(HashMap *map, char *key, void **value) {
     if (temp == NULL)
         return NOT_FOUND;
     /* Retrieves the value, saves into pointer */
-    *value = temp->payload;
+    *value = temp->value;
 
     return OK;
 }
 
-Status hashmap_remove(HashMap *map, char *key, void **value) {
+Status hashmap_remove(HashMap *map, void *key, void **value) {
 
     /* Checks if the map is currently empty */
     if (IS_EMPTY(map) == TRUE)
@@ -279,8 +264,9 @@ Status hashmap_remove(HashMap *map, char *key, void **value) {
         prev->next = temp->next;
 
     /* Free allocated node and attributes */
-    *value = temp->payload;
-    free(temp->key);
+    *value = temp->value;
+    if (map->keyDxn != NULL)
+        (*map->keyDxn)(temp->key);
     free(temp);
     map->changes++;
     map->load -= map->delta;
@@ -293,7 +279,7 @@ Status hashmap_remove(HashMap *map, char *key, void **value) {
  * Clears out the hashmap of all its elements. Frees up all reserved memory
  * back to the heap.
  */
-static void clearMap(HashMap *map, void (*destructor)(void *)) {
+static void clearMap(HashMap *map, void (*valueDestructor)(void *)) {
 
     HmEntry *temp, *next;
     long i;
@@ -303,9 +289,10 @@ static void clearMap(HashMap *map, void (*destructor)(void *)) {
         while (temp != NULL) {
             next = temp->next;
             /* Deallocate the node and attributes */
-            if (destructor != NULL)
-                (*destructor)(temp->payload);
-            free(temp->key);
+            if (map->keyDxn != NULL)
+                (*map->keyDxn)(temp->key);
+            if (valueDestructor != NULL)
+                (*valueDestructor)(temp->value);
             free(temp);
             temp = next;
         }
@@ -313,8 +300,8 @@ static void clearMap(HashMap *map, void (*destructor)(void *)) {
     }
 }
 
-void hashmap_clear(HashMap *map, void (*destructor)(void *)) {
-    clearMap(map, destructor);
+void hashmap_clear(HashMap *map, void (*valueDestructor)(void *)) {
+    clearMap(map, valueDestructor);
     map->size = 0L;
     map->changes = 0L;
     map->load = 0.0;
@@ -333,7 +320,7 @@ Status hashmap_keyArray(HashMap *map, Array **keys) {
     HmEntry *temp = NULL;
     long i, j = 0L;
     size_t bytes;
-    char **items = NULL;
+    void **items = NULL;
 
     /* Does not create the array if empty */
     if (IS_EMPTY(map) == TRUE)
@@ -345,8 +332,8 @@ Status hashmap_keyArray(HashMap *map, Array **keys) {
         return ALLOC_FAILURE;
 
     /* Allocates memory for the array */
-    bytes = ( map->size * sizeof(char *) );
-    items = (char **)malloc(bytes);
+    bytes = ( map->size * sizeof(void *) );
+    items = (void **)malloc(bytes);
     if (array == NULL) {
         free(array);
         return ALLOC_FAILURE;
@@ -356,7 +343,7 @@ Status hashmap_keyArray(HashMap *map, Array **keys) {
     for (i = 0L; i < map->capacity; i++)
         for (temp = map->buckets[i]; temp != NULL; temp = temp->next)
             items[j++] = temp->key;
-    array->items = (void **)items;
+    array->items = items;
     array->len = map->size;
     *keys = array;
 
@@ -436,20 +423,20 @@ Status hashmap_iterator(HashMap *map, Iterator **iter) {
     return OK;
 }
 
-void hashmap_destroy(HashMap *map, void (*destructor)(void *)) {
-    clearMap(map, destructor);
+void hashmap_destroy(HashMap *map, void (*valueDestructor)(void *)) {
+    clearMap(map, valueDestructor);
     free(map->buckets);
     free(map);
 }
 
-char *hmentry_getKey(HmEntry *entry) {
+void *hmentry_getKey(HmEntry *entry) {
     return entry->key;
 }
 
 void *hmentry_getValue(HmEntry *entry) {
-    return entry->payload;
+    return entry->value;
 }
 
 void hmentry_setValue(HmEntry *entry, void *value) {
-    entry->payload = value;
+    entry->value = value;
 }

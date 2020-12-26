@@ -29,7 +29,7 @@ IFLAGS=-I$(INCLUDE)
 LIBS=-lm -lpthread
 LFLAGS=-L. -lcds -lcunit $(LIBS)
 COMPILE=$(CC) $(CFLAGS) $(IFLAGS) -c -o $@ $^
-LINK=$(CC) $(CFLAGS) $^ -o $@ $(LFLAGS)
+LINK=$(CC) $(CFLAGS) -o $@ $@.o $(LFLAGS)
 
 ##### Name of the libraries to generate
 STATIC=libcds.a
@@ -69,34 +69,34 @@ EXECS=$(TEST)/arraylist_tests $(TEST)/boundedqueue_tests $(TEST)/boundedstack_te
       $(TEST)/queue_tests $(TEST)/stack_tests $(TEST)/treemap_tests $(TEST)/treeset_tests
 
 ##### Creates all of the listed test executables
-test: $(SHARED) $(EXECS)
+test: $(STATIC) $(EXECS)
 
 ##### Targets for creating individual testing executables
-$(TEST)/arraylist_tests: $(TEST)/arraylist_tests.o
+$(TEST)/arraylist_tests: $(STATIC) $(TEST)/arraylist_tests.o
 	$(LINK)
-$(TEST)/boundedqueue_tests: $(TEST)/boundedqueue_tests.o
+$(TEST)/boundedqueue_tests: $(STATIC) $(TEST)/boundedqueue_tests.o
 	$(LINK)
-$(TEST)/boundedstack_tests: $(TEST)/boundedstack_tests.o
+$(TEST)/boundedstack_tests: $(STATIC) $(TEST)/boundedstack_tests.o
 	$(LINK)
-$(TEST)/circularlist_tests: $(TEST)/circularlist_tests.o
+$(TEST)/circularlist_tests: $(STATIC) $(TEST)/circularlist_tests.o
 	$(LINK)
-$(TEST)/hashmap_tests: $(TEST)/hashmap_tests.o
+$(TEST)/hashmap_tests: $(STATIC) $(TEST)/hashmap_tests.o
 	$(LINK)
-$(TEST)/hashset_tests: $(TEST)/hashset_tests.o
+$(TEST)/hashset_tests: $(STATIC) $(TEST)/hashset_tests.o
 	$(LINK)
-$(TEST)/heap_tests: $(TEST)/heap_tests.o
+$(TEST)/heap_tests: $(STATIC) $(TEST)/heap_tests.o
 	$(LINK)
-$(TEST)/iterator_tests: $(TEST)/iterator_tests.o
+$(TEST)/iterator_tests: $(STATIC) $(TEST)/iterator_tests.o
 	$(LINK)
-$(TEST)/linkedlist_tests: $(TEST)/linkedlist_tests.o
+$(TEST)/linkedlist_tests: $(STATIC) $(TEST)/linkedlist_tests.o
 	$(LINK)
-$(TEST)/queue_tests: $(TEST)/queue_tests.o
+$(TEST)/queue_tests: $(STATIC) $(TEST)/queue_tests.o
 	$(LINK)
-$(TEST)/stack_tests: $(TEST)/stack_tests.o
+$(TEST)/stack_tests: $(STATIC) $(TEST)/stack_tests.o
 	$(LINK)
-$(TEST)/treemap_tests: $(TEST)/treemap_tests.o
+$(TEST)/treemap_tests: $(STATIC) $(TEST)/treemap_tests.o
 	$(LINK)
-$(TEST)/treeset_tests: $(TEST)/treeset_tests.o
+$(TEST)/treeset_tests: $(STATIC) $(TEST)/treeset_tests.o
 	$(LINK)
 
 ##### Single target used for building individual test/.obj files
@@ -139,6 +139,8 @@ mostlyclean:
 help:
 	@echo "Possible targets for this Makefile are the following:"
 	@echo "  all (default) : Compiles and builds the static (.a) and shared (.so) libraries."
+	@echo "  libcds.a      : Compiles and builds the static library (libcds.a) only."
+	@echo "  libcds.so     : Compiles and builds the shared library (libcds.so) only."
 	@echo "  test          : Compiles and builds all test executables in the test folder."
 	@echo "  dist          : Creates an archive (.tgz) of the complete repository."
 	@echo "  clean         : Cleans all project files."
