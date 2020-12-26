@@ -86,7 +86,7 @@ typedef enum {
 
     /**
      * Operation could not be completed due to a full structure. This is most common
-     * for insertion operatons on structures that have a capacity on the number of
+     * for insertion operations on structures that have a capacity on the number of
      * elements it may contain at once.
      */
     STRUCT_FULL = 5,
