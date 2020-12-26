@@ -265,7 +265,8 @@ Status hashmap_remove(HashMap *map, void *key, void **value) {
 
     /* Free allocated node and attributes */
     *value = temp->value;
-    free(temp->key);
+    if (map->keyDxn != NULL)
+        (*map->keyDxn)(temp->key);
     free(temp);
     map->changes++;
     map->load -= map->delta;
@@ -292,7 +293,6 @@ static void clearMap(HashMap *map, void (*valueDestructor)(void *)) {
                 (*map->keyDxn)(temp->key);
             if (valueDestructor != NULL)
                 (*valueDestructor)(temp->value);
-            free(temp->key);
             free(temp);
             temp = next;
         }

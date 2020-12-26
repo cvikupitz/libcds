@@ -54,6 +54,28 @@ static char *entries[] = {
     "#E6E6FA", "#4B0082", "#808000", "#FF6347", "#FFDAB9", "#800000"
 };
 
+/*
+ * Hash function used by the hashmap.
+ */
+#define PRIME 7L
+static long hash(void *key, long N) {
+
+    long val = 0L;
+    char *ch;
+
+    for (ch = key; *ch != '\0'; ch++)
+        val = (*ch + (val * PRIME)) % N;
+    return val;
+}
+
+/*
+ * Comparator function for the hashmap keys.
+ */
+static int keyCmp(void *this, void *other) {
+
+    return strcmp((char *)this, (char *)other);
+}
+
 static void validateEmptyHashMap(HashMap *map) {
 
     Array *keyArray, *entryArray;
@@ -74,7 +96,7 @@ static void testEmptyHashMap() {
     HashMap *map;
     Status stat;
 
-    stat = hashmap_new(&map, CAPACITY, LOAD_FACTOR);
+    stat = hashmap_new(&map, hash, keyCmp, CAPACITY, LOAD_FACTOR, NULL);
     if (stat != OK)
         CU_FAIL_FATAL("ERROR: testEmptyHashMap() - allocation failure");
 
@@ -90,7 +112,7 @@ static void testSingleItem() {
     Status stat;
     char *prev;
 
-    stat = hashmap_new(&map, CAPACITY, LOAD_FACTOR);
+    stat = hashmap_new(&map, hash, keyCmp, CAPACITY, LOAD_FACTOR, NULL);
     if (stat != OK)
         CU_FAIL_FATAL("ERROR: testSingleItem() - allocation failure");
 
@@ -121,7 +143,7 @@ static void testHashMapInsertions() {
     int i;
     char *prev;
 
-    stat = hashmap_new(&map, CAPACITY, LOAD_FACTOR);
+    stat = hashmap_new(&map, hash, keyCmp, CAPACITY, LOAD_FACTOR, NULL);
     if (stat != OK)
         CU_FAIL_FATAL("ERROR: testHashMapInsertions() - allocation failure");
 
@@ -148,7 +170,7 @@ static void testHashMapReplacements() {
     int i, j;
     char *prev;
 
-    stat = hashmap_new(&map, CAPACITY, LOAD_FACTOR);
+    stat = hashmap_new(&map, hash, keyCmp, CAPACITY, LOAD_FACTOR, NULL);
     if (stat != OK)
         CU_FAIL_FATAL("ERROR: testHashMapReplacements() - allocation failure");
 
@@ -172,7 +194,7 @@ static void testHashMapClear() {
     int i;
     char *prev;
 
-    stat = hashmap_new(&map, CAPACITY, LOAD_FACTOR);
+    stat = hashmap_new(&map, hash, keyCmp, CAPACITY, LOAD_FACTOR, NULL);
     if (stat != OK)
         CU_FAIL_FATAL("ERROR: testHashMapClear() - allocation failure");
 
@@ -193,7 +215,7 @@ static void testHashMapToArray() {
     int i;
     char *prev;
 
-    stat = hashmap_new(&map, CAPACITY, LOAD_FACTOR);
+    stat = hashmap_new(&map, hash, keyCmp, CAPACITY, LOAD_FACTOR, NULL);
     if (stat != OK)
         CU_FAIL_FATAL("ERROR: testHashMapToArray() - allocation failure");
 
@@ -220,7 +242,7 @@ static void testHashMapIterator() {
     int i;
     char *prev;
 
-    stat = hashmap_new(&map, CAPACITY, LOAD_FACTOR);
+    stat = hashmap_new(&map, hash, keyCmp, CAPACITY, LOAD_FACTOR, NULL);
     if (stat != OK)
         CU_FAIL_FATAL("ERROR: testHashMapIterator() - allocation failure");
 
