@@ -6,23 +6,23 @@ A library containing several data structures implemented in C, for C. Contains m
 
 To install the library, clone the repository onto your machine:
 
-```powershell
-$ git clone https://github.com/cvikupitz/libcds.git
+```console
+git clone https://github.com/cvikupitz/libcds.git
 ```
 
 Navigate to the root of the of the repository, and open the Makefile. Locate the macro *INSTALL_PATH* which specifies where the project libraries, headers, and other files will be installed to. Ensure that the root directory specified is appropriate for you (if you have write access to these directories). Then run the following make commands to install the libraries:
 
-```powershell
-$ make
-$ make install
+```console
+make
+make install
 ```
 
 The libraries will be installed into whatever directory you specified. You may now use the library in your C projects as shown in the examples section below.
 
 To uninstall the project, you can also run the uninstall target as such:
 
-```powershell
-$ make uninstall
+```console
+make uninstall
 ```
 
 ### Compiling & Linking
@@ -44,9 +44,9 @@ int main() {
 }
 ```
 
-```powershell
-$ gcc -c test.c
-$ gcc test.o -o test -lcds
+```shell
+gcc -c test.c
+gcc test.o -o test -lcds
 ```
 
 ### Available Structures
