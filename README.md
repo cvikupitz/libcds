@@ -177,6 +177,12 @@ static void testIterate(Stack *stack) {
 
 For more in-depth documentation, check out the project wiki [here](https://github.com/cvikupitz/libcds/wiki).
 
+### Resources Used
+
+* JDK 7 implementations converted to C, used for ```TreeMap``` and ```TreeSet```
+* [Tutorial on Heaps](https://www.youtube.com/watch?v=t0Cq6tVNRBA) by Gayle LaakMann, author of Cracking the Coding Interview
+* [CUnit](https://github.com/jacklicn/CUnit) used for unit testing.
+
 ### Contributing
 
 If you'd like to contribute, feel free to fork and provide a new feature. If you find any bugs, you can either submit one under *Issues*, or you can also fork and provide a fix yourself.
