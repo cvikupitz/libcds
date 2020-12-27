@@ -62,18 +62,18 @@ typedef struct ts_hashmap ConcurrentHashMap;
  * specified keys, such that cmp(a, b) returns 0 when a == b, or !0 when a != b.
  *
  * The key destructor function should be a function that performs any de-allocation
- * needed on the treemap's keys (if applicable). This function will be invoked on
- * the entry's key prior to being removed, the treemap being cleared, or the treemap
+ * needed on the hashmap's keys (if applicable). This function will be invoked on
+ * the entry's key prior to being removed, the hashmap being cleared, or the hashmap
  * being destructed. If no de-allocation/destructor for the custom keys is required,
  * you may pass NULL as this parameter.
  *
  * Params:
  *    map - The pointer address to store the new HashMap instance.
  *    hash - The hashing function the map will use to compute the bucket placement.
- *    comparator - Function for comparing two keys in the treemap.
+ *    comparator - Function for comparing two keys in the hashmap.
  *    capacity - The hashmap's starting capacity.
  *    loadFactor - The hashmap's assigned load factor.
- *    keyDestructor - Function for de-allocating the treemap's keys.
+ *    keyDestructor - Function for de-allocating the hashmap's keys.
  * Returns:
  *    OK - HashMap was successfully created.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
