@@ -39,8 +39,8 @@ struct hm_entry {
  */
 struct hashmap {
     long (*hash)(void *, long);         /* Hashing function for computing bucket placement */
-    int (*keyCmp)(void *, void *);      /* Function for comparing keys in the tree */
-    void (*keyDxn)(void *);             /* Function for destroying treemap keys */
+    int (*keyCmp)(void *, void *);      /* Function for comparing keys in the map */
+    void (*keyDxn)(void *);             /* Function for destroying hashmap keys */
     HmEntry **buckets;                  /* Array of buckets containing the entries */
     long size;                          /* The hashmap's current size */
     long capacity;                      /* The hashmap's current capacity */
