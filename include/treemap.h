@@ -63,7 +63,7 @@ typedef struct treemap TreeMap;
  *
  * Params:
  *    tree - The pointer address to store the new TreeMap instance.
- *    comparator - Function for comparing two keys in the treemap.
+ *    keyComparator - Function for comparing two keys in the treemap.
  *    keyDestructor - Function for de-allocating the treemap's keys.
  * Returns:
  *    OK - TreeMap was successfully created.
@@ -85,7 +85,7 @@ Status treemap_new(TreeMap **tree, int (*keyComparator)(void *, void *),
  * Returns:
  *    INSERTED - Key and value was inserted.
  *    REPLACED - Value was updated in the treemap, and the old value was
- *                          stored into '*previous' due to the key already existing.
+ *               stored into '*previous' due to the key already existing.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status treemap_put(TreeMap *tree, void *key, void *value, void **previous);
