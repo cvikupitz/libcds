@@ -61,7 +61,7 @@ typedef struct hashmap HashMap;
  *        long val = 0L;
  *        char *ch;
  *        for (ch = (char *)key; *ch != '\0'; ch++)
- *        val = (*ch + (val * PRIME)) % N;
+ *            val = (*ch + (val * PRIME)) % N;
  *        return val;
  *    }
  *
@@ -77,7 +77,7 @@ typedef struct hashmap HashMap;
  * Params:
  *    map - The pointer address to store the new HashMap instance.
  *    hash - The hashing function the map will use to compute the bucket placement.
- *    comparator - Function for comparing two keys in the hashmap.
+ *    keyComparator - Function for comparing two keys in the hashmap.
  *    capacity - The hashmap's starting capacity.
  *    loadFactor - The hashmap's assigned load factor.
  *    keyDestructor - Function for de-allocating the hashmap's keys.
