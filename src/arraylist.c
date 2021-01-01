@@ -56,6 +56,9 @@ Status arraylist_new(ArrayList **list, long capacity) {
     }
 
     /* Initializes the remainder of struct members */
+    long i;
+    for (i = 0L; i < cap; i++)
+        array[i] = NULL;
     temp->data = array;
     temp->size = 0L;
     temp->capacity = cap;
@@ -82,6 +85,9 @@ static Boolean ensureCapacity(ArrayList *list, long newCapacity) {
     if (temp != NULL) {
         /* Update attributes after extension */
         list->data = temp;
+        long i;
+        for (i = list->capacity; i < newCapacity; i++)
+            list->data[i] = NULL;
         list->capacity = newCapacity;
         status = TRUE;
     }
@@ -169,7 +175,7 @@ Status arraylist_remove(ArrayList *list, long i, void **item) {
     long j;
     for (j = i; j < list->size - 1; j++)
         list->data[j] = list->data[j + 1];
-    list->size--;
+    list->data[list->size--] = NULL;
 
     return OK;
 }
@@ -208,6 +214,7 @@ static void clearList(ArrayList *list, void (*destructor)(void *)) {
     for (i = 0L; i < list->size; i++) {
         if (destructor != NULL)
             (*destructor)(list->data[i]);
+        list->data[i] = NULL;
     }
 }
 
