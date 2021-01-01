@@ -44,17 +44,17 @@ typedef struct ts_hashmap ConcurrentHashMap;
  * <= 0, a default capacity is assigned. If the load factor specified is <= 0.0, a
  * default load factor is assigned.
  *
- * The hash function specified will be used by the hashmap to compute the bucket
- * placement for each entry in the hashmap, such that hash(a,N) will return a value
- * in the range [0, N-1]. For example, if using char * keys, you might define a hash
- * function like this:
+ * The hash function specified should return an index number such that hash(obj, N)
+ * will return the hashed value of 'obj' in an array of size N. For example, if using
+ * char * keys, you might define a hash function like this:
  *
  *    #define PRIME 7L
- *    long hash(void *key, long N) {
+ *    long hash(void *a, long N) {
  *        long val = 0L;
+ *        char *key = (char *)a;
  *        char *ch;
- *        for (ch = (char *)key; *ch != '\0'; ch++)
- *        val = (*ch + (val * PRIME)) % N;
+ *        for (ch = key; *ch != '\0'; ch++)
+ *            val = (*ch + (val * PRIME)) % N;
  *        return val;
  *    }
  *
@@ -70,7 +70,7 @@ typedef struct ts_hashmap ConcurrentHashMap;
  * Params:
  *    map - The pointer address to store the new HashMap instance.
  *    hash - The hashing function the map will use to compute the bucket placement.
- *    comparator - Function for comparing two keys in the hashmap.
+ *    keyComparator - Function for comparing two keys in the hashmap.
  *    capacity - The hashmap's starting capacity.
  *    loadFactor - The hashmap's assigned load factor.
  *    keyDestructor - Function for de-allocating the hashmap's keys.
@@ -114,15 +114,15 @@ void ts_hashmap_unlock(ConcurrentHashMap *map);
  *    value - The value to be associated with the specified key.
  *    previous - The pointer address to store the previous value into.
  * Returns:
- *    ENTRY_INSERTED - Key and entry was inserted.
+ *    ENTRY_INSERTED - Entry was inserted.
  *    ENTRY_REPLACED - Entry was updated in the hashmap, and the old entry was stored into
- *                      '*previous' due to the key already existing.
+ *                     '*previous' due to the key already existing.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_hashmap_put(ConcurrentHashMap *map, void *key, void *value, void **previous);
 
 /**
- * Returns TRUE if the hashmap contains a mapping for the specified key, false if
+ * Returns TRUE if the hashmap contains a mapping for the specified key, FALSE if
  * otherwise.
  *
  * Params:

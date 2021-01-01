@@ -47,8 +47,7 @@ typedef struct ts_hashset ConcurrentHashSet;
  * will return the hashed value of 'obj' in an array of size N.
  *
  * The comparator function specified should return an integer comparing the two
- * specified values, such that cmp(a, b) returns 0 when a == b, <0 when a < b, and
- * >0 when a > b.
+ * specified keys, such that cmp(a, b) returns 0 when a == b, or !0 when a != b.
  *
  * Params:
  *    set - The pointer address to store the new HashSet instance.
@@ -61,8 +60,7 @@ typedef struct ts_hashset ConcurrentHashSet;
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_hashset_new(ConcurrentHashSet **set, long (*hash)(void *, long),
-        int (*comparator)(void *, void *),
-        long capacity, double loadFactor);
+        int (*comparator)(void *, void *), long capacity, double loadFactor);
 
 /**
  * Locks the hashset, providing exclusive access to the calling thread. Caller

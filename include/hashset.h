@@ -47,8 +47,7 @@ typedef struct hashset HashSet;
  * will return the hashed value of 'obj' in an array of size N.
  *
  * The comparator function specified should return an integer comparing the two
- * specified values, such that cmp(a, b) returns 0 when a == b, <0 when a < b, and
- * >0 when a > b.
+ * specified keys, such that cmp(a, b) returns 0 when a == b, or !0 when a != b.
  *
  * Params:
  *    set - The pointer address to store the new HashSet instance.
@@ -60,8 +59,7 @@ typedef struct hashset HashSet;
  *    OK - HashSet was successfully created.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status hashset_new(HashSet **set, long (*hash)(void *, long),
-        int (*comparator)(void *, void *),
+Status hashset_new(HashSet **set, long (*hash)(void *, long), int (*comparator)(void *, void *),
         long capacity, double loadFactor);
 
 /**
