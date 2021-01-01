@@ -57,6 +57,9 @@ Status heap_new(Heap **heap, long capacity, int (*comparator)(void *, void *)) {
     }
 
     /* Initializes the remainder of struct members */
+    long i;
+    for (i = 0L; i < cap; i++)
+        array[i] = NULL;
     temp->data = array;
     temp->size = 0L;
     temp->capacity = cap;
@@ -134,13 +137,17 @@ static void downheap(Heap *heap) {
 static Boolean ensureCapacity(Heap *heap) {
 
     Boolean status = FALSE;
-    size_t bytes = ( heap->capacity * 2 ) * sizeof(void *);
+    long newCapacity = heap->capacity * 2;
+    size_t bytes = ( newCapacity * sizeof(void *) );
     void **temp = realloc(heap->data, bytes);
 
     if (temp != NULL) {
         /* Update the heap's properties */
         heap->data = temp;
-        heap->capacity *= 2;
+        long i;
+        for (i = heap->size; i < newCapacity; i++)
+            heap->data[i] = NULL;
+        heap->capacity = newCapacity;
         status = TRUE;
     }
 
@@ -180,7 +187,8 @@ Status heap_poll(Heap *heap, void **min) {
 
     /* Retrieves the min item, saves into pointer */
     *min = heap->data[0];
-    heap->data[0] = heap->data[--heap->size];
+    heap->data[0] = heap->data[heap->size - 1];
+    heap->data[--heap->size] = NULL;
     /* Downheap to update the heap */
     downheap(heap);
 
@@ -197,6 +205,7 @@ static void clearHeap(Heap *heap, void (*destructor)(void *)) {
     for (i = 0L; i < heap->size; i++) {
         if (destructor != NULL)
             (*destructor)(heap->data[i]);
+        heap->data[i] = NULL;
     }
 }
 

@@ -56,6 +56,9 @@ Status boundedstack_new(BoundedStack **stack, long capacity) {
     }
 
     /* Initialize the remaining struct members */
+    long i;
+    for (i = 0L; i < cap; i++)
+        array[i] = NULL;
     temp->data = array;
     temp->size = 0L;
     temp->capacity = cap;
@@ -97,7 +100,8 @@ Status boundedstack_pop(BoundedStack *stack, void **top) {
     if (IS_EMPTY(stack) == TRUE)
         return STRUCT_EMPTY;
     /* Removes the item, saves into pointer */
-    *top = stack->data[--stack->size];
+    *top = stack->data[stack->size - 1];
+    stack->data[--stack->size] = NULL;
 
     return OK;
 }
@@ -110,6 +114,7 @@ static void clearStack(BoundedStack *stack, void (*destructor)(void *)) {
     for (i = 0L; i < stack->size; i++) {
         if (destructor != NULL)
             (*destructor)(stack->data[i]);
+        stack->data[i] = NULL;
     }
 }
 

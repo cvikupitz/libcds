@@ -57,6 +57,9 @@ Status boundedqueue_new(BoundedQueue **queue, long capacity) {
     }
 
     /* Initialize the remainder of the struct members */
+    long i;
+    for (i = 0L; i < cap; i++)
+        array[i] = NULL;
     temp->data = array;
     temp->front = 0L;
     temp->size = 0L;
@@ -105,6 +108,7 @@ Status boundedqueue_poll(BoundedQueue *queue, void **front) {
     /* Extracts the front item, saves into pointer */
     *front = queue->data[queue->front];
     /* Computes next 'front' index after removal */
+    queue->data[queue->front] = NULL;
     queue->front = (queue->front + 1) % queue->capacity;
     queue->size--;
 
@@ -120,6 +124,7 @@ static void clearQueue(BoundedQueue *queue, void (*destructor)(void *)) {
     for (i = 0L, j = queue->front; i < queue->size; i++, j = (j + 1) % queue->capacity) {
         if (destructor != NULL)
             (*destructor)(queue->data[j]);
+        queue->data[j] = NULL;
     }
 }
 
