@@ -22,9 +22,7 @@
  * SOFTWARE.
  */
 
-#include <math.h>
 #include <stdlib.h>
-#include "boundedstack.h"
 #include "treemap.h"
 
 /*
@@ -847,27 +845,17 @@ Boolean treemap_isEmpty(TreeMap *tree) {
 /*
  * Populates the iteration of treemap keys via an in-order traversal.
  */
-static void populateKeyArray(TreeIter *iter, BoundedStack *toVisit, Node *node) {
+static void populateKeyArray(TreeIter *iter, Node *node) {
 
-    while (node != NULL || boundedstack_isEmpty(toVisit) == FALSE) {
-
-        /* Traverse down to the left-most node */
-        while (node != NULL) {
-            /* Pushes nodes onto visiting stack during left traversal */
-            (void)boundedstack_push(toVisit, node);
-            node = node->left;
-        }
-
-        /* Once leaf node reached, process and move to right subtree */
-        (void)boundedstack_pop(toVisit, (void **)&node);
-        iter->items[iter->next++] = node->entry->key;
-        node = node->right;
-    }
+    if (node == NULL)
+        return;
+    populateKeyArray(iter, node->left);
+    iter->items[iter->next++] = node->entry->key;
+    populateKeyArray(iter, node->right);
 }
 
 Status treemap_keyArray(TreeMap *tree, Array **keys) {
 
-    BoundedStack *stack;
     size_t bytes;
     void **items = NULL;
 
@@ -888,21 +876,12 @@ Status treemap_keyArray(TreeMap *tree, Array **keys) {
         return ALLOC_FAILURE;
     }
 
-    /* Create stack for iterative approach */
-    long capacity = (long)( 2 * ceil( log2(tree->size + 1) ) );  /* Max depth should be <= 2*log2(N + 1) */
-    if (boundedstack_new(&stack, capacity) != OK) {
-        free(items);
-        free(temp);
-        return ALLOC_FAILURE;
-    }
-
     /* Populates the iterator with the key, saves the results into pointer */
     TreeIter iter = {items, 0L};
-    populateKeyArray(&iter, stack, tree->root);
+    populateKeyArray(&iter, tree->root);
     temp->items = iter.items;
     temp->len = tree->size;
     *keys = temp;
-    boundedstack_destroy(stack, NULL);
 
     return OK;
 }
@@ -910,22 +889,13 @@ Status treemap_keyArray(TreeMap *tree, Array **keys) {
 /*
  * Populates the iteration of treemap entries via an in-order traversal.
  */
-static void populateEntryArray(TreeIter *iter, BoundedStack *toVisit, Node *node) {
+static void populateEntryArray(TreeIter *iter, Node *node) {
 
-    while (node != NULL || boundedstack_isEmpty(toVisit) == FALSE) {
-
-        /* Traverse down to the left-most node */
-        while (node != NULL) {
-            /* Pushes nodes onto visiting stack during left traversal */
-            (void)boundedstack_push(toVisit, node);
-            node = node->left;
-        }
-
-        /* Once leaf node reached, process and move to right subtree */
-        (void)boundedstack_pop(toVisit, (void **)&node);
-        iter->items[iter->next++] = node->entry;
-        node = node->right;
-    }
+    if (node == NULL)
+        return;
+    populateEntryArray(iter, node->left);
+    iter->items[iter->next++] = node->entry;
+    populateEntryArray(iter, node->right);
 }
 
 /*
@@ -933,7 +903,6 @@ static void populateEntryArray(TreeIter *iter, BoundedStack *toVisit, Node *node
  */
 static TmEntry **generateEntryArray(TreeMap *tree) {
 
-    BoundedStack *stack;
     size_t bytes;
     TmEntry **items = NULL;
 
@@ -943,17 +912,9 @@ static TmEntry **generateEntryArray(TreeMap *tree) {
     if (items == NULL)
         return NULL;
 
-    /* Create stack for iterative approach */
-    long capacity = (long)( 2 * ceil( log2(tree->size + 1) ) );  /* Max depth should be <= 2*log2(N + 1) */
-    if (boundedstack_new(&stack, capacity) != OK) {
-        free(items);
-        return NULL;
-    }
-
     /* Collects the array of treemap entries */
     TreeIter iter = {(void **)items, 0L};
-    populateEntryArray(&iter, stack, tree->root);
-    boundedstack_destroy(stack, NULL);
+    populateEntryArray(&iter, tree->root);
 
     return (TmEntry **)iter.items;
 }
