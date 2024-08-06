@@ -23,175 +23,99 @@
  */
 
 #include <stdlib.h>
-#include <limits.h>     /* Importing to use ULLONG_MAX */
+#include <limits.h>
 #include "string_buffer.h"
 
 struct string_buffer {
-    char *content;
-    long index;
-    unsigned long long capacity;
+
 };
 
-/* The default capacity to assign when the capacity give is invalid */
-#define DEFAULT_CAPACITY 256L
-/* The maximum capacity each buffer instance is allowed */
-#define MAX_CAPACITY ( ULLONG_MAX - 1 )
+Status stringbuffer_new(StringBuffer **buffer, long capacity, char *str);
 
-Status stringbuffer_new(StringBuffer **buffer, char *str, long capacity) {
+Status stringbuffer_appendChar(StringBuffer *buffer, char ch){ return OK; }
 
-    StringBuffer *temp = (StringBuffer *)malloc(sizeof(StringBuffer));
-    if (temp == NULL)
-        return ALLOC_FAILURE;
+Status stringbuffer_appendStr(StringBuffer *buffer, char *str){ return OK; }
 
-    long cap = ( capacity <= 0L ) ? DEFAULT_CAPACITY : capacity;
-    if (cap > MAX_CAPACITY)
-        cap = MAX_CAPACITY;
-    size_t bytes = ( cap * sizeof(char) );
-    char *content = (char *)malloc(bytes);
+Status stringbuffer_appendBoolean(StringBuffer *buffer, Boolean b){ return OK; }
 
-    if (content == NULL) {
-        free(temp);
-        return ALLOC_FAILURE;l
-    }
+Status stringbuffer_appendShort(StringBuffer *buffer, short s){ return OK; }
 
-    long i;
-    for (i = 0L; i < cap; i++)
-        content[i] = '\0';
-    temp->content = content;
-    temp->size = 0L;
-    temp->capacity = cap;
-    *buffer = temp;
+Status stringbuffer_appendInt(StringBuffer *buffer, int i){ return OK; }
 
-    return OK;
-}
+Status stringbuffer_appendLong(StringBuffer *buffer, long i){ return OK; }
 
-/* Macro to check if the buffer is currently empty */
-#define IS_EMPTY(x)  ( ((x)->index == 0L) ? TRUE : FALSE )
-/* Macro used to validate the given index i */
-#define INDEX_VALID(i, N) ( ( 0L <= (i) && (i) < (N) ) ? TRUE : FALSE )
+Status stringbuffer_appendFloat(StringBuffer *buffer, float f){ return OK; }
 
-/*
- * Extends the arraylist's capacity to the new specified capacity. Returns TRUE if
- * extension was successful, or FALSE if not.
- */
-static Boolean ensureCapacity(StringBuffer *buffer, unsigned long long newCapacity) {
+Status stringbuffer_appendDouble(StringBuffer *buffer, double d){ return OK; }
 
-    Boolean status = FALSE;
-    size_t bytes = ( newCapacity * sizeof(char) + 1);
-    char *temp = (char *)realloc(buffer->content, bytes);
+Status stringbuffer_appendSubStr(StringBuffer *buffer, char *str, int start, int end){ return OK; }
 
-    if (temp != NULL) {
-        /* Update attributes after extension */
-        list->data = temp;
-        long i;
-        for (i = list->capacity; i < newCapacity; i++)
-            list->data[i] = NULL;
-        list->capacity = newCapacity;
-        status = TRUE;
-    }
+Status stringbuffer_appendStrSubSequence(StringBuffer *buffer, char *str, int offset, int len){ return OK; }
 
-    return status;
-}
+Status stringbuffer_appendStrBuffer(StringBuffer *buffer, StringBuffer *other){ return OK; }
 
-// appends
-Status stringbuffer_appendChar(StringBuffer *buffer, char ch);
-Status stringbuffer_appendStr(StringBuffer *buffer, char *str);
-Status stringbuffer_appendStrSlice(StringBuffer *buffer, char *str, int start, int end);
-Status stringbuffer_appendStrFromOffset(StringBuffer *buffer, char *str, int offset, int len);
-Status stringbuffer_appendStrBuffer(StringBuffer *buffer, StringBuffer *other);
-Status stringbuffer_repeat(StringBuffer *buffer, char *str, int count);
+Status stringbuffer_insertChar(StringBuffer *buffer, long offset, char ch){ return OK; }
 
-// inserts
-Status stringbuffer_insertChar(StringBuffer *buffer, long offset, char ch);
-Status stringbuffer_insertStr(StringBuffer *buffer, long offset, char *str);
-Status stringbuffer_insertStrSlice(StringBuffer *buffer, long offset, char *str, int start, int end);
-Status stringbuffer_insertStrFromOffset(StringBuffer *buffer, long index, char *str, int offset, int len);
-Status stringbuffer_insertStrBuffer(StringBuffer *buffer, long offset, StringBuffer *other);
-Status stringbuffer_replace(StringBuffer *buffer, int start, int end, char *str);
+Status stringbuffer_insertStr(StringBuffer *buffer, long offset, char *str){ return OK; }
 
-// gets/sets
-char stringbuffer_charAt(StringBuffer *buffer, long i) {
+Status stringbuffer_insertBoolean(StringBuffer *buffer, long offset, Boolean b){ return OK; }
 
-}
+Status stringbuffer_insertShort(StringBuffer *buffer, long offset, short s){ return OK; }
 
-const char* stringbuffer_substring(StringBuffer *buffer, long start);
-const char* stringbuffer_subsequence(StringBuffer *buffer, long start, long end);
-Status stringbuilder_getChars(StringBuffer *buffer, int srcBegin, int srcEnd, char dst, int dstBegin);
-Status stringbuilder_setCharAt(StringBuffer *buffer, long index, char ch);
-Status stringbuilder_setLength(StringBuffer *buffer, long len);
+Status stringbuffer_insertInt(StringBuffer *buffer, long offset, int i){ return OK; }
 
-// searches
-long stringbuffer_indexOf(StringBuffer *buffer, char *str);
-long stringbuffer_indexOfFrom(StringBuffer *buffer, char *str, long fromIndex);
-long stringbuffer_lastIndexOf(StringBuffer *buffer, char *str);
-long stringbuffer_lastIndexOfFrom(StringBuffer *buffer, char *str, long fromIndex);
+Status stringbuffer_insertLong(StringBuffer *buffer, long offset, long l){ return OK; }
 
-// deletes
-Status stringbuffer_delete(StringBuffer *buffer, long start, long end);
-Status stringbuffer_deleteCharAt(StringBuffer *buffer, long index);
+Status stringbuffer_insertFloat(StringBuffer *buffer, long offset, float f){ return OK; }
 
-Status stringbuffer_reverse(StringBuffer *buffer) ;
+Status stringbuffer_insertDouble(StringBuffer *buffer, long offset, double d){ return OK; }
 
-Status stringbuffer_ensureCapacity(StringBuffer *buffer, unsigned long long capacity) {
+Status stringbuffer_insertSubStr(StringBuffer *buffer, long offset, char *str, int start, int end){ return OK; }
 
-    if (buffer->capacity < capacity)
-        if (ensureCapacity(list, capacity) == FALSE)
-            return ALLOC_FAILURE;
+Status stringbuffer_insertStrSubSequence(StringBuffer *buffer, long index, char *str, int offset, int len){ return OK; }
 
-    return OK;
-}
+Status stringbuffer_insertStrBuffer(StringBuffer *buffer, long offset, StringBuffer *other){ return OK; }
 
-Status stringbuffer_trimToSize(StringBuffer *buffer) {
+Status stringbuffer_replace(StringBuffer *buffer, int start, int end, char *str){ return OK; }
 
-    if (IS_EMPTY(list) == TRUE)
-        return STRUCT_EMPTY;
+Status stringbuffer_charAt(StringBuffer *buffer, long i, char *result){ return OK; }
 
-    /* Only trim if size < capacity */
-    if (list->size != list->capacity)
-        if (ensureCapacity(list, list->size) == FALSE)
-            return ALLOC_FAILURE;
+Status stringbuffer_substring(StringBuffer *buffer, long start, char **result){ return OK; }
 
-    return OK;
-}
+Status stringbuffer_subsequence(StringBuffer *buffer, long start, long end, char **result){ return OK; }
 
-static void clean_char_buffer(char *buffer, long len) {
-    long i;
-    for (i = 0L; i < buffer->capacity; i++)
-        buffer->content[i] = '\0';
-}
+Status stringbuffer_getChars(StringBuffer *buffer, long srcBegin, long srcEnd, char dst[], int dstBegin){ return OK; }
 
-void stringbuffer_clear(StringBuffer *buffer) {
-    clean_char_buffer(buffer->content, buffer->capacity);
-    buffer->index = 0L;
-}
+Status stringbuffer_setCharAt(StringBuffer *buffer, long index, char ch){ return OK; }
 
-long stringbuffer_length(StringBuffer *buffer) {
-    return buffer->index;
-}
+Status stringbuffer_setLength(StringBuffer *buffer, long len, char padding){ return OK; }
 
-long stringbuffer_capacity(StringBuffer *buffer) {
-    return buffer->capacity;
-}
+long stringbuffer_indexOf(StringBuffer *buffer, char *str){ return 0l; }
 
-Status stringbuffer_toString(StringBuffer *buffer) {
+long stringbuffer_indexOfFrom(StringBuffer *buffer, char *str, long fromIndex){ return 0L; }
 
-    char *str;
-    int i;
-    size_t bytes = (( sizeof(char) * buffer->index ) + 1 );
+long stringbuffer_lastIndexOf(StringBuffer *buffer, char *str){ return 0L; }
 
-    if (buffer->index == 0L)
-        return STRUCT_EMPTY;
-    if ((str = malloc(bytes)) == NULL)
-        return ALLOC_ERROR;
-    for (i = 0; i < buffer->index; i++)
-        str[i] = buffer->content[i];
-    str[i] = '\0';
+long stringbuffer_lastIndexOfFrom(StringBuffer *buffer, char *str, long fromIndex){ return 0L; }
 
-    return OK;
-}
+int stringbuffer_compareTo(StringBuffer *buffer, StringBuffer *other){ return 0; }
 
-void stringbuffer_destroy(*StringBuffer buffer) {
-    clean_char_buffer(buffer->content, buffer->capacity);
-    free(buffer->content);
-    free(buffer);
-}
+Status stringbuffer_delete(StringBuffer *buffer, long start, long end){ return OK; }
+
+Status stringbuffer_deleteCharAt(StringBuffer *buffer, long index){ return OK; }
+
+Status stringbuffer_reverse(StringBuffer *buffer){ return OK; }
+
+Status stringbuffer_ensureCapacity(StringBuffer *buffer, long capacity){ return OK; }
+
+Status stringbuffer_trimToSize(StringBuffer *buffer){ return OK; }
+
+void stringbuffer_clear(StringBuffer *buffer){ return OK; }
+
+long stringbuffer_length(StringBuffer *buffer) { return 0L; }
+
+long stringbuffer_capacity(StringBuffer *buffer) { return 0L; }
+
+Status stringbuffer_toString(StringBuffer *buffer, char **result) { return OK; }
+
+void stringbuffer_destroy(StringBuffer *buffer) {}
