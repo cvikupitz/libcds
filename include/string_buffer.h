@@ -35,7 +35,7 @@
  * functions such as string searching, subsequences, removals, reversing, and others are
  * also provided.
  *
- * Modeled after the Java 7 StringBuilder interface. It was decided to keep this ADT
+ * Modeled after the Java 11 StringBuilder interface. It was decided to keep this ADT
  * named as the StringBuffer rather than StringBuilder as C does not support the builder
  * constructor design pattern like Java does.
  */
@@ -60,7 +60,7 @@ typedef struct string_buffer StringBuffer;
  *    OK - StringBuffer was successfully created.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_new(StringBuffer **buffer, long capacity, char *str);
+Status string_buffer_new(StringBuffer **buffer, long capacity, char *str);
 
 /**
  * Appends the character `ch` to the buffer.
@@ -72,13 +72,13 @@ Status stringbuffer_new(StringBuffer **buffer, long capacity, char *str);
  *    OK - Operation was successful.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_appendChar(StringBuffer *buffer, char ch);
+Status string_buffer_appendChar(StringBuffer *buffer, char ch);
 
 /**
  * Appends the string `str` to the buffer. If `str` is NULL, then
  * nothing will be appended. Caller must ensure that `str` is
  * null-terminated (if not, undefined behavior or errors may occur).
- *l
+ *
  * Params:
  *    buffer - The string buffer to operate on.
  *    str - The string to append.
@@ -86,7 +86,7 @@ Status stringbuffer_appendChar(StringBuffer *buffer, char ch);
  *    OK - Operation was successful.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_appendStr(StringBuffer *buffer, char *str);
+Status string_buffer_appendStr(StringBuffer *buffer, char *str);
 
 /**
  * Appends the string representation of the boolean `b` to the buffer.
@@ -98,7 +98,7 @@ Status stringbuffer_appendStr(StringBuffer *buffer, char *str);
  *    OK - Operation was successful.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_appendBoolean(StringBuffer *buffer, Boolean b);
+Status string_buffer_appendBoolean(StringBuffer *buffer, Boolean b);
 
 /**
  * Appends the string representation of the short `s` to the buffer.
@@ -110,7 +110,7 @@ Status stringbuffer_appendBoolean(StringBuffer *buffer, Boolean b);
  *    OK - Operation was successful.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_appendShort(StringBuffer *buffer, short s);
+Status string_buffer_appendShort(StringBuffer *buffer, short s);
 
 /**
  * Appends the string representation of the int `i` to the buffer.
@@ -122,7 +122,7 @@ Status stringbuffer_appendShort(StringBuffer *buffer, short s);
  *    OK - Operation was successful.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_appendInt(StringBuffer *buffer, int i);
+Status string_buffer_appendInt(StringBuffer *buffer, int i);
 
 /**
  * Appends the string representation of the long `l` to the buffer.
@@ -134,7 +134,7 @@ Status stringbuffer_appendInt(StringBuffer *buffer, int i);
  *    OK - Operation was successful.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_appendLong(StringBuffer *buffer, long i);
+Status string_buffer_appendLong(StringBuffer *buffer, long i);
 
 /**
  * Appends the string representation of the float `f` to the buffer.
@@ -146,7 +146,7 @@ Status stringbuffer_appendLong(StringBuffer *buffer, long i);
  *    OK - Operation was successful.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_appendFloat(StringBuffer *buffer, float f);
+Status string_buffer_appendFloat(StringBuffer *buffer, float f);
 
 /**
  * Appends the string representation of the double `d` to the buffer.
@@ -158,7 +158,7 @@ Status stringbuffer_appendFloat(StringBuffer *buffer, float f);
  *    OK - Operation was successful.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_appendDouble(StringBuffer *buffer, double d);
+Status string_buffer_appendDouble(StringBuffer *buffer, double d);
 
 /**
  * Appends a substring of `str` to the buffer, given the starting and ending
@@ -176,11 +176,13 @@ Status stringbuffer_appendDouble(StringBuffer *buffer, double d);
  *    end - The ending index of `str` to append (exclusive).
  * Returns:
  *    OK - Operation was successful.
- *    INVALID_INDEX - Index specified is invalid (start < 0 or start > end or
- *                    end > length of str).
+ *    INVALID_INDEX - Index specified is invalid:
+ *       1.) `start` < 0
+ *       2.) `start` > `end`
+ *       3.) `end` > length
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_appendSubStr(StringBuffer *buffer, char *str, int start, int end);
+Status string_buffer_appendSubStr(StringBuffer *buffer, char *str, int start, int end);
 
 /**
  * Appends a subsequence of `str` to the buffer. Characters of the char array `str`,
@@ -197,11 +199,13 @@ Status stringbuffer_appendSubStr(StringBuffer *buffer, char *str, int start, int
  *    len - The number of characters to append.
  * Returns:
  *    OK - Operation was successful.
- *    INVALID_INDEX - Index specified is invalid (start < 0 or start > end or
- *                    end > length of str).
+ *    INVALID_INDEX - Index specified is invalid:
+ *       1.) `offset` < 0
+ *       2.) `len` < 0
+ *       3.) `offset` + `len` > length
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_appendStrSubSequence(StringBuffer *buffer, char *str, int offset, int len);
+Status string_buffer_appendStrSubSequence(StringBuffer *buffer, char *str, int offset, int len);
 
 /**
  * Appends the specified StringBuffer `other` to the sequence `buffer`.
@@ -219,7 +223,7 @@ Status stringbuffer_appendStrSubSequence(StringBuffer *buffer, char *str, int of
  *    OK - Operation was successful.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_appendStrBuffer(StringBuffer *buffer, StringBuffer *other);
+Status string_buffer_appendStrBuffer(StringBuffer *buffer, StringBuffer *other);
 
 /**
  * Inserts the string representation of the character `ch` into this sequence at the
@@ -234,7 +238,7 @@ Status stringbuffer_appendStrBuffer(StringBuffer *buffer, StringBuffer *other);
  *    INVALID_INDEX - Index was invalid; `offset` < 0 or `offset` > length().
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_insertChar(StringBuffer *buffer, long offset, char ch);
+Status string_buffer_insertChar(StringBuffer *buffer, long offset, char ch);
 
 /**
  * Inserts the specified string `str` into this sequence at the specified index `offset`.
@@ -250,7 +254,7 @@ Status stringbuffer_insertChar(StringBuffer *buffer, long offset, char ch);
  *    INVALID_INDEX - Index was invalid; `offset` < 0 or `offset` > length().
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_insertStr(StringBuffer *buffer, long offset, char *str);
+Status string_buffer_insertStr(StringBuffer *buffer, long offset, char *str);
 
 /**
  * Inserts the string representation of the boolean `b` into this sequence at the
@@ -265,7 +269,7 @@ Status stringbuffer_insertStr(StringBuffer *buffer, long offset, char *str);
  *    INVALID_INDEX - Index was invalid; `offset` < 0 or `offset` > length().
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_insertBoolean(StringBuffer *buffer, long offset, Boolean b);
+Status string_buffer_insertBoolean(StringBuffer *buffer, long offset, Boolean b);
 
 /**
  * Inserts the string representation of the short `s` into this sequence at the
@@ -280,7 +284,7 @@ Status stringbuffer_insertBoolean(StringBuffer *buffer, long offset, Boolean b);
  *    INVALID_INDEX - Index was invalid; `offset` < 0 or `offset` > length().
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_insertShort(StringBuffer *buffer, long offset, short s);
+Status string_buffer_insertShort(StringBuffer *buffer, long offset, short s);
 
 /**
  * Inserts the string representation of the int `i` into this sequence at the
@@ -295,7 +299,7 @@ Status stringbuffer_insertShort(StringBuffer *buffer, long offset, short s);
  *    INVALID_INDEX - Index was invalid; `offset` < 0 or `offset` > length().
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_insertInt(StringBuffer *buffer, long offset, int i);
+Status string_buffer_insertInt(StringBuffer *buffer, long offset, int i);
 
 /**
  * Inserts the string representation of the long `l` into this sequence at the
@@ -310,7 +314,7 @@ Status stringbuffer_insertInt(StringBuffer *buffer, long offset, int i);
  *    INVALID_INDEX - Index was invalid; `offset` < 0 or `offset` > length().
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_insertLong(StringBuffer *buffer, long offset, long l);
+Status string_buffer_insertLong(StringBuffer *buffer, long offset, long l);
 
 /**
  * Inserts the string representation of the float `f` into this sequence at the
@@ -325,7 +329,7 @@ Status stringbuffer_insertLong(StringBuffer *buffer, long offset, long l);
  *    INVALID_INDEX - Index was invalid; `offset` < 0 or `offset` > length().
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_insertFloat(StringBuffer *buffer, long offset, float f);
+Status string_buffer_insertFloat(StringBuffer *buffer, long offset, float f);
 
 /**
  * Inserts the string representation of the double `d` into this sequence at the
@@ -340,7 +344,7 @@ Status stringbuffer_insertFloat(StringBuffer *buffer, long offset, float f);
  *    INVALID_INDEX - Index was invalid; `offset` < 0 or `offset` > length().
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_insertDouble(StringBuffer *buffer, long offset, double d);
+Status string_buffer_insertDouble(StringBuffer *buffer, long offset, double d);
 
 /**
  * Inserts a substring of the specified string `str` into this sequence.
@@ -372,7 +376,7 @@ Status stringbuffer_insertDouble(StringBuffer *buffer, long offset, double d);
  *       3.) `end` < 0 or `end` > length()
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_insertSubStr(StringBuffer *buffer, long offset, char *str, int start, int end);
+Status string_buffer_insertSubStr(StringBuffer *buffer, long offset, char *str, int start, int end);
 
 /**
  * Inserts the string representation of a subarray of the `str` array argument into
@@ -398,7 +402,7 @@ Status stringbuffer_insertSubStr(StringBuffer *buffer, long offset, char *str, i
  *       3.) `len` < 0
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_insertStrSubSequence(StringBuffer *buffer, long index, char *str, int offset, int len);
+Status string_buffer_insertStrSubSequence(StringBuffer *buffer, long index, char *str, int offset, int len);
 
 /**
  * Inserts the string representation of the StringBuffer `other` argument into the
@@ -415,7 +419,7 @@ Status stringbuffer_insertStrSubSequence(StringBuffer *buffer, long index, char 
  *    INVALID_INDEX - Index was invalid; `offset` < 0 or `offset` > length()
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_insertStrBuffer(StringBuffer *buffer, long offset, StringBuffer *other);
+Status string_buffer_insertStrBuffer(StringBuffer *buffer, long offset, StringBuffer *other);
 
 /**
  * Replaces the characters in a substring of this sequence with characters in the
@@ -442,7 +446,7 @@ Status stringbuffer_insertStrBuffer(StringBuffer *buffer, long offset, StringBuf
  *       2.) `start` > length()
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_replace(StringBuffer *buffer, int start, int end, char *str);
+Status string_buffer_replace(StringBuffer *buffer, int start, int end, char *str);
 
 /**
  * Fetches the char value in this buffer at the specified index `i` and stores the
@@ -458,7 +462,7 @@ Status stringbuffer_replace(StringBuffer *buffer, int start, int end, char *str)
  *    INVALID_INDEX - Index is invalid; `i` < 0 or `i` >= length().
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_charAt(StringBuffer *buffer, long i, char *result);
+Status string_buffer_charAt(StringBuffer *buffer, long i, char *result);
 
 /**
  * Allocates a string that is a substring of this buffer, and stores the result into
@@ -476,7 +480,7 @@ Status stringbuffer_charAt(StringBuffer *buffer, long i, char *result);
  *    INVALID_INDEX - Index is invalid; `start` < 0 or `start` > length().
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_substring(StringBuffer *buffer, long start, char **result);
+Status string_buffer_substring(StringBuffer *buffer, long start, char **result);
 
 /**
  * Allocates a string that is a subsequence of this buffer, and stores the result into
@@ -496,7 +500,7 @@ Status stringbuffer_substring(StringBuffer *buffer, long start, char **result);
  *      3.) `start` > `end`
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_subsequence(StringBuffer *buffer, long start, long end, char **result);
+Status string_buffer_subsequence(StringBuffer *buffer, long start, long end, char **result);
 
 /**
  * Characters are copied from this sequence into the destination character array `dst`.
@@ -524,7 +528,7 @@ Status stringbuffer_subsequence(StringBuffer *buffer, long start, long end, char
  *       3.) `srcBegin` > `srcEnd`
  *       4.) `srcEnd` > length()
  */
-Status stringbuffer_getChars(StringBuffer *buffer, long srcBegin, long srcEnd, char dst[], int dstBegin);
+Status string_buffer_getChars(StringBuffer *buffer, long srcBegin, long srcEnd, char dst[], int dstBegin);
 
 /**
  * The character at the specified index `index` is set to `ch`. All other characters
@@ -538,7 +542,7 @@ Status stringbuffer_getChars(StringBuffer *buffer, long srcBegin, long srcEnd, c
  *    OK - Operation was successful.
  *    INVALID_INDEX - Index given in invalid; `index` < 0 or  `index` > length().
  */
-Status stringbuffer_setCharAt(StringBuffer *buffer, long index, char ch);
+Status string_buffer_setCharAt(StringBuffer *buffer, long index, char ch);
 
 /**
  * Sets the length of the character sequence. If `len` is less than this buffer's
@@ -555,7 +559,7 @@ Status stringbuffer_setCharAt(StringBuffer *buffer, long index, char ch);
  *    INVALID_INDEX - New length given is invalid (len < 0).
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_setLength(StringBuffer *buffer, long len, char padding);
+Status string_buffer_setLength(StringBuffer *buffer, long len, char padding);
 
 /**
  * Returns the index within this string buffer of the first occurrence of the specified
@@ -568,7 +572,7 @@ Status stringbuffer_setLength(StringBuffer *buffer, long len, char padding);
  * Returns:
  *    The index of the last occurrence of the substring, or -1 if no such index exists.
  */
-long stringbuffer_indexOf(StringBuffer *buffer, char *str);
+long string_buffer_indexOf(StringBuffer *buffer, char *str);
 
 /**
  * Returns the index within this string buffer of the first occurrence of the specified
@@ -583,8 +587,8 @@ long stringbuffer_indexOf(StringBuffer *buffer, char *str);
  *    The index of the first occurrence of the substring, searching from `fromIndex`,
  *    or -1 if no such index exists.
  */
-long stringbuffer_indexOfFrom(StringBuffer *buffer, char *str, long fromIndex);
-l
+long string_buffer_indexOfFrom(StringBuffer *buffer, char *str, long fromIndex);
+
 /**
  * Returns the index within this string buffer of the last occurrence of the specified
  * substring `str`. The last occurrence of the empty string "" is considered to occur
@@ -597,7 +601,7 @@ l
  * Returns:
  *    The index of the last occurrence of the substring, or -1 if no such index exists.
  */
-long stringbuffer_lastIndexOf(StringBuffer *buffer, char *str);
+long string_buffer_lastIndexOf(StringBuffer *buffer, char *str);
 
 /**
  * Returns the index within this string buffer of the last occurrence of the specified
@@ -612,7 +616,7 @@ long stringbuffer_lastIndexOf(StringBuffer *buffer, char *str);
  *    The index of the last occurrence of the substring, searching backwards from
  *    `fromIndex`, or -1 if no such index exists.
  */
-long stringbuffer_lastIndexOfFrom(StringBuffer *buffer, char *str, long fromIndex);
+long string_buffer_lastIndexOfFrom(StringBuffer *buffer, char *str, long fromIndex);
 
 /**
  * Compares the two string buffer instances lexicographically.
@@ -625,7 +629,7 @@ long stringbuffer_lastIndexOfFrom(StringBuffer *buffer, char *str, long fromInde
  *    each other, <0 if `buffer` is lexographically less than `other`, or >0
  *    if `buffer` is lexographically greater than `other`.
  */
-int stringbuffer_compareTo(StringBuffer *buffer, StringBuffer *other);
+int string_buffer_compareTo(StringBuffer *buffer, StringBuffer *other);
 
 /**
  * Removes the characters in a substring of this sequence from the buffer. The
@@ -643,7 +647,7 @@ int stringbuffer_compareTo(StringBuffer *buffer, StringBuffer *other);
  *    INVALID_INDEX - Index given is out of range (start < 0 or start >= length()
  *                    or start > end).
  */
-Status stringbuffer_delete(StringBuffer *buffer, long start, long end);
+Status string_buffer_delete(StringBuffer *buffer, long start, long end);
 
 /**
  * Removes the character at the specified position in the string buffer.
@@ -656,7 +660,7 @@ Status stringbuffer_delete(StringBuffer *buffer, long start, long end);
  *    STRUCT_EMPTY - String buffer is currently empty.
  *    INVALID_INDEX - Index given is out of range (index < 0 or index >= length()).
  */
-Status stringbuffer_deleteCharAt(StringBuffer *buffer, long index);
+Status string_buffer_deleteCharAt(StringBuffer *buffer, long index);
 
 /**
  * Reverses the contents of the string buffer in place.
@@ -664,10 +668,9 @@ Status stringbuffer_deleteCharAt(StringBuffer *buffer, long index);
  * Params:
  *    buffer - The string buffer to operate on.
  * Returns:
- *    OK - Operation was successful.
- *    STRUCT_EMPTY - Not performed as buffer has no content.
+ *    None
  */
-Status stringbuffer_reverse(StringBuffer *buffer);
+void string_buffer_reverse(StringBuffer *buffer);
 
 /**
  * Increases the capacity of the string buffer, if necessary, to ensure that it can
@@ -681,7 +684,7 @@ Status stringbuffer_reverse(StringBuffer *buffer);
  *    OK - Operation was successful.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_ensureCapacity(StringBuffer *buffer, long capacity);
+Status string_buffer_ensureCapacity(StringBuffer *buffer, long capacity);
 
 /**
  * Trims the capacity of the string buffer instance down to its current size (the
@@ -694,7 +697,7 @@ Status stringbuffer_ensureCapacity(StringBuffer *buffer, long capacity);
  *    STRUCT_EMPTY - String buffer is currently empty.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_trimToSize(StringBuffer *buffer);
+Status string_buffer_trimToSize(StringBuffer *buffer);
 
 /**
  * Clears out all content currently within the string buffer.
@@ -704,7 +707,7 @@ Status stringbuffer_trimToSize(StringBuffer *buffer);
  * Returns:
  *    None
  */
-void stringbuffer_clear(StringBuffer *buffer);
+void string_buffer_clear(StringBuffer *buffer);
 
 /**
  * Returns the string buffer's current length, that is, the number of characters it currently
@@ -715,7 +718,7 @@ void stringbuffer_clear(StringBuffer *buffer);
  * Returns:
  *    The string buffer's current length.
  */
-long stringbuffer_length(StringBuffer *buffer);
+long string_buffer_length(StringBuffer *buffer);
 
 /**
  * Returns the string buffer's current capacity, that is, the maximum number of characters
@@ -726,7 +729,7 @@ long stringbuffer_length(StringBuffer *buffer);
  * Returns:
  *    The string buffer's current capacity.
  */
-long stringbuffer_capacity(StringBuffer *buffer);
+long string_buffer_capacity(StringBuffer *buffer);
 
 /**
  * Allocates a new string from the heap, copies the string buffer's current contents into
@@ -741,7 +744,7 @@ long stringbuffer_capacity(StringBuffer *buffer);
  *    STRUCT_EMPTY - String buffer is currently empty.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status stringbuffer_toString(StringBuffer *buffer, char **result);
+Status string_buffer_toString(StringBuffer *buffer, char **result);
 
 /**
  * Destroys the string buffer instance by freeing all of its reserved memory.
@@ -751,6 +754,6 @@ Status stringbuffer_toString(StringBuffer *buffer, char **result);
  * Returns:
  *    None
  */
-void stringbuffer_destroy(StringBuffer *buffer);
+void string_buffer_destroy(StringBuffer *buffer);
 
 #endif  /* _CDS_STRING_BUFFER_H__ */
