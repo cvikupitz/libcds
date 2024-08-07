@@ -86,9 +86,19 @@ Status string_builder_new(StringBuilder **builder, long capacity, float growthFa
     for (i = 0L; i < cap + 1; i++) {
         innerBuffer[i] = '\0';
     }
+
+    // If initial string is provided, append it to the buffer
+    if (str != NULL) {
+        char *c;
+        for (c = str, i = 0; *c; c++, i++)
+            innerBuffer[i] = *c;
+        temp->index = ( c - str );
+    } else {
+        temp->index = 0L;
+    }
+
     // Initialize remaining struct properties
     temp->str = innerBuffer;
-    temp->index = 0L;
     temp->capacity = cap;
     temp->growthFactor = ( ( 0.0f < growthFactor ) && ( growthFactor <= 1.0f ) ) ?
                          growthFactor : DEFAULT_GROWTH_FACTOR;
