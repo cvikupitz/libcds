@@ -36,12 +36,13 @@ STATIC=libcds.a
 SHARED=libcds.so
 
 ##### List of .obj files to archive into library
-LIB_OBJS=$(SRC)/array_list.o $(SRC)/bounded_stack.o $(SRC)/bounded_queue.o $(SRC)/circular_list.o $(SRC)/hash_map.o \
-         $(SRC)/hash_set.o $(SRC)/heap.o $(SRC)/iterator.o $(SRC)/linked_list.o $(SRC)/queue.o $(SRC)/stack.o \
-         $(SRC)/string_buffer.o $(SRC)/tree_map.o $(SRC)/tree_set.o \
-         $(SRC)/ts_array_list.o $(SRC)/ts_bounded_queue.o $(SRC)/ts_bounded_stack.o $(SRC)/ts_circular_list.o \
-         $(SRC)/ts_hash_map.o $(SRC)/ts_hash_set.o $(SRC)/ts_heap.o $(SRC)/ts_iterator.o $(SRC)/ts_linked_list.o \
-         $(SRC)/ts_queue.o $(SRC)/ts_stack.o $(SRC)/ts_tree_map.o $(SRC)/ts_tree_set.o
+LIB_OBJS=$(SRC)/array_list.o $(SRC)/bounded_stack.o $(SRC)/bounded_queue.o $(SRC)/circular_list.o \
+         $(SRC)/hash_map.o $(SRC)/hash_set.o $(SRC)/heap.o $(SRC)/iterator.o $(SRC)/linked_list.o \
+         $(SRC)/queue.o $(SRC)/stack.o $(SRC)/string_builder.o $(SRC)/tree_map.o $(SRC)/tree_set.o \
+         $(SRC)/ts_array_list.o $(SRC)/ts_bounded_queue.o $(SRC)/ts_bounded_stack.o \
+         $(SRC)/ts_circular_list.o $(SRC)/ts_hash_map.o $(SRC)/ts_hash_set.o $(SRC)/ts_heap.o \
+         $(SRC)/ts_iterator.o $(SRC)/ts_linked_list.o $(SRC)/ts_queue.o $(SRC)/ts_stack.o \
+         $(SRC)/ts_tree_map.o $(SRC)/ts_tree_set.o
 
 ##### Builds all libraries
 all: $(STATIC) $(SHARED)
@@ -59,14 +60,16 @@ $(SRC)/%.o: $(SRC)/%.c
 
 ##### List of .obj files for the test executables
 TEST_OBJS=$(TEST)/array_list_tests.o $(TEST)/bounded_queue_tests.o $(TEST)/bounded_stack_tests.o \
-          $(TEST)/circular_list_tests.o $(TEST)/hash_map_tests.o $(TEST)/hash_set_tests.o $(TEST)/heap_tests.o \
-          $(TEST)/iterator_tests.o $(TEST)/linked_list_tests.o $(TEST)/queue_tests.o $(TEST)/stack_tests.o \
-          $(TEST)/tree_map_tests.o $(TEST)/tree_set_tests.o
+          $(TEST)/circular_list_tests.o $(TEST)/hash_map_tests.o $(TEST)/hash_set_tests.o \
+          $(TEST)/heap_tests.o $(TEST)/iterator_tests.o $(TEST)/linked_list_tests.o \
+          $(TEST)/queue_tests.o $(TEST)/stack_tests.o $(TEST)/tree_map_tests.o \
+          $(TEST)/tree_set_tests.o
 
 ##### List of testing executables to build
-EXECS=$(TEST)/array_list_tests $(TEST)/bounded_queue_tests $(TEST)/bounded_stack_tests $(TEST)/circular_list_tests \
-      $(TEST)/hash_map_tests $(TEST)/hash_set_tests $(TEST)/heap_tests $(TEST)/iterator_tests $(TEST)/linked_list_tests \
-      $(TEST)/queue_tests $(TEST)/stack_tests $(TEST)/tree_map_tests $(TEST)/tree_set_tests
+EXECS=$(TEST)/array_list_tests $(TEST)/bounded_queue_tests $(TEST)/bounded_stack_tests \
+      $(TEST)/circular_list_tests $(TEST)/hash_map_tests $(TEST)/hash_set_tests $(TEST)/heap_tests \
+      $(TEST)/iterator_tests $(TEST)/linked_list_tests $(TEST)/queue_tests $(TEST)/stack_tests \
+      $(TEST)/tree_map_tests $(TEST)/tree_set_tests
 
 ##### Creates all of the listed test executables
 test: $(STATIC) $(EXECS)
