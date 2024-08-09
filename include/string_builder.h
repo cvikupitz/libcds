@@ -28,7 +28,7 @@
  * Interface for the StringBuilder ADT.
  *
  * The StringBuilder is a mutable sequence of characters. The API provides a way for callers to
- * construct strings by appending and inserting string elements into the buffer. Other functions
+ * construct strings by appending and inserting string elements into the sequence. Other functions
  * such as string searching, subsequences, removals, reversing, and others are also provided.
  *
  * Modeled after the Java 11 StringBuilder interface.
@@ -399,7 +399,8 @@ Status string_builder_insertDouble(StringBuilder *builder, long offset, double d
  *       3.) `end` < 0 or `end` > length()
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status string_builder_insertSubStr(StringBuilder *builder, long offset, char *str, int start, int end);
+Status string_builder_insertSubStr(StringBuilder *builder, long offset, char *str, int start,
+                                   int end);
 
 /**
  * Inserts the string representation of a subarray of the `str` array argument into this sequence.
