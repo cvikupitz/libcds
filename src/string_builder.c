@@ -31,6 +31,8 @@ struct string_builder {
     float growthFactor;     // The growth factor to apply when expanding builder capacity
 };
 
+#define UNUSED __attribute__((unused))
+
 // The default capacity to assign when the capacity give is invalid
 #define DEFAULT_CAPACITY 16L
 // The maximum capacity allowed (to avoid builder overflow)
@@ -39,7 +41,8 @@ struct string_builder {
 // The default growth factor to apply when user input is invalid or 0
 #define DEFAULT_GROWTH_FACTOR 0.12f
 
-#define UNUSED __attribute__((unused))
+// Macro to detect an overflow if longs `a` and `b` are added together
+#define ADD_OVERFLOWS(a, b) ( ( b > ( MAX_CAPACITY - a ) ) ? TRUE : FALSE )
 
 /**
  * Local method to compute the length of the specified string `str`.
@@ -48,67 +51,8 @@ static int _get_str_length(char *str) {
 
     char *ch;
     for (ch = str; *ch != '\0'; ch++); // Navigate to end of string
-    return ( ch - str );
+    return ch - str;
 }
-
-Status string_builder_new(StringBuilder **builder, long capacity, float growthFactor, char *str) {
-
-    // Allocate the struct, check for allocation failures
-    StringBuilder *temp = (StringBuilder *)malloc(sizeof(StringBuilder));
-    if (temp == NULL) {
-        return ALLOC_FAILURE;
-    }
-
-    // Set up capacity, initialize the reminaing struct members
-    long cap = ( capacity <= 0 ) ? DEFAULT_CAPACITY : capacity;
-    // If initial string is supplied, must ensure starting capacity >= string length
-    if (str != NULL) {
-        int len = _get_str_length(str);
-        if (cap < len) {
-            cap = len;
-        }
-    }
-    // Ensure capacity does not exceed max allowed
-    if (cap > MAX_CAPACITY) {
-        cap = MAX_CAPACITY;
-    }
-
-    // Allocates the inner string builder, return error if fails
-    size_t bytes = ( ( cap + 1 ) * sizeof(char) );
-    char *innerBuffer = (char *)malloc(bytes);
-    if (innerBuffer == NULL) {
-        free(temp);
-        return ALLOC_FAILURE;
-    }
-
-    // Fills up the empty builder with null terminators
-    long i;
-    for (i = 0L; i < cap + 1; i++) {
-        innerBuffer[i] = '\0';
-    }
-
-    // If initial string is provided, append it to the buffer
-    if (str != NULL) {
-        char *c;
-        for (c = str, i = 0; *c; c++, i++)
-            innerBuffer[i] = *c;
-        temp->index = ( c - str );
-    } else {
-        temp->index = 0L;
-    }
-
-    // Initialize remaining struct properties
-    temp->str = innerBuffer;
-    temp->capacity = cap;
-    temp->growthFactor = ( ( 0.0f < growthFactor ) && ( growthFactor <= 1.0f ) ) ?
-                         growthFactor : DEFAULT_GROWTH_FACTOR;
-    *builder = temp;
-
-    return OK;
-}
-
-// Macro to detect an overflow if longs `a` and `b` are added together
-#define ADD_OVERFLOWS(a, b) ( ( b > ( MAX_CAPACITY - a ) ) ? TRUE : FALSE )
 
 /**
  * Helper method to ensure the capacity of the string builder, given the capacity to assign. The
@@ -145,35 +89,38 @@ static Boolean _ensure_capacity(StringBuilder *builder, long newCapacity) {
  */
 static long _compute_next_capacity_increase(StringBuilder *builder, int strLen) {
 
-    long delta = 0L;
-    long builderRemaining = ( builder->capacity - builder->index );
+    long increment = 0L;
+    long bufferRemaining = builder->capacity - builder->index;
 
-    // There's not enough room in builder to store the string, need to increase capacity
-    if (strLen > builderRemaining) {
+    // There's not enough room in builder to store the string, will need to increase capacity
+    if (strLen > bufferRemaining) {
 
         /**
          * Checks the total number of characters that are available without causing an overflow with
          * this builder. If the string still can't be allocated after resizing the max capacity
          * allowed, then we cannot append and must return an allocation error.
          */
-        long totalRemaining = ( MAX_CAPACITY - builder->capacity + builderRemaining );
+        long totalRemaining = ( MAX_CAPACITY - builder->capacity + bufferRemaining );
         if (strLen > totalRemaining) {
             return -1L;
         }
 
         /**
-         * Computes the `delta`, that is, the amount to grow the builder. We will add the remaining
-         * characters needed for the string, plus some additional room to avoid reallocating every
-         * call. We also must check for builder overflow again, but can just set it to the max
-         * capacity if so.
+         * Computes the `increment`, that is, the amount to grow the builder. We will add the
+         * remaining characters needed for the string, plus some additional room to avoid
+         * reallocating every call. We also must check for builder overflow again, but can just set
+         * it to the max capacity if so.
          */
-        delta = (long)( builder->capacity * builder->growthFactor ) + 1;
-        if ( ADD_OVERFLOWS(builder->capacity, delta) ) {
-            delta = ( MAX_CAPACITY - builder->capacity );
+        increment = strLen - bufferRemaining;
+        long extraPadding = ( (long)( builder->capacity * builder->growthFactor ) + 1 );
+        if ( ADD_OVERFLOWS(builder->capacity, increment + extraPadding) == FALSE ) {
+            increment += extraPadding;
+        } else {
+            increment = MAX_CAPACITY - builder->capacity;
         }
     }
 
-    return delta;
+    return increment;
 }
 
 /**
@@ -203,7 +150,7 @@ static Status _insert_str(StringBuilder *builder, long offset, char *str) {
 
     // If offset < length, need to shift characters over `len` spaces to right to fit in string
     if (offset < builder->index) {
-        for (i = builder->index - 1; i > offset; i--) {
+        for (i = builder->index - 1; i >= offset; i--) {
             builder->str[i + len] = builder->str[i];
         }
     }
@@ -213,6 +160,54 @@ static Status _insert_str(StringBuilder *builder, long offset, char *str) {
         builder->str[i] = *ch;
     }
     builder->index += len;
+
+    return OK;
+}
+
+Status string_builder_new(StringBuilder **builder, long capacity, float growthFactor, char *str) {
+
+    // Allocate the struct, check for allocation failures
+    StringBuilder *temp = (StringBuilder *)malloc(sizeof(StringBuilder));
+    if (temp == NULL) {
+        return ALLOC_FAILURE;
+    }
+
+    // Set up capacity, initialize the reminaing struct members
+    long cap = ( capacity <= 0 ) ? DEFAULT_CAPACITY : capacity;
+    // Ensure capacity does not exceed max allowed
+    if (cap > MAX_CAPACITY) {
+        cap = MAX_CAPACITY;
+    }
+
+    // Allocates the inner string builder, return error if fails
+    size_t bytes = ( ( cap + 1 ) * sizeof(char) );
+    char *innerBuffer = (char *)malloc(bytes);
+    if (innerBuffer == NULL) {
+        free(temp);
+        return ALLOC_FAILURE;
+    }
+
+    // Fills up the empty builder with null terminators
+    long i;
+    for (i = 0L; i < cap + 1; i++) {
+        innerBuffer[i] = '\0';
+    }
+
+    // Initialize remaining struct properties
+    temp->str = innerBuffer;
+    temp->capacity = cap;
+    temp->growthFactor = ( 0.0f < growthFactor ) && ( growthFactor <= 1.0f ) ?
+                         growthFactor : DEFAULT_GROWTH_FACTOR;
+
+    // If an initial string is provided, append it to the builder
+    if (str != NULL) {
+        if (_insert_str(temp, 0L, str) != OK) {
+            free(temp->str);
+            free(temp);
+            return ALLOC_FAILURE;
+        }
+    }
+    *builder = temp;
 
     return OK;
 }
@@ -273,15 +268,15 @@ Status string_builder_appendDouble(StringBuilder *builder, double d) {
     return _insert_str(builder, builder->index, temp);
 }
 
-static Boolean _load_substring_to_builder(char *src, char dest[], int dstBegin, int dstEnd) {
+static Boolean _load_substring_to_buffer(char *src, char dest[], long dstBegin, long dstEnd) {
 
     char *s = ( src != NULL ) ? src : "null";
     int strLen = _get_str_length(s);
-    if ( (dstBegin < 0) || (dstBegin > dstEnd) || (dstEnd > strLen) ) {
+    if ( ( dstBegin < 0 )  || ( dstBegin > dstEnd ) || ( dstEnd > strLen ) ) {
         return FALSE;
     }
 
-    int i, j, subLen = ( dstEnd - dstBegin );
+    long i, j, subLen = ( dstEnd - dstBegin );
     for (i = 0, j = dstBegin; i < subLen; i++, j++) {
         dest[i] = s[j];
     }
@@ -293,7 +288,7 @@ static Boolean _load_substring_to_builder(char *src, char dest[], int dstBegin, 
 Status string_builder_appendSubStr(StringBuilder *builder, char *str, int start, int end) {
 
     char temp[(end - start) + 1];
-    if ((_load_substring_to_builder(str, temp, start, end)) == FALSE) {
+    if ((_load_substring_to_buffer(str, temp, start, end)) == FALSE) {
         return INVALID_INDEX;
     }
     return _insert_str(builder, builder->index, temp);
@@ -302,24 +297,25 @@ Status string_builder_appendSubStr(StringBuilder *builder, char *str, int start,
 Status string_builder_appendStrSubSequence(StringBuilder *builder, char *str, int offset, int len) {
 
     char temp[len + 1];
-    if (_load_substring_to_builder(str, temp, offset, offset + len) == FALSE) {
+    if (_load_substring_to_buffer(str, temp, offset, offset + len) == FALSE) {
         return INVALID_INDEX;
     }
     return _insert_str(builder, builder->index, temp);
 }
 
-Status string_builder_appendStrBuffer(StringBuilder *builder, StringBuilder *other) {
+Status string_builder_appendStrBuilder(StringBuilder *builder, StringBuilder *other) {
 
-    char *temp;
     if (other == NULL) {
-        temp = "null";
+        return _insert_str(builder, builder->index, "null");
     } else if (other->index == 0) {
         return OK;
+    } else if (builder == other) {
+        char buffer[other->index];
+        _load_substring_to_buffer(other->str, buffer, 0, other->index);
+        return _insert_str(builder, builder->index, buffer);
     } else {
-        temp = other->str;
+        return _insert_str(builder, builder->index, other->str);
     }
-
-    return _insert_str(builder, builder->index, temp);
 }
 
 Status string_builder_insertChar(StringBuilder *builder, long offset, char ch) {
@@ -379,7 +375,7 @@ Status string_builder_insertSubStr(StringBuilder *builder, long offset, char *st
                                    int end) {
 
     char temp[(end - start) + 1];
-    if ((_load_substring_to_builder(str, temp, start, end)) == FALSE) {
+    if ((_load_substring_to_buffer(str, temp, start, end)) == FALSE) {
         return INVALID_INDEX;
     }
     return _insert_str(builder, offset, temp);
@@ -389,24 +385,25 @@ Status string_builder_insertStrSubSequence(StringBuilder *builder, long index, c
                                            int offset, int len) {
 
     char temp[len + 1];
-    if ((_load_substring_to_builder(str, temp, offset, offset + len)) == FALSE) {
+    if ((_load_substring_to_buffer(str, temp, offset, offset + len)) == FALSE) {
         return INVALID_INDEX;
     }
     return _insert_str(builder, index, temp);
 }
 
-Status string_builder_insertStrBuffer(StringBuilder *builder, long offset, StringBuilder *other) {
+Status string_builder_insertStrBuilder(StringBuilder *builder, long offset, StringBuilder *other) {
 
-    char *temp;
     if (other == NULL) {
-        temp = "null";
+        return _insert_str(builder, offset, "null");
     } else if (other->index == 0) {
         return OK;
+    } else if (builder == other) {
+        char buffer[other->index];
+        _load_substring_to_buffer(other->str, buffer, 0, other->index);
+        return _insert_str(builder, offset, buffer);
     } else {
-        temp = other->str;
+        return _insert_str(builder, offset, other->str);
     }
-
-    return _insert_str(builder, offset, temp);
 }
 
 Status string_builder_replace(UNUSED StringBuilder *builder, UNUSED int start, UNUSED int end, UNUSED char *str) { return OK; }
@@ -428,7 +425,7 @@ static Status _get_substring(StringBuilder *builder, long start, long end, char 
         return INVALID_INDEX;
     }
 
-    int strLen = (end - start) + 1;
+    int strLen = ( end - start ) + 1;
     if (allocate == TRUE) {
         int i;
         char *temp;
@@ -548,9 +545,9 @@ int string_builder_compareTo(StringBuilder *builder, StringBuilder *other) {
     }
 
     char *a, *b;
-    for (a = builder->str, b = other->str; *a && *b && *a == *b; a++, b++);
+    for (a = builder->str, b = other->str; (*a != '\0') && (*b != '\0') && (*a == *b); a++, b++);
 
-    return (*a - *b);
+    return ( *a - *b );
 }
 
 static void _scrub_char_builder(char *builder, long start, long end) {
@@ -596,7 +593,7 @@ void string_builder_reverse(StringBuilder *builder) {
 
     char temp;
     long head, tail;
-    for (head = 0, tail = builder->index; head < tail; head++, tail--) {
+    for (head = 0, tail = builder->index - 1; head < tail; head++, tail--) {
         temp = builder->str[head];
         builder->str[head] = builder->str[tail];
         builder->str[tail] = temp;
@@ -609,9 +606,11 @@ Status string_builder_ensureCapacity(StringBuilder *builder, long capacity) {
     if (capacity > MAX_CAPACITY) {
         capacity = MAX_CAPACITY;
     }
-    if (builder->capacity < capacity)
-        if (_ensure_capacity(builder, capacity) == FALSE)
+    if (builder->capacity < capacity) {
+        if (_ensure_capacity(builder, capacity) == FALSE) {
             return ALLOC_FAILURE;
+        }
+    }
 
     return OK;
 }
@@ -645,14 +644,10 @@ long string_builder_capacity(StringBuilder *builder) {
 
 Status string_builder_toString(StringBuilder *builder, char **result) {
 
-    if (builder->index == 0L) {
-        return STRUCT_EMPTY;
-    }
-
     Status status = OK;
     long i;
     char *str;
-    size_t bytes = ((builder->index + 1) * sizeof(char));
+    size_t bytes = ( ( builder->index + 1 ) * sizeof(char) );
     if ((str = (char *)malloc(bytes)) != NULL) {
         for (i = 0; i < builder->index; i++) {
             str[i] = builder->str[i];

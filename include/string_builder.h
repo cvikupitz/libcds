@@ -43,7 +43,8 @@ typedef struct string_builder StringBuilder;
  * needs to be resized. The percentage is expressed as a float in the range (0.0, 1.0], so 0.01
  * would be 1% growth, 0.1 is 10%, 1.0 would be 100%, and so forth. For example, if the builder has
  * a capacity of 175 characters and becomes full, and the growth factor is set to 0.14 (14%), then
- * the builder capacity increases from 175 to 200:
+ * the builder capacity increases from 175 to 200 (this in addition to the extra characters of the
+ * input string being inserted/appended):
  *    growth = ceiling(175 * 0.14)
  *           = ceiling(24.5)
  *           = 25
@@ -52,8 +53,7 @@ typedef struct string_builder StringBuilder;
  * Caller may also provide a string in which the builder will be initialized with its contents, or
  * NULL to create a builder instance with no content. If an initialization string is provided,
  * caller must ensure that `str` is null-terminated (if not, undefined behavior or errors may
- * occur). If the intial capacity specified is less than the length of `str`, the new default
- * capacity will become the length of `str`.
+ * occur).
  *
  * Params:
  *    builder - The pointer address to store the new StringBuilder instance.
@@ -229,7 +229,7 @@ Status string_builder_appendStrSubSequence(StringBuilder *builder, char *str, in
  *    OK - Operation was successful.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status string_builder_appendStrBuffer(StringBuilder *builder, StringBuilder *other);
+Status string_builder_appendStrBuilder(StringBuilder *builder, StringBuilder *other);
 
 /**
  * Inserts the string representation of the character `ch` into this sequence at the specified index
@@ -447,7 +447,7 @@ Status string_builder_insertStrSubSequence(StringBuilder *builder, long index, c
  *       2.) `offset` > length()
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status string_builder_insertStrBuffer(StringBuilder *builder, long offset, StringBuilder *other);
+Status string_builder_insertStrBuilder(StringBuilder *builder, long offset, StringBuilder *other);
 
 /**
  * Replaces the characters in a substring of this sequence with characters in the specified string
@@ -772,7 +772,6 @@ long string_builder_capacity(StringBuilder *builder);
  *    builder - The string builder to operate on.
  * Returns:
  *    OK - Operation was successful.
- *    STRUCT_EMPTY - String builder is currently empty.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status string_builder_toString(StringBuilder *builder, char **result);
