@@ -473,7 +473,7 @@ Status string_builder_insertStrBuilder(StringBuilder *builder, long offset, Stri
  *       2.) `start` > length()
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status string_builder_replace(StringBuilder *builder, int start, int end, char *str);
+Status string_builder_replace(StringBuilder *builder, long start, long end, char *str);
 
 /**
  * Fetches the char value in this builder at the specified index `i` and stores the result into

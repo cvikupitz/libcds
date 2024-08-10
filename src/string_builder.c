@@ -406,7 +406,63 @@ Status string_builder_insertStrBuilder(StringBuilder *builder, long offset, Stri
     }
 }
 
-Status string_builder_replace(UNUSED StringBuilder *builder, UNUSED int start, UNUSED int end, UNUSED char *str) { return OK; }
+static void _scrub_char_builder(char *builder, long start, long end) {
+
+    long i;
+    for (i = start; i < end; i++) {
+        builder[i] = '\0';
+    }
+}
+
+static Status _delete_substring(StringBuilder *builder, long start, long end) {
+
+    if (builder->index == 0L) {
+        return STRUCT_EMPTY;
+    }
+    if (start < 0 || start >= builder->index || start > end) {
+        return INVALID_INDEX;
+    }
+
+    long i;
+    long delta = end - start;
+    for (i = end; i < builder->index; i++) {
+        builder->str[i - delta] = builder->str[i];
+    }
+
+    _scrub_char_builder(builder->str, builder->index - delta, builder->index);
+    builder->index -= delta;
+
+    return OK;
+}
+
+Status string_builder_replace(StringBuilder *builder, long start, long end, char *str) {
+
+    if (start < 0 || start > end || start > builder->index) {
+        return INVALID_INDEX;
+    }
+
+    if (end > builder->index) {
+        end = builder->index;
+    }
+    int subLen = 0;
+    long diff = end - start;
+    int strLen = _get_str_length(str);
+    if (strLen > diff) {
+        subLen = strLen - diff;
+        char subStr[subLen + 1];
+        _load_substring_to_buffer(str, subStr, 0, subLen);
+        if (_insert_str(builder, start, subStr) != OK) {
+            return ALLOC_FAILURE;
+        }
+    }
+
+    long i, j;
+    for (i = ( start + subLen ), j = subLen; j < strLen; i++, j++) {
+        builder->str[i] = str[j];
+    }
+
+    return OK;
+}
 
 Status string_builder_charAt(StringBuilder *builder, long i, char *result) {
 
@@ -425,11 +481,11 @@ static Status _get_substring(StringBuilder *builder, long start, long end, char 
         return INVALID_INDEX;
     }
 
+    char *temp;
     int strLen = ( end - start ) + 1;
     if (allocate == TRUE) {
         int i;
-        char *temp;
-        if ((temp = (char *)malloc(dstBegin + strLen)) == NULL) {
+        if ((temp = (char *)malloc(strLen)) == NULL) {
             return ALLOC_FAILURE;
         }
         for (i = 0; i < strLen; i++) {
@@ -548,35 +604,6 @@ int string_builder_compareTo(StringBuilder *builder, StringBuilder *other) {
     for (a = builder->str, b = other->str; (*a != '\0') && (*b != '\0') && (*a == *b); a++, b++);
 
     return ( *a - *b );
-}
-
-static void _scrub_char_builder(char *builder, long start, long end) {
-
-    long i;
-    for (i = start; i < end; i++) {
-        builder[i] = '\0';
-    }
-}
-
-static Status _delete_substring(StringBuilder *builder, long start, long end) {
-
-    if (builder->index == 0L) {
-        return STRUCT_EMPTY;
-    }
-    if (start < 0 || start >= builder->index || start > end) {
-        return INVALID_INDEX;
-    }
-
-    long i;
-    long delta = end - start;
-    for (i = end; i < builder->index; i++) {
-        builder->str[i - delta] = builder->str[i];
-    }
-
-    _scrub_char_builder(builder->str, builder->index - delta, builder->index);
-    builder->index -= delta;
-
-    return OK;
 }
 
 Status string_builder_delete(StringBuilder *builder, long start, long end) {
