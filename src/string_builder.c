@@ -62,6 +62,7 @@ static int _get_str_length(char *str) {
  */
 static Boolean _ensure_capacity(StringBuilder *builder, long newCapacity) {
 
+    Boolean expanding = newCapacity > builder->capacity ? TRUE : FALSE;
     size_t bytes = ( ( newCapacity + 1 ) * sizeof(char) );
     char *temp;
 
@@ -72,10 +73,15 @@ static Boolean _ensure_capacity(StringBuilder *builder, long newCapacity) {
 
     // Update attributes after extension
     builder->str = temp;
-    long i;
-    for (i = builder->capacity; i < newCapacity + 1; i++) {
-        // Need to add null terminators in all new bytes
-        builder->str[i] = '\0';
+    if (expanding == TRUE) {
+        long i;
+        for (i = builder->capacity; i < newCapacity + 1; i++) {
+            // Need to add null terminators in all new bytes
+            builder->str[i] = '\0';
+        }
+    } else {
+        builder->str[newCapacity] = '\0';
+        builder->index = newCapacity;
     }
     builder->capacity = newCapacity;
 
