@@ -196,6 +196,7 @@ Status string_builder_new(StringBuilder **builder, long capacity, float growthFa
 
     // Initialize remaining struct properties
     temp->str = innerBuffer;
+    temp->index = 0L;
     temp->capacity = cap;
     temp->growthFactor = ( 0.0f < growthFactor ) && ( growthFactor <= 1.0f ) ?
                          growthFactor : DEFAULT_GROWTH_FACTOR;
