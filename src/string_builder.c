@@ -604,12 +604,12 @@ long string_builder_indexOfFrom(StringBuilder *builder, char *str, long fromInde
     return _search_first_occurrence(builder, str, fromIndex);
 }
 
-static Boolean _compare_str_backward(char *str, long strIdx, char *subStr int subLen,
+static Boolean _compare_str_backward(char *str, long strIdx, char *subStr, int subLen,
                                      int *compared) {
 
     int i;
     int subIdx = subLen - 1;
-    for (i = 0; ( str[strIdx] == subStr[subIdx] ) && ( strIdx > 0 ) && ( subIdx > 0 );
+    for (i = 0; ( str[strIdx] == subStr[subIdx] ) && ( strIdx >= 0 ) && ( subIdx >= 0 );
         i++, strIdx--, subIdx--);
     *compared = i;
 
@@ -633,7 +633,7 @@ static long _search_last_occurrence(StringBuilder *builder, char *sub, long star
         if (builder->str[i] == sub[subLen - 1]) {
             Boolean matched = _compare_str_backward(builder->str, i, sub, subLen, &compared);
             if (matched == TRUE) {
-                return i - subLen;
+                return i - subLen + 1;
             } else {
                 i -= compared;
             }
@@ -645,7 +645,7 @@ static long _search_last_occurrence(StringBuilder *builder, char *sub, long star
 
 long string_builder_lastIndexOf(StringBuilder *builder, char *str) {
 
-    return _search_last_occurrence(builder, str, builder->index);
+    return _search_last_occurrence(builder, str, builder->index - 1);
 }
 
 long string_builder_lastIndexOfFrom(StringBuilder *builder, char *str, long fromIndex) {
