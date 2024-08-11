@@ -376,7 +376,7 @@ Status string_builder_insertSubStr(StringBuilder *builder, long offset, char *st
                                    int end) {
 
     char temp[(end - start) + 1];
-    if ((_load_substring_to_buffer(str, temp, start, end)) == FALSE) {
+    if ((_load_substring_to_buffer(str, temp, start, end)) != OK) {
         return INVALID_INDEX;
     }
     return _insert_str(builder, offset, temp);
@@ -386,7 +386,7 @@ Status string_builder_insertStrSubSequence(StringBuilder *builder, long index, c
                                            int offset, int len) {
 
     char temp[len + 1];
-    if ((_load_substring_to_buffer(str, temp, offset, offset + len)) == FALSE) {
+    if ((_load_substring_to_buffer(str, temp, offset, offset + len)) != OK) {
         return INVALID_INDEX;
     }
     return _insert_str(builder, index, temp);
@@ -557,14 +557,37 @@ Status string_builder_setLength(StringBuilder *builder, long len, char padding) 
     return OK;
 }
 
-static long _search_first_occurrence(UNUSED StringBuilder *builder, UNUSED char *sub, UNUSED long start) {
+static Boolean _compare_str(char *str, char *subStr, int subLen, int *compared) {
+
+    int i;
+    char *c1, *c2;
+    for (i = 0, c1 = str, c2 = subStr; *c1 != '\0' && *c2 != '\0' && *c1 == *c2; c1++, c2++, i++);
+    *compared = i;
+
+    return i == subLen ? TRUE : FALSE;
+}
+
+static long _search_first_occurrence(StringBuilder *builder, char *sub, long start) {
 
     if (sub == NULL || start < 0 || start >= builder->index) {
         return -1L;
     }
 
-    //TODO
-    return 0L;
+    long i;
+    int compared;
+    int subLen = _get_str_length(sub);
+    for (i = start; i < builder->index; i++) {
+        if (builder->str[i] == sub[0]) {
+            Boolean matched = _compare_str(builder->str + i, sub, subLen, &compared);
+            if (matched == TRUE) {
+                return i;
+            } else {
+                i += compared;
+            }
+        }
+    }
+
+    return -1L;
 }
 
 long string_builder_indexOf(StringBuilder *builder, char *str) {
