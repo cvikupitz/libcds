@@ -62,8 +62,8 @@ $(SRC)/%.o: $(SRC)/%.c
 TEST_OBJS=$(TEST)/array_list_tests.o $(TEST)/bounded_queue_tests.o $(TEST)/bounded_stack_tests.o \
           $(TEST)/circular_list_tests.o $(TEST)/hash_map_tests.o $(TEST)/hash_set_tests.o \
           $(TEST)/heap_tests.o $(TEST)/iterator_tests.o $(TEST)/linked_list_tests.o \
-          $(TEST)/queue_tests.o $(TEST)/stack_tests.o $(TEST)/tree_map_tests.o \
-          $(TEST)/tree_set_tests.o
+          $(TEST)/queue_tests.o $(TEST)/stack_tests.o $(TEST)/string_builder_tests.o \
+          $(TEST)/tree_map_tests.o $(TEST)/tree_set_tests.o
 
 ##### List of testing executables to build
 EXECS=$(TEST)/array_list_tests $(TEST)/bounded_queue_tests $(TEST)/bounded_stack_tests \
@@ -96,6 +96,8 @@ $(TEST)/linked_list_tests: $(STATIC) $(TEST)/linked_list_tests.o
 $(TEST)/queue_tests: $(STATIC) $(TEST)/queue_tests.o
 	$(LINK)
 $(TEST)/stack_tests: $(STATIC) $(TEST)/stack_tests.o
+	$(LINK)
+$(TEST)/string_builder_tests: $(STATIC) $(TEST)/string_builder_tests.o
 	$(LINK)
 $(TEST)/tree_map_tests: $(STATIC) $(TEST)/tree_map_tests.o
 	$(LINK)

@@ -509,17 +509,26 @@ Status string_builder_replace(StringBuilder *builder, long start, long end, char
 
 Status string_builder_charAt(StringBuilder *builder, long i, char *result) {
 
-    if (i < 0L || i >= builder->index) {
-        return INVALID_INDEX;
-    }
+    VALIDATE_INDEX_RANGE(i, builder->index, builder->index);
 
     *result = builder->str[i];
     return OK;
 }
 
+/**
+ * Helper method to extract a substring from the builder `builder`, index-based, starting from index
+ * `start` (inclusive) and ending at `end` (exclusive). Substring is loaded into `dst` from the
+ * starting index `dstBegin`. Additonal parameter `allocate` is given to indicate whether `dstBegin`
+ * will be allocated from the heap or not. If set to TRUE, it will, otherwise `dst` is assumed to be
+ * a char array big enough to hold the result.
+ *
+ * Returns OK if successful, INVALID_INDEX if one of the indecies given is invalid, or ALLOC_FAILURE
+ * if any allocation fails.
+ */
 static Status _get_substring(StringBuilder *builder, long start, long end, char *dst, int dstBegin,
                              Boolean allocate) {
 
+    // Checks all given parameters for invalid input
     if (start < 0 || end < 0 || end > builder->index || start > end || dstBegin < 0) {
         return INVALID_INDEX;
     }
@@ -527,11 +536,13 @@ static Status _get_substring(StringBuilder *builder, long start, long end, char 
     char *temp;
     int strLen = ( end - start ) + 1;
     if (allocate == TRUE) {
+        // If allocation set to true, will allocate char array from heap
         int i;
         if ((temp = (char *)malloc(strLen)) == NULL) {
             return ALLOC_FAILURE;
         }
         for (i = 0; i < strLen; i++) {
+            // Need to nullify all characters in string
             temp[i] = '\0';
         }
         dst = temp;
@@ -540,6 +551,7 @@ static Status _get_substring(StringBuilder *builder, long start, long end, char 
     long i;
     int j;
     for (i = start, j = dstBegin; i < end; i++, j++) {
+        // Copies substring into the destination array
         dst[j] = builder->str[i];
     }
 
@@ -573,8 +585,10 @@ Status string_builder_setCharAt(StringBuilder *builder, long index, char ch) {
 Status string_builder_setLength(StringBuilder *builder, long len, char padding) {
 
     if (len < 0) {
+        // Validation check - invalid index given
         return INVALID_INDEX;
     } else if (len == builder->index) {
+        // If length given equals current length, don't need to do anything
         return OK;
     }
 
@@ -584,6 +598,7 @@ Status string_builder_setLength(StringBuilder *builder, long len, char padding) 
     }
 
     if (shrink) {
+        // Need to append null terminator at end if shrinking
         builder->str[len] = '\0';
     } else {
         long i;
