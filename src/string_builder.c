@@ -31,8 +31,6 @@ struct string_builder {
     float growthFactor;     // The growth factor to apply when expanding builder capacity
 };
 
-#define UNUSED __attribute__((unused))
-
 // The default capacity to assign when the capacity give is invalid
 #define DEFAULT_CAPACITY 16L
 // The maximum capacity allowed (to avoid builder overflow)
@@ -661,7 +659,8 @@ int string_builder_compareTo(StringBuilder *builder, StringBuilder *other) {
     }
 
     char *a, *b;
-    for (a = builder->str, b = other->str; (*a != '\0') && (*b != '\0') && (*a == *b); a++, b++);
+    for (a = builder->str, b = other->str; ( *a != '\0' ) && ( *b != '\0' ) && ( *a == *b );
+         a++, b++);
 
     return *a - *b;
 }
