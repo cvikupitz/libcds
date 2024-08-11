@@ -42,7 +42,9 @@ struct string_builder {
 // Macro to detect an overflow if longs `a` and `b` are added together
 #define ADD_OVERFLOWS(a, b) ( ( b > ( MAX_CAPACITY - a ) ) ? TRUE : FALSE )
 
-#define VALIDATE_INDEX_RANGE(start, end, len) if (start < 0 || start > end || start > len) \
+// Macro to vlaidate the given indecies `start` and `end`, and the max array size `len`
+// Returns `INVALID_INDEX` if invalid or nothing if valid
+#define VALIDATE_INDEX_RANGE(start, end, len) if (start < 0 || start > end || end > len) \
                                               { return INVALID_INDEX; }
 
 /**
@@ -131,7 +133,7 @@ static long _compute_next_capacity_increase(StringBuilder *builder, int strLen) 
 }
 
 /**
- * Local method to insert the specified string `str` into the builder, starting at index `index` in
+ * Local method to insert the specified string `str` into the builder, starting at index `offset` in
  * the builder.
  */
 static Status _insert_str(StringBuilder *builder, long offset, char *str) {
@@ -274,15 +276,25 @@ Status string_builder_appendDouble(StringBuilder *builder, double d) {
     return _insert_str(builder, builder->index, temp);
 }
 
+/**
+ * Helper method to load the specified buffer `dest` with a substring of `src`, index-based,
+ * starting from `dstBegine` (inclusive) to `dstEnd` (exclusive). The char array `dest` is assumed
+ * to be large enough to store the results. Returns OK if successful, INVALID_INDEX if one of
+ * the substring indecies specified is invalid.
+ */
 static Status _load_substring_to_buffer(char *src, char dest[], long dstBegin, long dstEnd) {
 
-    char *s = ( src != NULL ) ? src : "null";
-    int strLen = _get_str_length(s);
+    // For null strings, will use the string literal "null"
+    if (src == NULL) {
+        src = "null";
+    }
+    int strLen = _get_str_length(src);
     VALIDATE_INDEX_RANGE(dstBegin, dstEnd, strLen);
 
+    // Copies substring characters into buffer
     long i, j, subLen = ( dstEnd - dstBegin );
     for (i = 0, j = dstBegin; i < subLen; i++, j++) {
-        dest[i] = s[j];
+        dest[i] = src[j];
     }
     dest[i] = '\0';
 
@@ -312,14 +324,22 @@ Status string_builder_appendStrSubSequence(StringBuilder *builder, char *str, in
 Status string_builder_appendStrBuilder(StringBuilder *builder, StringBuilder *other) {
 
     if (other == NULL) {
+        // For null object, will use string literal "null"
         return _insert_str(builder, builder->index, "null");
     } else if (other->index == 0) {
+        // If other builder is empty, then do nothing
         return OK;
     } else if (builder == other) {
+        /*
+         * If both instances are equal, need to copy builder's contents to array and add that to the
+         * builder. Step is needed as the loop inside the insert string helper method will loop
+         * infinitely.
+         */
         char buffer[other->index];
         _load_substring_to_buffer(other->str, buffer, 0, other->index);
         return _insert_str(builder, builder->index, buffer);
     } else {
+        // If both instances are different and not empty, append as normal
         return _insert_str(builder, builder->index, other->str);
     }
 }
@@ -400,38 +420,55 @@ Status string_builder_insertStrSubSequence(StringBuilder *builder, long index, c
 Status string_builder_insertStrBuilder(StringBuilder *builder, long offset, StringBuilder *other) {
 
     if (other == NULL) {
+        // For null object, will use string literal "null"
         return _insert_str(builder, offset, "null");
     } else if (other->index == 0) {
+        // If other builder is empty, then do nothing
         return OK;
     } else if (builder == other) {
+        /*
+         * If both instances are equal, need to copy builder's contents to array and add that to the
+         * builder. Step is needed as the loop inside the insert string helper method will loop
+         * infinitely.
+         */
         char buffer[other->index];
         _load_substring_to_buffer(other->str, buffer, 0, other->index);
         return _insert_str(builder, offset, buffer);
     } else {
+        // If both instances are different and not empty, append as normal
         return _insert_str(builder, offset, other->str);
     }
 }
 
-static void _scrub_char_builder(char *builder, long start, long end) {
+/**
+ * Helper method to nullify all characters in array `buffer` from index `start` (inclusive) to
+ * `end` (exlcusive). By nullify, the characters are set to null terminators.
+ */
+static void _scrub_char_builder(char *buffer, long start, long end) {
 
     long i;
     for (i = start; i < end; i++) {
-        builder[i] = '\0';
+        buffer[i] = '\0';
     }
 }
 
+/**
+ * Helper method to delete a substring from the string builder `builder`, starting from index
+ * `start` (inclusive) to `end` (exclusive). All characters are shifted to fill in the delted
+ * characters as needed.
+ */
 static Status _delete_substring(StringBuilder *builder, long start, long end) {
 
+    VALIDATE_INDEX_RANGE(start, end, builder->index)
+    // Dont do anything if currently empty
     if (builder->index == 0L) {
         return STRUCT_EMPTY;
-    }
-    if (start < 0 || start >= builder->index || start > end) {
-        return INVALID_INDEX;
     }
 
     long i;
     long delta = end - start;
     for (i = end; i < builder->index; i++) {
+        // Shifts all characters in buffer over to left
         builder->str[i - delta] = builder->str[i];
     }
 
@@ -527,9 +564,7 @@ Status string_builder_getChars(StringBuilder *builder, long srcBegin, long srcEn
 
 Status string_builder_setCharAt(StringBuilder *builder, long index, char ch) {
 
-    if (index < 0 || index >= builder->index) {
-        return INVALID_INDEX;
-    }
+    VALIDATE_INDEX_RANGE(index, builder->index, builder->index);
 
     builder->str[index] = ch;
     return OK;
@@ -562,18 +597,39 @@ Status string_builder_setLength(StringBuilder *builder, long len, char padding) 
     return OK;
 }
 
+/**
+ * Helper method to perform a forward string comparison between `src` and `subStr`. Returns TRUE if
+ * the strings match, FALSE if not. In addition, the number of characters that are compared between
+ * the two strings before result is calculated is also stored in `compared`.
+ */
 static Boolean _compare_str_forward(char *str, char *subStr, int subLen, int *compared) {
 
     int i;
     char *c1, *c2;
+
+    /*
+     * Loops through both strings, comparing each character until one of the following conditions
+     * are met:
+     *   1.) The characters in both strings don't match
+     *   2.) We reach the end of the first string
+     *   3.) We reach the end of the substring
+     */
     for (i = 0, c1 = str, c2 = subStr; *c1 != '\0' && *c2 != '\0' && *c1 == *c2; c1++, c2++, i++);
     *compared = i;
 
+    // String is a match if number of characters compared equals the substring's length
     return i == subLen ? TRUE : FALSE;
 }
 
+/**
+ * Helper method to search the string builder `builder` for the first occurence of the substring
+ * `sub`, starting from index `start`. Returns the starting index in builder where first occurence
+ * is, from index `start`, or -1 if not found. -1 will also be returned if `start` is invalid, or
+ * `sub` is NULL.
+ */
 static long _search_first_occurrence(StringBuilder *builder, char *sub, long start) {
 
+    // Validation checks, return -1 if does not pass
     if (sub == NULL || start < 0 || start >= builder->index) {
         return -1L;
     }
@@ -582,15 +638,20 @@ static long _search_first_occurrence(StringBuilder *builder, char *sub, long sta
     int compared;
     int subLen = _get_str_length(sub);
     if (subLen == 0) {
+        // Base case - substring is empty, so return the starting index
         return start;
     }
 
+    // Loop through the string, starting from first character
     for (i = start; i < builder->index; i++) {
+        // Characters match, starts a search in the string
         if (builder->str[i] == sub[0]) {
             Boolean matched = _compare_str_forward(builder->str + i, sub, subLen, &compared);
             if (matched == TRUE) {
+                // Return starting index of substring if match is found
                 return i;
             } else {
+                // If not a match, can skip over these searched characters to save some work
                 i += compared;
             }
         }
@@ -609,20 +670,43 @@ long string_builder_indexOfFrom(StringBuilder *builder, char *str, long fromInde
     return _search_first_occurrence(builder, str, fromIndex);
 }
 
+/**
+ * Helper method to perform a backwards string comparison between `src` and `subStr`. To better
+ * assist with backwards comparison, caller should provide `strIdx` being the last index of `str`,
+ * and `subLen` being the length of `subStr`. Returns TRUE if the strings match, FALSE if not. In
+ * addition, the number of characters that are compared between the two strings before result is
+ * calculated is also stored in `compared`.
+ */
 static Boolean _compare_str_backward(char *str, long strIdx, char *subStr, int subLen,
                                      int *compared) {
 
     int i;
     int subIdx = subLen - 1;
+
+    /*
+     * Loops through both strings backwards, comparing each character until one of the following
+     * conditions are met:
+     *   1.) The characters in both strings don't match
+     *   2.) We reach the start of the first string
+     *   3.) We reach the start of the substring
+     */
     for (i = 0; ( str[strIdx] == subStr[subIdx] ) && ( strIdx >= 0 ) && ( subIdx >= 0 );
         i++, strIdx--, subIdx--);
     *compared = i;
 
+    // String is a match if number of characters compared equals the substring's length
     return i == subLen ? TRUE : FALSE;
 }
 
+/**
+ * Helper method to search the string builder `builder` for the last occurence of the substring
+ * `sub`, starting from index `start`. Returns the starting index in builder where last occurence
+ * is, from index `start`, or -1 if not found. -1 will also be returned if `start` is invalid, or
+ * `sub` is NULL.
+ */
 static long _search_last_occurrence(StringBuilder *builder, char *sub, long start) {
 
+    // Validation checks, return -1 if does not pass
     if (sub == NULL || start < 0 || start >= builder->index) {
         return -1L;
     }
@@ -631,15 +715,20 @@ static long _search_last_occurrence(StringBuilder *builder, char *sub, long star
     int compared;
     int subLen = _get_str_length(sub);
     if (subLen == 0) {
+        // Base case - substring is empty, so return the starting index
         return start;
     }
 
+    // Loop through the string, starting from last character
     for (i = start; i >= 0; i--) {
+        // Characters match, starts a search in the string
         if (builder->str[i] == sub[subLen - 1]) {
             Boolean matched = _compare_str_backward(builder->str, i, sub, subLen, &compared);
             if (matched == TRUE) {
-                return i - subLen + 1;
+                // Return starting index of substring if match is found
+                return ( i - subLen + 1 );
             } else {
+                // If not a match, can skip over these searched characters to save some work
                 i -= compared;
             }
         }
@@ -660,10 +749,18 @@ long string_builder_lastIndexOfFrom(StringBuilder *builder, char *str, long from
 
 int string_builder_compareTo(StringBuilder *builder, StringBuilder *other) {
 
+    // If both builders are same object, they are equal by definition
     if (builder == other) {
         return 0;
     }
 
+    /*
+     * Proceed through both strings comparing characters at same index in both until either:
+     *   1.) characters aren't equal
+     *   2.) we reach end of `builder`
+     *   3.) we reach end of `other`
+     * Then take difference of the next characters to get lexographical difference.
+     */
     char *a, *b;
     for (a = builder->str, b = other->str; ( *a != '\0' ) && ( *b != '\0' ) && ( *a == *b );
          a++, b++);
@@ -685,6 +782,13 @@ void string_builder_reverse(StringBuilder *builder) {
 
     char temp;
     long head, tail;
+
+    /*
+     * Performs a loop through the builder, one character pointing at the start and another at the
+     * end. Each iteration simply swaps the two characters then the first char proceeds to next
+     * index and the last char to the previous index. Loops until the two characters intersect or
+     * pass each each other.
+     */
     for (head = 0, tail = builder->index - 1; head < tail; head++, tail--) {
         temp = builder->str[head];
         builder->str[head] = builder->str[tail];
@@ -698,6 +802,8 @@ Status string_builder_ensureCapacity(StringBuilder *builder, long capacity) {
     if (capacity > MAX_CAPACITY) {
         capacity = MAX_CAPACITY;
     }
+
+    // Only ensure capacity if new capacity is greater than the current capacity
     if (builder->capacity < capacity) {
         if (_ensure_capacity(builder, capacity) == FALSE) {
             return ALLOC_FAILURE;
@@ -709,12 +815,17 @@ Status string_builder_ensureCapacity(StringBuilder *builder, long capacity) {
 
 Status string_builder_trimToSize(StringBuilder *builder) {
 
-    if (builder->index == 0L)
+    // If builder is empty, don't do anything
+    if (builder->index == 0L) {
         return STRUCT_EMPTY;
+    }
 
-    if (builder->index != builder->capacity)
-        if (_ensure_capacity(builder, builder->index) == FALSE)
+    // Only trim size down if there's still capacity leftover
+    if (builder->index != builder->capacity) {
+        if (_ensure_capacity(builder, builder->index) == FALSE) {
             return ALLOC_FAILURE;
+        }
+    }
 
     return OK;
 }
@@ -740,6 +851,8 @@ Status string_builder_toString(StringBuilder *builder, char **result) {
     long i;
     char *str;
     size_t bytes = ( ( builder->index + 1 ) * sizeof(char) );
+
+    // Allocate memory for the string, copying over the builder if successful
     if ((str = (char *)malloc(bytes)) != NULL) {
         for (i = 0; i < builder->index; i++) {
             str[i] = builder->str[i];
