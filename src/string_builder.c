@@ -44,6 +44,9 @@ struct string_builder {
 // Macro to detect an overflow if longs `a` and `b` are added together
 #define ADD_OVERFLOWS(a, b) ( ( b > ( MAX_CAPACITY - a ) ) ? TRUE : FALSE )
 
+#define VALIDATE_INDEX_RANGE(start, end, len) if (start < 0 || start > end || start > len) \
+                                              { return INVALID_INDEX; }
+
 /**
  * Local method to compute the length of the specified string `str`.
  */
@@ -130,9 +133,7 @@ static long _compute_next_capacity_increase(StringBuilder *builder, int strLen) 
 static Status _insert_str(StringBuilder *builder, long offset, char *str) {
 
     // Asserts the index supplied is valid
-    if (offset < 0 || offset > builder->index) {
-        return INVALID_INDEX;
-    }
+    VALIDATE_INDEX_RANGE(offset, builder->index, builder->index)
 
     char *ch;
     int len = _get_str_length(str);
@@ -268,13 +269,11 @@ Status string_builder_appendDouble(StringBuilder *builder, double d) {
     return _insert_str(builder, builder->index, temp);
 }
 
-static Boolean _load_substring_to_buffer(char *src, char dest[], long dstBegin, long dstEnd) {
+static Status _load_substring_to_buffer(char *src, char dest[], long dstBegin, long dstEnd) {
 
     char *s = ( src != NULL ) ? src : "null";
     int strLen = _get_str_length(s);
-    if ( ( dstBegin < 0 )  || ( dstBegin > dstEnd ) || ( dstEnd > strLen ) ) {
-        return FALSE;
-    }
+    VALIDATE_INDEX_RANGE(dstBegin, dstEnd, strLen);
 
     long i, j, subLen = ( dstEnd - dstBegin );
     for (i = 0, j = dstBegin; i < subLen; i++, j++) {
@@ -282,13 +281,14 @@ static Boolean _load_substring_to_buffer(char *src, char dest[], long dstBegin, 
     }
     dest[i] = '\0';
 
-    return TRUE;
+    return OK;
 }
 
 Status string_builder_appendSubStr(StringBuilder *builder, char *str, int start, int end) {
 
+    Status status;
     char temp[(end - start) + 1];
-    if ((_load_substring_to_buffer(str, temp, start, end)) == FALSE) {
+    if ((status = _load_substring_to_buffer(str, temp, start, end)) != OK) {
         return INVALID_INDEX;
     }
     return _insert_str(builder, builder->index, temp);
@@ -296,8 +296,9 @@ Status string_builder_appendSubStr(StringBuilder *builder, char *str, int start,
 
 Status string_builder_appendStrSubSequence(StringBuilder *builder, char *str, int offset, int len) {
 
+    Status status;
     char temp[len + 1];
-    if (_load_substring_to_buffer(str, temp, offset, offset + len) == FALSE) {
+    if ((status = _load_substring_to_buffer(str, temp, offset, offset + len)) != OK) {
         return INVALID_INDEX;
     }
     return _insert_str(builder, builder->index, temp);
@@ -561,6 +562,7 @@ static long _search_first_occurrence(UNUSED StringBuilder *builder, UNUSED char 
     if (sub == NULL || start < 0 || start >= builder->index) {
         return -1L;
     }
+
     //TODO
     return 0L;
 }
@@ -603,7 +605,7 @@ int string_builder_compareTo(StringBuilder *builder, StringBuilder *other) {
     char *a, *b;
     for (a = builder->str, b = other->str; (*a != '\0') && (*b != '\0') && (*a == *b); a++, b++);
 
-    return ( *a - *b );
+    return *a - *b;
 }
 
 Status string_builder_delete(StringBuilder *builder, long start, long end) {

@@ -42,7 +42,7 @@ LIB_OBJS=$(SRC)/array_list.o $(SRC)/bounded_stack.o $(SRC)/bounded_queue.o $(SRC
          $(SRC)/ts_array_list.o $(SRC)/ts_bounded_queue.o $(SRC)/ts_bounded_stack.o \
          $(SRC)/ts_circular_list.o $(SRC)/ts_hash_map.o $(SRC)/ts_hash_set.o $(SRC)/ts_heap.o \
          $(SRC)/ts_iterator.o $(SRC)/ts_linked_list.o $(SRC)/ts_queue.o $(SRC)/ts_stack.o \
-         $(SRC)/ts_tree_map.o $(SRC)/ts_tree_set.o
+         $(SRC)/ts_string_builder.o $(SRC)/ts_tree_map.o $(SRC)/ts_tree_set.o
 
 ##### Builds all libraries
 all: $(STATIC) $(SHARED)

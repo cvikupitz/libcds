@@ -25,7 +25,7 @@
 #include "cds_common.h"
 
 /**
- * Interface for the thread-safe StringBuilder ADT.
+ * Interface for the thread safe StringBuilder ADT.
  *
  * The StringBuilder is a mutable sequence of characters. The API provides a way for callers to
  * construct strings by appending and inserting string elements into the sequence. Other functions
@@ -66,6 +66,27 @@ typedef struct ts_string_builder ConcurrentStringBuilder;
  */
 Status ts_string_builder_new(ConcurrentStringBuilder **builder, long capacity, float growthFactor,
                              char *str);
+
+/**
+ * Locks the string builder, providing exclusive access to the calling thread. Caller is responsible
+ * for unlocking the string builder to allow other threads access.
+ *
+ * Params:
+ *    builder - The string builder to operate on.
+ * Returns:
+ *    None
+ */
+void ts_string_builder_lock(ConcurrentStringBuilder *builder);
+
+/**
+ * Unlocks the string builder, releasing the exclusive access from the calling thread.
+ *
+ * Params:
+ *    builder - The string builder to operate on.
+ * Returns:
+ *    None
+ */
+void ts_string_builder_unlock(ConcurrentStringBuilder *builder);
 
 /**
  * Appends the character `ch` to the builder.
@@ -232,7 +253,8 @@ Status ts_string_builder_appendStrSubSequence(ConcurrentStringBuilder *builder, 
  *    OK - Operation was successful.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status ts_string_builder_appendStrBuilder(StringBuilder *builder, StringBuilder *other);
+Status ts_string_builder_appendStrBuilder(ConcurrentStringBuilder *builder,
+                                          ConcurrentStringBuilder *other);
 
 /**
  * Inserts the string representation of the character `ch` into this sequence at the specified index
@@ -477,7 +499,7 @@ Status ts_string_builder_insertStrBuilder(ConcurrentStringBuilder *builder, long
  *       2.) `start` > length()
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
-Status ts_string_builder_replace(ConcurrentStringBuilder *builder, int start, int end, char *str);
+Status ts_string_builder_replace(ConcurrentStringBuilder *builder, long start, long end, char *str);
 
 /**
  * Fetches the char value in this builder at the specified index `i` and stores the result into
