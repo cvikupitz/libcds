@@ -27,18 +27,18 @@
 #include "tree_set.h"
 #include "ts_tree_set.h"
 
-/*
+/**
  * Struct for the thread-safe treeset.
  */
 struct ts_treeset {
-    pthread_mutex_t lock;       /* The lock */
-    TreeSet *instance;          /* Internal instance of TreeSet */
+    pthread_mutex_t lock;       // The lock
+    TreeSet *instance;          // Internal instance of TreeSet
 };
 
-/* Macro used for locking the tree */
-#define LOCK(x)    pthread_mutex_lock( &((x)->lock) )
-/* Macro used for unlocking the tree */
-#define UNLOCK(x)  pthread_mutex_unlock( &((x)->lock) )
+// Macro used for locking the tree `t`
+#define LOCK(t)    pthread_mutex_lock( &((t)->lock) )
+// Macro used for unlocking the tree `t`
+#define UNLOCK(t)  pthread_mutex_unlock( &((t)->lock) )
 
 Status ts_treeset_new(ConcurrentTreeSet **tree, int (*comparator)(void *, void *)) {
 
@@ -46,19 +46,20 @@ Status ts_treeset_new(ConcurrentTreeSet **tree, int (*comparator)(void *, void *
     Status status;
     pthread_mutexattr_t attr;
 
-    /* Allocates memory for the treeset */
+    // Allocates memory for the treeset
     temp = (ConcurrentTreeSet *)malloc(sizeof(ConcurrentTreeSet));
-    if (temp == NULL)
+    if (temp == NULL) {
         return ALLOC_FAILURE;
+    }
 
-    /* Creates the internal treeset instance */
+    // Creates the internal treeset instance
     status = treeset_new(&(temp->instance), comparator);
     if (status != OK) {
         free(temp);
         return status;
     }
 
-    /* Creates the pthread_mutex for locking */
+    // Creates the pthread_mutex for locking
     pthread_mutexattr_init(&attr);
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
     pthread_mutex_init(&(temp->lock), &attr);
@@ -214,7 +215,7 @@ Status ts_treeset_iterator(ConcurrentTreeSet *tree, ConcurrentIterator **iter) {
     Array *array;
     Status status;
 
-    /* Creates the array of items and locks it */
+    // Creates the array of items and locks it
     LOCK(tree);
     status = treeset_toArray(tree->instance, &array);
     if (status != OK) {
@@ -222,7 +223,7 @@ Status ts_treeset_iterator(ConcurrentTreeSet *tree, ConcurrentIterator **iter) {
         return status;
     }
 
-    /* Creates the iterator */
+    // Creates the iterator
     status = ts_iterator_new(iter, &(tree->lock), array->items, array->len);
     if (status != OK) {
         FREE_ARRAY(array);

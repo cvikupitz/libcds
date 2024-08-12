@@ -27,39 +27,40 @@
 #include "hash_set.h"
 #include "ts_hash_set.h"
 
-/*
+/**
  * Struct for the thread-safe hashset.
  */
 struct ts_hashset {
-    pthread_mutex_t lock;       /* The lock */
-    HashSet *instance;          /* Internal instance of HashSet */
+    pthread_mutex_t lock;       // The lock
+    HashSet *instance;          // Internal instance of HashSet
 };
 
-/* Macro used for locking the set */
-#define LOCK(x)    pthread_mutex_lock( &((x)->lock) )
-/* Macro used for unlocking the set */
-#define UNLOCK(x)  pthread_mutex_unlock( &((x)->lock) )
+// Macro used for locking the set `hs`
+#define LOCK(hs)    pthread_mutex_lock( &((hs)->lock) )
+// Macro used for unlocking the set
+#define UNLOCK(hs)  pthread_mutex_unlock( &((hs)->lock) )
 
 Status ts_hashset_new(ConcurrentHashSet **set, long (*hash)(void *, long),
-        int (*comparator)(void *, void *), long capacity, double loadFactor)
-{
+        int (*comparator)(void *, void *), long capacity, double loadFactor) {
+
     ConcurrentHashSet *temp;
     Status status;
     pthread_mutexattr_t attr;
 
-    /* Allocates memory for the hashset */
+    // Allocates memory for the hashset
     temp = (ConcurrentHashSet *)malloc(sizeof(ConcurrentHashSet));
-    if (temp == NULL)
+    if (temp == NULL) {
         return ALLOC_FAILURE;
+    }
 
-    /* Creates internal instance of hashset */
+    // Creates internal instance of hashset
     status = hashset_new(&(temp->instance), hash, comparator, capacity, loadFactor);
     if (status != OK) {
         free(temp);
         return status;
     }
 
-    /* Creates pthread_mutex for locking */
+    // Creates pthread_mutex for locking
     pthread_mutexattr_init(&attr);
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
     pthread_mutex_init(&(temp->lock), &attr);
@@ -143,7 +144,7 @@ Status ts_hashset_iterator(ConcurrentHashSet *set, ConcurrentIterator **iter) {
     Array *array;
     Status status;
 
-    /* Creates array of items and locks it */
+    // Creates array of items and locks it
     LOCK(set);
     status = hashset_toArray(set->instance, &array);
     if (status != OK) {
@@ -151,7 +152,7 @@ Status ts_hashset_iterator(ConcurrentHashSet *set, ConcurrentIterator **iter) {
         return status;
     }
 
-    /* Creates the iterator */
+    // Creates the iterator
     status = ts_iterator_new(iter, &(set->lock), array->items, array->len);
     if (status != OK) {
         FREE_ARRAY(array);
