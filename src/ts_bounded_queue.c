@@ -27,18 +27,18 @@
 #include "bounded_queue.h"
 #include "ts_bounded_queue.h"
 
-/*
+/**
  * Struct for the thread-safe bounded queue.
  */
 struct ts_bounded_queue {
-    pthread_mutex_t lock;       /* The lock */
-    BoundedQueue *instance;     /* Internal instance of BoundedQueue */
+    pthread_mutex_t lock;       // The lock
+    BoundedQueue *instance;     // Internal instance of BoundedQueue
 };
 
-/* Macro used for locking the queue */
-#define LOCK(x)    pthread_mutex_lock( &((x)->lock) )
-/* Macro used for unlocking the queue */
-#define UNLOCK(x)  pthread_mutex_unlock( &((x)->lock) )
+// Macro used for locking the queue `q`
+#define LOCK(q)    pthread_mutex_lock( &((q)->lock) )
+// Macro used for unlocking the queue `q`
+#define UNLOCK(q)  pthread_mutex_unlock( &((q)->lock) )
 
 Status ts_boundedqueue_new(ConcurrentBoundedQueue **queue, long capacity) {
 
@@ -46,19 +46,20 @@ Status ts_boundedqueue_new(ConcurrentBoundedQueue **queue, long capacity) {
     Status status;
     pthread_mutexattr_t attr;
 
-    /* Allocates memory for the queue */
+    // Allocates memory for the queue
     temp = (ConcurrentBoundedQueue *)malloc(sizeof(ConcurrentBoundedQueue));
-    if (temp == NULL)
+    if (temp == NULL) {
         return ALLOC_FAILURE;
+    }
 
-    /* Creates the internal queue instance */
+    // Creates the internal queue instance
     status = boundedqueue_new(&(temp->instance), capacity);
     if (status != OK) {
         free(temp);
         return status;
     }
 
-    /* Creates the pthread_mutex for locking */
+    // Creates the pthread_mutex for locking
     pthread_mutexattr_init(&attr);
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
     pthread_mutex_init(&(temp->lock), &attr);
@@ -160,7 +161,7 @@ Status ts_boundedqueue_iterator(ConcurrentBoundedQueue *queue, ConcurrentIterato
     Array *array;
     Status status;
 
-    /* Creates the array of items and locks it */
+    // Creates the array of items and locks it
     LOCK(queue);
     status = boundedqueue_toArray(queue->instance, &array);
     if (status != OK) {
@@ -168,7 +169,7 @@ Status ts_boundedqueue_iterator(ConcurrentBoundedQueue *queue, ConcurrentIterato
         return status;
     }
 
-    /* Creates the iterator */
+    // Creates the iterator
     status = ts_iterator_new(iter, &(queue->lock), array->items, array->len);
     if (status != OK) {
         FREE_ARRAY(array);

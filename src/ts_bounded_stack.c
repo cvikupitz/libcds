@@ -27,18 +27,18 @@
 #include "bounded_stack.h"
 #include "ts_bounded_stack.h"
 
-/*
+/**
  * Struct for the thread-safe bounded stack.
  */
 struct ts_bounded_stack {
-    pthread_mutex_t lock;       /* The lock */
-    BoundedStack *instance;     /* Internal instance of BoundedStack */
+    pthread_mutex_t lock;       // The lock
+    BoundedStack *instance;     // Internal instance of BoundedStack
 };
 
-/* Macro used for locking the stack */
-#define LOCK(x)    pthread_mutex_lock( &((x)->lock) )
-/* Macro used for unlocking the stack */
-#define UNLOCK(x)  pthread_mutex_unlock( &((x)->lock) )
+// Macro used for locking the stack `s`
+#define LOCK(s)    pthread_mutex_lock( &((s)->lock) )
+// Macro used for unlocking the stack `s`
+#define UNLOCK(s)  pthread_mutex_unlock( &((s)->lock) )
 
 Status ts_boundedstack_new(ConcurrentBoundedStack **stack, long capacity) {
 
@@ -46,19 +46,20 @@ Status ts_boundedstack_new(ConcurrentBoundedStack **stack, long capacity) {
     Status status;
     pthread_mutexattr_t attr;
 
-    /* Allocates memory for the new stack */
+    // Allocates memory for the new stack
     temp = (ConcurrentBoundedStack *)malloc(sizeof(ConcurrentBoundedStack));
-    if (temp == NULL)
+    if (temp == NULL) {
         return ALLOC_FAILURE;
+    }
 
-    /* Creates the internal stack instance */
+    // Creates the internal stack instance
     status = boundedstack_new(&(temp->instance), capacity);
     if (status != OK) {
         free(temp);
         return status;
     }
 
-    /* Creates the pthread_mutex for locking */
+    // Creates the pthread_mutex for locking
     pthread_mutexattr_init(&attr);
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
     pthread_mutex_init(&(temp->lock), &attr);
@@ -160,7 +161,7 @@ Status ts_boundedstack_iterator(ConcurrentBoundedStack *stack, ConcurrentIterato
     Array *array;
     Status status;
 
-    /* Creates the array of items and locks it */
+    // Creates the array of items and locks it
     LOCK(stack);
     status = boundedstack_toArray(stack->instance, &array);
     if (status != OK) {
@@ -168,7 +169,7 @@ Status ts_boundedstack_iterator(ConcurrentBoundedStack *stack, ConcurrentIterato
         return status;
     }
 
-    /* Creates the iterator */
+    // Creates the iterator
     status = ts_iterator_new(iter, &(stack->lock), array->items, array->len);
     if (status != OK) {
         FREE_ARRAY(array);

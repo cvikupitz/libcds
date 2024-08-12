@@ -32,10 +32,10 @@ struct ts_string_builder {
     StringBuilder *instance;
 };
 
-// Macro used for locking the string builder
-#define LOCK(x)    pthread_mutex_lock( &((x)->lock) )
-// Macro used for unlocking the string builder
-#define UNLOCK(x)  pthread_mutex_unlock( &((x)->lock) )
+// Macro used for locking the string builder `s`
+#define LOCK(s)    pthread_mutex_lock( &((s)->lock) )
+// Macro used for unlocking the string builder `s`
+#define UNLOCK(s)  pthread_mutex_unlock( &((s)->lock) )
 
 Status ts_string_builder_new(ConcurrentStringBuilder **builder, long capacity, float growthFactor,
                              char *str) {
@@ -45,8 +45,9 @@ Status ts_string_builder_new(ConcurrentStringBuilder **builder, long capacity, f
     pthread_mutexattr_t attr;
 
     temp = (ConcurrentStringBuilder *)malloc(sizeof(ConcurrentStringBuilder));
-    if (temp == NULL)
+    if (temp == NULL) {
         return ALLOC_FAILURE;
+    }
 
     status = string_builder_new(&(temp->instance), capacity, growthFactor, str);
     if (status != OK) {

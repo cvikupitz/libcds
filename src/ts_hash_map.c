@@ -27,40 +27,42 @@
 #include "hash_map.h"
 #include "ts_hash_map.h"
 
-/*
+/**
  * Struct for the thread-safe hashmap.
  */
 struct ts_hashmap {
-    pthread_mutex_t lock;       /* The lock */
-    HashMap *instance;          /* Internal instance of HashMap */
+    pthread_mutex_t lock;       // The lock
+    HashMap *instance;          // Internal instance of HashMap
 };
 
-/* Macro used for locking the map */
-#define LOCK(x)    pthread_mutex_lock( &((x)->lock) )
-/* Macro used for unlocking the map */
-#define UNLOCK(x)  pthread_mutex_unlock( &((x)->lock) )
+// Macro used for locking the map `hm`
+#define LOCK(hm)    pthread_mutex_lock( &((hm)->lock) )
+// Macro used for unlocking the map `hm`
+#define UNLOCK(hm)  pthread_mutex_unlock( &((hm)->lock) )
 
 Status ts_hashmap_new(ConcurrentHashMap **map, long (*hash)(void *, long),
-        int (*keyComparator)(void *, void *), long capacity, double loadFactor,
-        void (*keyDestructor)(void *)) {
+                      int (*keyComparator)(void *, void *), long capacity, double loadFactor,
+                      void (*keyDestructor)(void *)) {
 
     ConcurrentHashMap *temp;
     Status status;
     pthread_mutexattr_t attr;
 
-    /* Allocates memory for the new hashmap */
+    // Allocates memory for the new hashmap
     temp = (ConcurrentHashMap *)malloc(sizeof(ConcurrentHashMap));
-    if (temp == NULL)
+    if (temp == NULL) {
         return ALLOC_FAILURE;
+    }
 
-    /* Creates the internal hashmap */
-    status = hashmap_new(&(temp->instance), hash, keyComparator, capacity, loadFactor, keyDestructor);
+    // Creates the internal hashmap
+    status = hashmap_new(&(temp->instance), hash, keyComparator, capacity, loadFactor,
+                         keyDestructor);
     if (status != OK) {
         free(temp);
         return status;
     }
 
-    /* Creates pthread_mutex for locking */
+    // Creates pthread_mutex for locking
     pthread_mutexattr_init(&attr);
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
     pthread_mutex_init(&(temp->lock), &attr);
@@ -162,7 +164,7 @@ Status ts_hashmap_iterator(ConcurrentHashMap *map, ConcurrentIterator **iter) {
     Array *array;
     Status status;
 
-    /* Creates the array of items and locks it */
+    // Creates the array of items and locks it
     LOCK(map);
     status = hashmap_entryArray(map->instance, &array);
     if (status != OK) {
@@ -170,7 +172,7 @@ Status ts_hashmap_iterator(ConcurrentHashMap *map, ConcurrentIterator **iter) {
         return status;
     }
 
-    /* Creates the iterator */
+    // Creates the iterator
     status = ts_iterator_new(iter, &(map->lock), array->items, array->len);
     if (status != OK) {
         FREE_ARRAY(array);

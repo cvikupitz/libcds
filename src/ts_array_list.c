@@ -27,18 +27,18 @@
 #include "array_list.h"
 #include "ts_array_list.h"
 
-/*
+/**
  * Struct for the thread-safe arraylist.
  */
 struct ts_arraylist {
-    pthread_mutex_t lock;       /* The lock */
-    ArrayList *instance;        /* Internal instance of ArrayList */
+    pthread_mutex_t lock;       // The lock
+    ArrayList *instance;        // Internal instance of ArrayList
 };
 
-/* Macro used for locking the arraylist */
-#define LOCK(x)    pthread_mutex_lock( &((x)->lock) )
-/* Macro used for unlocking the arraylist */
-#define UNLOCK(x)  pthread_mutex_unlock( &((x)->lock) )
+// Macro used for locking the arraylist `li`
+#define LOCK(li)    pthread_mutex_lock( &((li)->lock) )
+// Macro used for unlocking the arraylist `li`
+#define UNLOCK(li)  pthread_mutex_unlock( &((li)->lock) )
 
 Status ts_arraylist_new(ConcurrentArrayList **list, long capacity) {
 
@@ -46,19 +46,20 @@ Status ts_arraylist_new(ConcurrentArrayList **list, long capacity) {
     Status status;
     pthread_mutexattr_t attr;
 
-    /* Allocates memory for the arraylist */
+    // Allocates memory for the arraylist
     temp = (ConcurrentArrayList *)malloc(sizeof(ConcurrentArrayList));
-    if (temp == NULL)
+    if (temp == NULL) {
         return ALLOC_FAILURE;
+    }
 
-    /* Creates new internal arraylist instance */
+    // Creates new internal arraylist instance
     status = arraylist_new(&(temp->instance), capacity);
     if (status != OK) {
         free(temp);
         return status;
     }
 
-    /* Create the pthread_mutex for locking */
+    // Create the pthread_mutex for locking
     pthread_mutexattr_init(&attr);
     pthread_mutexattr_settype(&attr, PTHREAD_MUTEX_RECURSIVE);
     pthread_mutex_init(&(temp->lock), &attr);
@@ -187,7 +188,7 @@ Status ts_arraylist_iterator(ConcurrentArrayList *list, ConcurrentIterator **ite
     Array *array;
     Status status;
 
-    /* Creates the array of items and locks the instance */
+    // Creates the array of items and locks the instance
     LOCK(list);
     status = arraylist_toArray(list->instance, &array);
     if (status != OK) {
@@ -195,7 +196,7 @@ Status ts_arraylist_iterator(ConcurrentArrayList *list, ConcurrentIterator **ite
         return status;
     }
 
-    /* Creates the iterator */
+    // Creates the iterator
     status = ts_iterator_new(iter, &(list->lock), array->items, array->len);
     if (status != OK) {
         FREE_ARRAY(array);
