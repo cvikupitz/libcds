@@ -187,6 +187,7 @@ Status linkedlist_removeLast(LinkedList *list, void **last);
  *    INVALID_INDEX - Index given is invalid:
  *       1.) `i` < 0
  *       2.) `i` >= size
+ */
 Status linkedlist_remove(LinkedList *list, long i, void **item);
 
 /**

@@ -3,52 +3,50 @@
  *
  * Copyright (c) 2020 Cole Vikupitz
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #include <stdlib.h>
 #include "stack.h"
 
-/*
+/**
  * Struct for a node inside the stack.
  */
 typedef struct node {
-    struct node *next;  /* Points to the next node */
-    void *data;         /* Pointer that holds the element */
+    struct node *next;      // Points to the next node
+    void *data;             // Pointer that holds the element
 } Node;
 
-/*
+/**
  * The struct for the stack ADT.
  */
 struct stack {
-    Node *top;          /* Pointer to the top element of the stack */
-    long size;          /* The stack's current size */
+    Node *top;              // Pointer to the top element of the stack
+    long size;              // The stack's current size
 };
 
 Status stack_new(Stack **stack) {
 
-    /* Allocates the struct, check for allocation failure */
+    // Allocates the struct, check for allocation failure
     Stack *temp = (Stack *)malloc(sizeof(Stack));
-    if (temp == NULL)
+    if (temp == NULL) {
         return ALLOC_FAILURE;
+    }
 
-    /* Initializes the stack's struct members */
+    // Initializes the stack's struct members
     temp->top = NULL;
     temp->size = 0L;
     *stack = temp;
@@ -56,17 +54,18 @@ Status stack_new(Stack **stack) {
     return OK;
 }
 
-/* Macro to check if the stack is currently empty */
-#define IS_EMPTY(x)  ( ((x)->size == 0L) ? TRUE : FALSE )
+// Macro to check if the stack `s` is currently empty
+#define IS_EMPTY(s)  ( ((s)->size == 0L) ? TRUE : FALSE )
 
 Status stack_push(Stack *stack, void *item) {
 
-    /* Generate node for pushing item */
+    // Generate node for pushing item
     Node *node = (Node *)malloc(sizeof(Node));
-    if (node == NULL)
+    if (node == NULL) {
         return ALLOC_FAILURE;
+    }
 
-    /* Links node to stack, store data into node */
+    // Links node to stack, store data into node
     node->next = stack->top;
     node->data = item;
     stack->top = node;
@@ -77,10 +76,11 @@ Status stack_push(Stack *stack, void *item) {
 
 Status stack_peek(Stack *stack, void **top) {
 
-    /* Checks if the stack is empty */
-    if (IS_EMPTY(stack) == TRUE)
+    // Checks if the stack is empty
+    if (IS_EMPTY(stack) == TRUE) {
         return STRUCT_EMPTY;
-    /* Extracts the top element, saves to pointer */
+    }
+    // Extracts the top element, saves to pointer
     *top = stack->top->data;
 
     return OK;
@@ -88,41 +88,44 @@ Status stack_peek(Stack *stack, void **top) {
 
 Status stack_pop(Stack *stack, void **top) {
 
-    /* Checks if the stack is empty */
-    if (IS_EMPTY(stack) == TRUE)
+    // Checks if the stack is empty
+    if (IS_EMPTY(stack) == TRUE) {
         return STRUCT_EMPTY;
+    }
 
-    /* Unlinks the node from stack */
+    // Unlinks the node from stack
     Node *temp = stack->top;
     stack->top = temp->next;
     *top = temp->data;
-    /* Free the allocated node */
+    // Free the allocated node
     free(temp);
     stack->size--;
 
     return OK;
 }
 
-/*
- * Clears out the stack of all its elements.
+/**
+ * Helper method to clear out the stack `stack` of all its elements, applying the destructor method
+ * `destructor` on each element (or if NULL, nothing will be done to the elements).
  */
-static void clearStack(Stack *stack, void (*destructor)(void *)) {
+static void _clear_stack(Stack *stack, void (*destructor)(void *)) {
 
     Node *curr = stack->top, *next = NULL;
     long i;
 
     for (i = 0L; i < stack->size; i++) {
         next = curr->next;
-        /* Free all allocated memory */
-        if (destructor != NULL)
+        // Free all allocated memory
+        if (destructor != NULL) {
             (*destructor)(curr->data);
+        }
         free(curr);
         curr = next;
     }
 }
 
 void stack_clear(Stack *stack, void (*destructor)(void *)) {
-    clearStack(stack, destructor);
+    _clear_stack(stack, destructor);
     stack->top = NULL;
     stack->size = 0L;
 }
@@ -135,48 +138,53 @@ Boolean stack_isEmpty(Stack *stack) {
     return IS_EMPTY(stack);
 }
 
-/*
- * Generates and returns an array representation of the stack.
+/**
+ * Helper method to generate an array representation of stack. Returns the allocated array with the
+ * populated elements, or NULL if failed (allocation error).
  */
-static void **generateArray(Stack *stack) {
+static void **_generate_array(Stack *stack) {
 
     Node *temp = NULL;
     long i = 0L;
     size_t bytes;
     void **items = NULL;
 
-    /* Allocates memory for the array */
+    // Allocates memory for the array
     bytes = ( stack->size * sizeof(void *) );
     items = (void **)malloc(bytes);
-    if (items == NULL)
+    if (items == NULL) {
         return NULL;
+    }
 
-    /* Populates the array with the stack items */
-    for (temp = stack->top; temp != NULL; temp = temp->next)
+    // Populates the array with the stack items
+    for (temp = stack->top; temp != NULL; temp = temp->next) {
         items[i++] = temp->data;
+    }
 
     return items;
 }
 
 Status stack_toArray(Stack *stack, Array **array) {
 
-    /* Checks if the stack is empty */
-    if (IS_EMPTY(stack) == TRUE)
+    // Checks if the stack is empty
+    if (IS_EMPTY(stack) == TRUE) {
         return STRUCT_EMPTY;
+    }
 
-    /* Generate the array of stack items */
-    void **items = generateArray(stack);
-    if (items == NULL)
+    // Generate the array of stack items
+    void **items = _generate_array(stack);
+    if (items == NULL) {
         return ALLOC_FAILURE;
+    }
 
-    /* Allocate memory for the array struct */
+    // Allocate memory for the array struct
     Array *temp = (Array *)malloc(sizeof(Array));
     if (temp == NULL) {
         free(items);
         return ALLOC_FAILURE;
     }
 
-    /* Initialize the array struct members */
+    // Initialize the array struct members
     temp->items = items;
     temp->len = stack->size;
     *array = temp;
@@ -188,16 +196,18 @@ Status stack_iterator(Stack *stack, Iterator **iter) {
 
     Iterator *temp = NULL;
 
-    /* Checks if the stack is empty */
-    if (IS_EMPTY(stack) == TRUE)
+    // Checks if the stack is empty
+    if (IS_EMPTY(stack) == TRUE) {
         return STRUCT_EMPTY;
+    }
 
-    /* Generates the array of items for iterator */
-    void **items = generateArray(stack);
-    if (items == NULL)
+    // Generates the array of items for iterator
+    void **items = _generate_array(stack);
+    if (items == NULL) {
         return ALLOC_FAILURE;
+    }
 
-    /* Creates a new iterator with the items */
+    // Creates a new iterator with the items
     Status status = iterator_new(&temp, items, stack->size);
     if (status != OK) {
         free(items);
@@ -209,6 +219,6 @@ Status stack_iterator(Stack *stack, Iterator **iter) {
 }
 
 void stack_destroy(Stack *stack, void (*destructor)(void *)) {
-    clearStack(stack, destructor);
+    _clear_stack(stack, destructor);
     free(stack);
 }
