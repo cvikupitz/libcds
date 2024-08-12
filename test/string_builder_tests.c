@@ -228,7 +228,7 @@ static void _test_append_long() {
     string_builder_destroy(builder);
 }
 
-static void _test_append_sub_string() {
+static void _test_append_sub_string1() {
 
     StringBuilder *builder;
     Status status;
@@ -245,16 +245,18 @@ static void _test_append_sub_string() {
     // Test invalid inputs
     CU_ASSERT_EQUAL( string_builder_appendSubStr(builder, other, -1, otherLen), INVALID_INDEX );
     CU_ASSERT_EQUAL( string_builder_appendSubStr(builder, other, -30, otherLen), INVALID_INDEX );
-    CU_ASSERT_EQUAL( string_builder_appendSubStr(builder, other, -30, otherLen), INVALID_INDEX );
-
-    status = string_builder_appendLong(builder, l);
-    CU_ASSERT_EQUAL( status, OK );
+    CU_ASSERT_EQUAL( string_builder_appendSubStr(builder, other, otherLen + 1, otherLen), INVALID_INDEX );
+    CU_ASSERT_EQUAL( string_builder_appendSubStr(builder, other, otherLen + 62, otherLen), INVALID_INDEX );
+    CU_ASSERT_EQUAL( string_builder_appendSubStr(builder, other, 0, otherLen + 20), INVALID_INDEX );
+    CU_ASSERT_EQUAL( string_builder_appendSubStr(builder, other, 0, otherLen + 98), INVALID_INDEX );
+    CU_ASSERT_EQUAL( string_builder_appendSubStr(builder, other, -1, otherLen + 1999), INVALID_INDEX );
+    CU_ASSERT_EQUAL( string_builder_appendSubStr(builder, other, -87, otherLen + 2), INVALID_INDEX );
 
     char *temp;
     status = string_builder_toString(builder, &temp);
     CU_ASSERT_EQUAL( status, OK );
-    CU_ASSERT_EQUAL( strcmp("999450331", temp), 0 );
-    CU_ASSERT_EQUAL( string_builder_length(builder), 9 );
+    CU_ASSERT_EQUAL( strcmp(init, temp), 0 );
+    CU_ASSERT_EQUAL( string_builder_length(builder), initLen );
     free(temp);
     string_builder_destroy(builder);
 }
@@ -281,6 +283,7 @@ int main(UNUSED int argc, UNUSED char **argv) {
     CU_add_test(suite, "StringBuilder - Append Short", _test_append_short);
     CU_add_test(suite, "StringBuilder - Append Int", _test_append_int);
     CU_add_test(suite, "StringBuilder - Append Long", _test_append_long);
+    CU_add_test(suite, "StringBuilder - Append SubStr #1", _test_append_sub_string1);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
