@@ -3,23 +3,20 @@
  *
  * Copyright (c) 2020 Cole Vikupitz
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #ifndef _CDS_TS_TREEMAP_H__
@@ -32,27 +29,24 @@
 /**
  * Declaration for the thread-safe TreeMap ADT.
  *
- * A red-black tree set storing elements based on key-value pairings. The treemap
- * is sorted by the stored keys based on their natural ordering defined through a
- * comparator provided at construction time. Provides self-balancing capabilities
- * for even distribution.
+ *  A red-black tree set storing elements based on key-value pairings. The treemap is sorted by the
+ * stored keys based on their natural ordering defined through a comparator provided at construction
+ * time. Provides self-balancing capabilities for even distribution.
  *
  * Modeled after the Java 7 TreeMap interface.
  */
 typedef struct ts_treemap ConcurrentTreeMap;
 
 /**
- * Constructs a new treemap, then stores the new instance into '*tree'.
+ * Constructs a new treemap, then stores the new instance into `*tree`.
  *
- * The comparator function specified should return an integer comparing the two
- * specified keys, such that cmp(a, b) returns 0 when a == b, <0 when a < b, and
- * >0 when a > b.
+ *  The comparator function specified should return an integer comparing the two specified keys,
+ * such that cmp(a, b) returns 0 when a == b, <0 when a < b, and >0 when a > b.
  *
- * The key destructor function should be a function that performs any de-allocation
- * needed on the treemap's keys (if applicable). This function will be invoked on
- * the entry's key prior to being removed, the treemap being cleared, or the treemap
- * being destructed. If no de-allocation/destructor for the custom keys is required,
- * you may pass NULL as this parameter.
+ * The key destructor function should be a function that performs any de-allocation needed on the
+ * treemap's keys (if applicable). This function will be invoked on the entry's key prior to being
+ * removed, the treemap being cleared, or the treemap being destructed. If no de-allocation or
+ * destructor for the custom keys is required, you may pass NULL as this parameter.
  *
  * Params:
  *    tree - The pointer address to store the new TreeMap instance.
@@ -63,11 +57,11 @@ typedef struct ts_treemap ConcurrentTreeMap;
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_treemap_new(ConcurrentTreeMap **tree, int (*keyComparator)(void *, void *),
-        void (*keyDestructor)(void *));
+                      void (*keyDestructor)(void *));
 
 /**
- * Locks the treemap, providing exclusive access to the calling thread. Caller
- * is responsible for unlocking the treemap to allow other threads access.
+ * Locks the treemap, providing exclusive access to the calling thread. Caller is responsible for
+ * unlocking the treemap to allow other threads access.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -87,9 +81,8 @@ void ts_treemap_lock(ConcurrentTreeMap *tree);
 void ts_treemap_unlock(ConcurrentTreeMap *tree);
 
 /**
- * Associates the specified value with the specified key in the treemap. If the
- * treemap previously contained a mapping for the key, the old value is replaced, and
- * stored into '*previous'.
+ * Associates the specified value with the specified key in the treemap. If the treemap previously
+ * contained a mapping for the key, the old value is replaced, and stored into `*previous`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -98,15 +91,14 @@ void ts_treemap_unlock(ConcurrentTreeMap *tree);
  *    previous - The pointer address to store the previous value into.
  * Returns:
  *    INSERTED - Key and value was inserted.
- *    REPLACED - Value was updated in the treemap, and the old value was stored into '*previous'
+ *    REPLACED - Value was updated in the treemap, and the old value was stored into `*previous`
  *               due to the key already existing.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_treemap_put(ConcurrentTreeMap *tree, void *key, void *value, void **previous);
 
 /**
- * Fetches the first (least) key currently in the treemap, then stores the result
- * into '*firstKey'.
+ * Fetches the first (least) key currently in the treemap, then stores the result into `*firstKey`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -118,8 +110,8 @@ Status ts_treemap_put(ConcurrentTreeMap *tree, void *key, void *value, void **pr
 Status ts_treemap_firstKey(ConcurrentTreeMap *tree, void **firstKey);
 
 /**
- * Fetches the key-value mapping associated with the least key in this map, then
- * stores the result into '*first'.
+ * Fetches the key-value mapping associated with the least key in this map, then stores the result
+ * into `*first`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -131,8 +123,7 @@ Status ts_treemap_firstKey(ConcurrentTreeMap *tree, void **firstKey);
 Status ts_treemap_first(ConcurrentTreeMap *tree, TmEntry **first);
 
 /**
- * Fetches the last (greatest) key currently in the treemap, then stores the result
- * into '*lastKey'.
+ * Fetches the last (greatest) key currently in the treemap, then stores the result into `*lastKey`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -144,8 +135,8 @@ Status ts_treemap_first(ConcurrentTreeMap *tree, TmEntry **first);
 Status ts_treemap_lastKey(ConcurrentTreeMap *tree, void **lastKey);
 
 /**
- * Fetches the key-value mapping associated with the greatest key in this map, then
- * stores the result into '*last'.
+ * Fetches the key-value mapping associated with the greatest key in this map, then stores the
+ * result into `*last`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -157,8 +148,8 @@ Status ts_treemap_lastKey(ConcurrentTreeMap *tree, void **lastKey);
 Status ts_treemap_last(ConcurrentTreeMap *tree, TmEntry **last);
 
 /**
- * Fetches the greatest key in the treemap less than or equal to the given key, then
- * stores the result into '*floorKey'.
+ * Fetches the greatest key in the treemap less than or equal to the given key, then stores the
+ * result into `*floorKey`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -172,8 +163,8 @@ Status ts_treemap_last(ConcurrentTreeMap *tree, TmEntry **last);
 Status ts_treemap_floorKey(ConcurrentTreeMap *tree, void *key, void **floorKey);
 
 /**
- * Fetches the greatest entry in the treemap less than or equal to the given
- * key, then stores the result into '*floor'.
+ * Fetches the greatest entry in the treemap less than or equal to the given key, then stores the
+ * result into `*floor`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -187,8 +178,8 @@ Status ts_treemap_floorKey(ConcurrentTreeMap *tree, void *key, void **floorKey);
 Status ts_treemap_floor(ConcurrentTreeMap *tree, void *key, TmEntry **floor);
 
 /**
- * Fetches the least key in the treemap greater than or equal to the given key, then
- * stores the result into '*ceilingKey'.
+ * Fetches the least key in the treemap greater than or equal to the given key, then stores the
+ * result into `*ceilingKey`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -202,8 +193,8 @@ Status ts_treemap_floor(ConcurrentTreeMap *tree, void *key, TmEntry **floor);
 Status ts_treemap_ceilingKey(ConcurrentTreeMap *tree, void *key, void **ceilingKey);
 
 /**
- * Fetches the least entry in the treemap greater than or equal to the given key,
- * then stores the result into '*ceiling'.
+ * Fetches the least entry in the treemap greater than or equal to the given key, then stores the
+ * result into `*ceiling`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -217,8 +208,8 @@ Status ts_treemap_ceilingKey(ConcurrentTreeMap *tree, void *key, void **ceilingK
 Status ts_treemap_ceiling(ConcurrentTreeMap *tree, void *key, TmEntry **ceiling);
 
 /**
- * Fetches the greatest key in the treemap strictly less than the given key, then
- * stores the result into '*lowerKey'.
+ * Fetches the greatest key in the treemap strictly less than the given key, then stores the result
+ * into `*lowerKey`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -232,8 +223,8 @@ Status ts_treemap_ceiling(ConcurrentTreeMap *tree, void *key, TmEntry **ceiling)
 Status ts_treemap_lowerKey(ConcurrentTreeMap *tree, void *key, void **lowerKey);
 
 /**
- * Fetches the greatest entry in the treemap strictly less than the given key, then
- * stores the result into '*lower'.
+ * Fetches the greatest entry in the treemap strictly less than the given key, then stores the
+ * result into `*lower`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -247,8 +238,8 @@ Status ts_treemap_lowerKey(ConcurrentTreeMap *tree, void *key, void **lowerKey);
 Status ts_treemap_lower(ConcurrentTreeMap *tree, void *key, TmEntry **lower);
 
 /**
- * Fetches the least key in the treemap strictly greater than the given key, then
- * stores the result into '*higherKey'.
+ * Fetches the least key in the treemap strictly greater than the given key, then stores the result
+ * into `*higherKey`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -262,8 +253,8 @@ Status ts_treemap_lower(ConcurrentTreeMap *tree, void *key, TmEntry **lower);
 Status ts_treemap_higherKey(ConcurrentTreeMap *tree, void *key, void **higherKey);
 
 /**
- * Fetches the least entry in the treemap strictly greater than the given key, then
- * stores the result into '*higher'.
+ * Fetches the least entry in the treemap strictly greater than the given key, then stores the
+ * result into `*higher`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -277,8 +268,7 @@ Status ts_treemap_higherKey(ConcurrentTreeMap *tree, void *key, void **higherKey
 Status ts_treemap_higher(ConcurrentTreeMap *tree, void *key, TmEntry **higher);
 
 /**
- * Returns TRUE if the treemap contains a mapping for the specified key, FALSE if
- * otherwise.
+ * Returns TRUE if the treemap contains a mapping for the specified key, FALSE if otherwise.
  *
  * Params:
  *    map - The treemap to operate on.
@@ -289,8 +279,7 @@ Status ts_treemap_higher(ConcurrentTreeMap *tree, void *key, TmEntry **higher);
 Boolean ts_treemap_containsKey(ConcurrentTreeMap *tree, void *key);
 
 /**
- * Fetches the value to which the specified key is mapped, and stores the result
- * into '*value'.
+ * Fetches the value to which the specified key is mapped, and stores the result into `*value`.
  *
  * Params:
  *    map - The treemap to operate on.
@@ -304,8 +293,8 @@ Boolean ts_treemap_containsKey(ConcurrentTreeMap *tree, void *key);
 Status ts_treemap_get(ConcurrentTreeMap *tree, void *key, void **value);
 
 /**
- * Retrieves and removes the first (least) entry from the treemap, then stores the
- * removed key and value into '*firstKey' and '*firstValue', respectively.
+ * Retrieves and removes the first (least) entry from the treemap, then stores the removed key and
+ * value into `*firstKey` and `*firstValue`, respectively.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -318,8 +307,8 @@ Status ts_treemap_get(ConcurrentTreeMap *tree, void *key, void **value);
 Status ts_treemap_pollFirst(ConcurrentTreeMap *tree, void **firstKey, void **firstValue);
 
 /**
- * Retrieves and removes the last (greatest) entry from the treemap, then stores the
- * removed key and value into '*lastKey' and '*lastValue', respectively.
+ * Retrieves and removes the last (greatest) entry from the treemap, then stores the removed key and
+ * value into `*lastKey` and `*lastValue`, respectively.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -346,8 +335,8 @@ Status ts_treemap_pollLast(ConcurrentTreeMap *tree, void **lastKey, void **lastV
 Status ts_treemap_remove(ConcurrentTreeMap *tree, void *key, void **value);
 
 /**
- * Removes all elements from the treemap. If 'valueDestructor' is not NULL, it
- * will be invoked on each element in the treemap after being removed.
+ * Removes all elements from the treemap. If `valueDestructor` is not NULL, it will be invoked on
+ * each element in the treemap after being removed.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -378,9 +367,9 @@ long ts_treemap_size(ConcurrentTreeMap *tree);
 Boolean ts_treemap_isEmpty(ConcurrentTreeMap *tree);
 
 /**
- * Allocates and generates an array containing all of the treemap's keys in in proper
- * sequence (defined by the key comparator, from least to greatest), then stores the
- * array into '*keys'. Caller is responsible for freeing the array when finished.
+ * Allocates and generates an array containing all of the treemap's keys in in proper sequence
+ * (defined by the key comparator, from least to greatest), then stores the array into `*keys`.
+ * Caller is responsible for freeing the array when finished.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -393,10 +382,10 @@ Boolean ts_treemap_isEmpty(ConcurrentTreeMap *tree);
 Status ts_treemap_keyArray(ConcurrentTreeMap *tree, Array **keys);
 
 /**
- * Allocates and generates an array containing all of the treemap's entries in proper
- * sequence (defined by the key comparator, from least to greatest), then stores the
- * array into '*entries'. Note that the items provided in the array are 'TmEntry*' values.
- * Caller is responsible for freeing the array when finished.
+ * Allocates and generates an array containing all of the treemap's entries in proper sequence
+ * (defined by the key comparator, from least to greatest), then stores the array into `*entries`.
+ * Note that the items provided in the array are `TmEntry*` values. Caller is responsible for
+ * freeing the array when finished.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -409,10 +398,10 @@ Status ts_treemap_keyArray(ConcurrentTreeMap *tree, Array **keys);
 Status ts_treemap_entryArray(ConcurrentTreeMap *tree, Array **entries);
 
 /**
- * Creates an Iterator instance to iterate over the treemap's elements in proper
- * sequence (defined by the key's comparator, from least to greatest), then stores the
- * iterator into '*iter'. Note that the items being iterated over are 'TmEntry*' values.
- * Caller is responsible for destroying the iterator instance when finished.
+ * Creates an Iterator instance to iterate over the treemap's elements in proper sequence (defined
+ * by the key's comparator, from least to greatest), then stores the iterator into `*iter`. Note
+ * that the items being iterated over are `TmEntry*` values. Caller is responsible for destroying
+ * the iterator instance when finished.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -425,9 +414,8 @@ Status ts_treemap_entryArray(ConcurrentTreeMap *tree, Array **entries);
 Status ts_treemap_iterator(ConcurrentTreeMap *tree, ConcurrentIterator **iter);
 
 /**
- * Destroys the treemap instance by freeing all of its reserved memory. If
- * 'valueDestructor' is not NULL, it will be invoked on each entry's value before the
- * treemap is destroyed.
+ * Destroys the treemap instance by freeing all of its reserved memory. If `valueDestructor` is not
+ * NULL, it will be invoked on each entry's value before the treemap is destroyed.
  *
  * Params:
  *    tree - The treemap to destroy.

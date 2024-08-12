@@ -3,23 +3,20 @@
  *
  * Copyright (c) 2020 Cole Vikupitz
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #ifndef _CDS_TS_BOUNDED_QUEUE_H__
@@ -31,17 +28,16 @@
 /**
  * Interface for the thread-safe BoundedQueue ADT.
  *
- * The BoundedQueue class represents a first-in-first-out (FIFO) queue of objects.
- * In addition, the queue is bounded, meaning that it can only hold a set number of
- * elements at a time.
+ * The BoundedQueue class represents a first-in-first-out (FIFO) queue of objects. In addition, the
+ * queue is bounded, meaning that it can only hold a set number of elements at a time.
  *
  * Modeled after the Java 7 Queue interface.
  */
 typedef struct ts_bounded_queue ConcurrentBoundedQueue;
 
 /**
- * Creates a new bounded queue instance, then stores the new instance into '*queue'.
- * If the capacity specified is <= 0, a default capacity is assigned.
+ * Creates a new bounded queue instance, then stores the new instance into `*queue`. If the capacity
+ * specified is <= 0, a default capacity is assigned.
  *
  * Params:
  *    queue - The pointer address to store the new BoundedQueue instance.
@@ -53,8 +49,8 @@ typedef struct ts_bounded_queue ConcurrentBoundedQueue;
 Status ts_boundedqueue_new(ConcurrentBoundedQueue **queue, long capacity);
 
 /**
- * Locks the queue, providing exclusive access to the calling thread. Caller
- * is responsible for unlocking the queue to allow other threads access.
+ * Locks the queue, providing exclusive access to the calling thread. Caller is responsible for
+ * unlocking the queue to allow other threads access.
  *
  * Params:
  *    queue - The queue to operate on.
@@ -86,8 +82,8 @@ void ts_boundedqueue_unlock(ConcurrentBoundedQueue *queue);
 Status ts_boundedqueue_add(ConcurrentBoundedQueue *queue, void *item);
 
 /**
- * Retrieves, but does not remove, the first element from the queue and stores the
- * result into '*first'.
+ * Retrieves, but does not remove, the first element from the queue and stores the result into
+ * `*first`.
  *
  * Params:
  *    queue - The queue to operate on.
@@ -99,7 +95,7 @@ Status ts_boundedqueue_add(ConcurrentBoundedQueue *queue, void *item);
 Status ts_boundedqueue_peek(ConcurrentBoundedQueue *queue, void **first);
 
 /**
- * Removes the first element from the queue and stores the result into '*first'.
+ * Removes the first element from the queue and stores the result into `*first`.
  *
  * Params:
  *    queue - The queue to operate on.
@@ -111,8 +107,8 @@ Status ts_boundedqueue_peek(ConcurrentBoundedQueue *queue, void **first);
 Status ts_boundedqueue_poll(ConcurrentBoundedQueue *queue, void **first);
 
 /**
- * Removes all elements from the queue. If 'destructor' is not NULL, it will be
- * invoked on each element in the queue after being removed.
+ * Removes all elements from the queue. If `destructor` is not NULL, it will be invoked on each
+ * element in the queue after being removed.
  *
  * Params:
  *    queue - The queue to operate on.
@@ -163,9 +159,9 @@ Boolean ts_boundedqueue_isEmpty(ConcurrentBoundedQueue *queue);
 Boolean ts_boundedqueue_isFull(ConcurrentBoundedQueue *queue);
 
 /**
- * Allocates and generates an array containing all of the queue's elements in proper
- * sequence (from the first to last element), then stores the array into '*array'.
- * Caller is responsible for freeing the array when finished.
+ * Allocates and generates an array containing all of the queue's elements in proper sequence (from
+ * the first to last element), then stores the array into `*array`. Caller is responsible for
+ * freeing the array when finished.
  *
  * Params:
  *    queue - The queue to operate on.
@@ -178,9 +174,9 @@ Boolean ts_boundedqueue_isFull(ConcurrentBoundedQueue *queue);
 Status ts_boundedqueue_toArray(ConcurrentBoundedQueue *queue, Array **array);
 
 /**
- * Creates an Iterator instance to iterate over the queue's elements in proper
- * sequence (from first to last element), then stores the iterator into '*iter'.
- * Caller is responsible for destroying the iterator instance when finished.
+ * Creates an Iterator instance to iterate over the queue's elements in proper sequence (from first
+ * to last element), then stores the iterator into `*iter`. Caller is responsible for destroying the
+ * iterator instance when finished.
  *
  * Params:
  *    queue - The queue to operate on.
@@ -193,9 +189,8 @@ Status ts_boundedqueue_toArray(ConcurrentBoundedQueue *queue, Array **array);
 Status ts_boundedqueue_iterator(ConcurrentBoundedQueue *queue, ConcurrentIterator **iter);
 
 /**
- * Destroys the queue instance by freeing all of its reserved memory. If
- * 'destructor' is not NULL, it will be invoked on each element before the queue
- * is destroyed.
+ * Destroys the queue instance by freeing all of its reserved memory. If `destructor` is not NULL,
+ * it will be invoked on each element before the queue is destroyed.
  *
  * Params:
  *    queue - The queue to destroy.
