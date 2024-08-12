@@ -3,23 +3,20 @@
  *
  * Copyright (c) 2020 Cole Vikupitz
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #ifndef _CDS_TS_ARRAYLIST_H__
@@ -38,9 +35,8 @@
 typedef struct ts_arraylist ConcurrentArrayList;
 
 /**
- * Constructs a new array list instance with the specified starting capacity, then
- * stores the new instance into '*list'. If the capacity given is <= 0, a default
- * capacity is assigned.
+ * Constructs a new array list instance with the specified starting capacity, then stores the new
+ * instance into `*list`. If the capacity given is <= 0, a default capacity is assigned.
  *
  * Params:
  *    list - The pointer address to store the new ArrayList instance.
@@ -52,8 +48,8 @@ typedef struct ts_arraylist ConcurrentArrayList;
 Status ts_arraylist_new(ConcurrentArrayList **list, long capacity);
 
 /**
- * Locks the arraylist, providing exclusive access to the calling thread. Caller
- * is responsible for unlocking the list to allow other threads access.
+ * Locks the arraylist, providing exclusive access to the calling thread. Caller is responsible for
+ * unlocking the list to allow other threads access.
  *
  * Params:
  *    list - The arraylist to operate on.
@@ -85,9 +81,9 @@ void ts_arraylist_unlock(ConcurrentArrayList *list);
 Status ts_arraylist_add(ConcurrentArrayList *list, void *item);
 
 /**
- * Inserts the specified element at the specified position in the array list. Shifts
- * the element currently at that position (if any) and any subsequent elements to the
- * right (adds one to their indices).
+ * Inserts the specified element at the specified position in the array list. Shifts the element
+ * currently at that position (if any) and any subsequent elements to the right (adds one to their
+ * indices).
  *
  * Params:
  *    list - The array list to operate on.
@@ -95,7 +91,9 @@ Status ts_arraylist_add(ConcurrentArrayList *list, void *item);
  *    item - The element to be inserted.
  * Returns:
  *    OK - Operation was successful.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` > size
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_arraylist_insert(ConcurrentArrayList *list, long i, void *item);
@@ -110,13 +108,14 @@ Status ts_arraylist_insert(ConcurrentArrayList *list, long i, void *item);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Array list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status ts_arraylist_get(ConcurrentArrayList *list, long i, void **item);
 
 /**
- * Replaces the element at the specified position in the array list with the specified
- * element.
+ * Replaces the element at the specified position in the array list with the specified element.
  *
  * Params:
  *    list - The array list to operate on.
@@ -127,13 +126,15 @@ Status ts_arraylist_get(ConcurrentArrayList *list, long i, void **item);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Array list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status ts_arraylist_set(ConcurrentArrayList *list, long i, void *item, void **previous);
 
 /**
- * Removes the element at the specified position in the array list. Shifts any subsequent
- * elements to the left (subtracts one from their indices).
+ * Removes the element at the specified position in the array list. Shifts any subsequent elements
+ * to the left (subtracts one from their indices).
  *
  * Params:
  *    list - The array list to operate on.
@@ -142,13 +143,15 @@ Status ts_arraylist_set(ConcurrentArrayList *list, long i, void *item, void **pr
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Array list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status ts_arraylist_remove(ConcurrentArrayList *list, long i, void **item);
 
 /**
- * Increases the capacity of the array list, if necessary, to ensure that it can hold
- * at least the number of elements specified by the minimum capacity argument.
+ * Increases the capacity of the array list, if necessary, to ensure that it can hold at least the
+ * number of elements specified by the minimum capacity argument.
  *
  * Params:
  *    list - The array list to operate on.
@@ -172,8 +175,8 @@ Status ts_arraylist_ensureCapacity(ConcurrentArrayList *list, long capacity);
 Status ts_arraylist_trimToSize(ConcurrentArrayList *list);
 
 /**
- * Removes all elements from the array list. If 'destructor' is not NULL, it will be
- * invoked on each element in the array list after being removed.
+ * Removes all elements from the array list. If `destructor` is not NULL, it will be invoked on each
+ * element in the array list after being removed.
  *
  * Params:
  *    list - The array list to operate on.
@@ -194,8 +197,8 @@ void ts_arraylist_clear(ConcurrentArrayList *list, void (*destructor)(void *));
 long ts_arraylist_size(ConcurrentArrayList *list);
 
 /**
- * Returns the array list's current capacity, that is, the maximum number of elements
- * it can hold before resizing is required.
+ * Returns the array list's current capacity, that is, the maximum number of elements it can hold
+ * before resizing is required.
  *
  * Params:
  *    list - The array list to operate on.
@@ -215,9 +218,9 @@ long ts_arraylist_capacity(ConcurrentArrayList *list);
 Boolean ts_arraylist_isEmpty(ConcurrentArrayList *list);
 
 /**
- * Allocates and generates an array containing all of the array list's elements in
- * proper sequence (from first to last element), then stores the array into '*array'.
- * Caller is responsible for freeing the array when finished.
+ * Allocates and generates an array containing all of the array list's elements in proper sequence
+ * (from first to last element), then stores the array into `*array`. Caller is responsible for
+ * freeing the array when finished.
  *
  * Params:
  *    list - The array list to operate on.
@@ -230,9 +233,9 @@ Boolean ts_arraylist_isEmpty(ConcurrentArrayList *list);
 Status ts_arraylist_toArray(ConcurrentArrayList *list, Array **array);
 
 /**
- * Creates an Iterator instance to iterate over the array list's elements in proper
- * sequence (from first to last element), then stores the iterator into '*iter'. Caller
- * is responsible for destroying the iterator instance when finished.
+ * Creates an Iterator instance to iterate over the array list's elements in proper sequence (from
+ * first to last element), then stores the iterator into `*iter`. Caller is responsible for
+ * destroying the iterator instance when finished.
  *
  * Params:
  *    list - The array list to operate on.
@@ -245,8 +248,8 @@ Status ts_arraylist_toArray(ConcurrentArrayList *list, Array **array);
 Status ts_arraylist_iterator(ConcurrentArrayList *list, ConcurrentIterator **iter);
 
 /**
- * Destroys the array list instance by freeing all of its reserved memory. If 'destructor'
- * is not NULL, it will be invoked on each element before the arraylist is destroyed.
+ * Destroys the array list instance by freeing all of its reserved memory. If `destructor` is not
+ * NULL, it will be invoked on each element before the arraylist is destroyed.
  *
  * Params:
  *    list - The array list to destroy.

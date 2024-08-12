@@ -3,23 +3,20 @@
  *
  * Copyright (c) 2020 Cole Vikupitz
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #ifndef _CDS_LINKEDLIST_H__
@@ -31,15 +28,15 @@
 /**
  * Interface for the LinkedList ADT.
  *
- * Doubly-linked list implementation. Implements all optional list operations, and
- * permits all elements (including null).
+ * Doubly-linked list implementation. Implements all optional list operations, and permits all
+ * elements (including null).
  *
  * Modeled after the Java 7 LinkedList interface.
  */
 typedef struct linkedlist LinkedList;
 
 /**
- * Constructs a new linked list instance, then stores the new instance into '*list'.
+ * Constructs a new linked list instance, then stores the new instance into `*list`.
  *
  * Params:
  *    None
@@ -74,9 +71,9 @@ Status linkedlist_addFirst(LinkedList *list, void *item);
 Status linkedlist_addLast(LinkedList *list, void *item);
 
 /**
- * Inserts the specified element at the specified position in this list. Shifts the
- * element currently at that position (if any) and any subsequent elements to the
- * right (adds one to their indices).
+ * Inserts the specified element at the specified position in this list. Shifts the element
+ * currently at that position (if any) and any subsequent elements to the right (adds one to their
+ * indices).
  *
  * Params:
  *    list - The linked list to operate on.
@@ -84,14 +81,16 @@ Status linkedlist_addLast(LinkedList *list, void *item);
  *    item - The element to be inserted.
  * Returns:
  *    OK - Operation was successful.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` > size
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status linkedlist_insert(LinkedList *list, long i, void *item);
 
 /**
- * Retrieves the first element from the linked list without removing it, and stores
- * the element into '*first'.
+ * Retrieves the first element from the linked list without removing it, and stores the element into
+ * `*first`.
  *
  * Params:
  *    list - The linked list to operate on.
@@ -103,8 +102,8 @@ Status linkedlist_insert(LinkedList *list, long i, void *item);
 Status linkedlist_first(LinkedList *list, void **first);
 
 /**
- * Retrieves the last element from the linked list without removing it, and stores
- * the element into '*last'.
+ * Retrieves the last element from the linked list without removing it, and stores the element into
+ * `*last`.
  *
  * Params:
  *    list - The linked list to operate on.
@@ -116,8 +115,8 @@ Status linkedlist_first(LinkedList *list, void **first);
 Status linkedlist_last(LinkedList *list, void **last);
 
 /**
- * Retrieves the element at the specified index from the linked list without removing
- * it, and stores the element into '*item'.
+ * Retrieves the element at the specified index from the linked list without removing it, and stores
+ * the element into `*item`.
  *
  * Params:
  *    list - The linked list to operate on.
@@ -126,29 +125,32 @@ Status linkedlist_last(LinkedList *list, void **last);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Linked list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status linkedlist_get(LinkedList *list, long i, void **item);
 
 /**
- * Replaces the element at the specified position in the linked list with the specified
- * element. The old element is then placed into '*previous'.
+ * Replaces the element at the specified position in the linked list with the specified element. The
+ * old element is then placed into `*previous`.
  *
  * Params:
  *    list - The linked list to operate on.
  *    i - The index of the element to replace
  *    item - The element to be stored at the specified position
- *    previous - The pointer address to store the element previously at the specified
- *               position.
+ *    previous - The pointer address to store the element previously at the specified position.
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Linked list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status linkedlist_set(LinkedList *list, long i, void *item, void **previous);
 
 /**
- * Removes the first element from the linked list, and stores the result into '*first'.
+ * Removes the first element from the linked list, and stores the result into `*first`.
  *
  * Params:
  *    list - The linked list to operate on.
@@ -160,7 +162,7 @@ Status linkedlist_set(LinkedList *list, long i, void *item, void **previous);
 Status linkedlist_removeFirst(LinkedList *list, void **first);
 
 /**
- * Removes the last element from the linked list, and stores the result into '*last'.
+ * Removes the last element from the linked list, and stores the result into `*last`.
  *
  * Params:
  *    list - The linked list to operate on.
@@ -172,9 +174,8 @@ Status linkedlist_removeFirst(LinkedList *list, void **first);
 Status linkedlist_removeLast(LinkedList *list, void **last);
 
 /**
- * Removes the element at the specified position in the linked list. Shifts any
- * subsequent elements to the left (subtracts one from their indices). Stores the
- * removed element into '*item'.
+ * Removes the element at the specified position in the linked list. Shifts any subsequent elements
+ * to the left (subtracts one from their indices). Stores the removed element into `*item`.
  *
  * Params:
  *    list - The linked list to operate on.
@@ -183,13 +184,14 @@ Status linkedlist_removeLast(LinkedList *list, void **last);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Linked list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
- */
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
 Status linkedlist_remove(LinkedList *list, long i, void **item);
 
 /**
- * Removes all elements from the linked list. If 'destructor' is not NULL, it will be
- * invoked on each element in the linked list after being removed.
+ * Removes all elements from the linked list. If `destructor` is not NULL, it will be invoked on
+ * each element in the linked list after being removed.
  *
  * Params:
  *    list - The linked list to operate on.
@@ -220,9 +222,9 @@ long linkedlist_size(LinkedList *list);
 Boolean linkedlist_isEmpty(LinkedList *list);
 
 /**
- * Allocates and generates an array containing all of the elements in the linked list in
- * proper sequence (from first to last element), then stores the array into '*array'. Caller
- * is responsible for freeing the array when finished.
+ * Allocates and generates an array containing all of the elements in the linked list in proper
+ * sequence (from first to last element), then stores the array into `*array`. Caller is responsible
+ * for freeing the array when finished.
  *
  * Params:
  *    list - The linked list to operate on.
@@ -235,9 +237,9 @@ Boolean linkedlist_isEmpty(LinkedList *list);
 Status linkedlist_toArray(LinkedList *list, Array **array);
 
 /**
- * Createss an Iterator instance to iterate over the linked list's elements in proper
- * sequence (from first to last element), then stores the iterator into '*iter'. Caller
- * is responsible for destroying the iterator instance when finished.
+ * Createss an Iterator instance to iterate over the linked list's elements in proper sequence (from
+ * first to last element), then stores the iterator into `*iter`. Caller is responsible for
+ * destroying the iterator instance when finished.
  *
  * Params:
  *    list - The linked list to operate on.
@@ -250,8 +252,8 @@ Status linkedlist_toArray(LinkedList *list, Array **array);
 Status linkedlist_iterator(LinkedList *list, Iterator **iter);
 
 /**
- * Destroys the linked list instance by freeing all of its reserved memory. If 'destructor'
- * is not NULL, it will be invoked on each element before the linked list is destroyed.
+ * Destroys the linked list instance by freeing all of its reserved memory. If `destructor` is not
+ * NULL, it will be invoked on each element before the linked list is destroyed.
  *
  * Params:
  *    list - The linked list to destroy.

@@ -3,23 +3,20 @@
  *
  * Copyright (c) 2020 Cole Vikupitz
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #ifndef _CDS_TS_HASHSET_H__
@@ -38,16 +35,15 @@
 typedef struct ts_hashset ConcurrentHashSet;
 
 /**
- * Constructs a new hashset instance with the specified starting capacity and load
- * factor, then stores the new instance into '*set'. If the capacity specified is
- * <= 0, a default capacity is assigned. If the load factor specified is <= 0.0,
- * a default load factor is assigned.
+ * Constructs a new hashset instance with the specified starting capacity and load factor, then
+ * stores the new instance into `*set`. If the capacity specified is <= 0, a default capacity is
+ * assigned. If the load factor specified is <= 0.0, a default load factor is assigned.
  *
- * The hash function specified should return an index number such that hash(obj, N)
- * will return the hashed value of 'obj' in an array of size N.
+ * The hash function specified should return an index number such that hash(obj, N) will return the
+ * hashed value of `obj` in an array of size N.
  *
- * The comparator function specified should return an integer comparing the two
- * specified keys, such that cmp(a, b) returns 0 when a == b, or !0 when a != b.
+ * The comparator function specified should return an integer comparing the two specified keys, such
+ * that cmp(a, b) returns 0 when a == b, or !0 when a != b.
  *
  * Params:
  *    set - The pointer address to store the new HashSet instance.
@@ -60,11 +56,11 @@ typedef struct ts_hashset ConcurrentHashSet;
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_hashset_new(ConcurrentHashSet **set, long (*hash)(void *, long),
-        int (*comparator)(void *, void *), long capacity, double loadFactor);
+                      int (*comparator)(void *, void *), long capacity, double loadFactor);
 
 /**
- * Locks the hashset, providing exclusive access to the calling thread. Caller
- * is responsible for unlocking the hashset to allow other threads access.
+ * Locks the hashset, providing exclusive access to the calling thread. Caller is responsible for
+ * unlocking the hashset to allow other threads access.
  *
  * Params:
  *    set - The hashset to operate on.
@@ -108,8 +104,8 @@ Status ts_hashset_add(ConcurrentHashSet *set, void *item);
 Boolean ts_hashset_contains(ConcurrentHashSet *set, void *item);
 
 /**
- * Removes the specified element from the hashset if it is present. If 'destructor'
- * is not NULL, it will be invoked on the element after removal.
+ * Removes the specified element from the hashset if it is present. If `destructor` is not NULL, it
+ * will be invoked on the element after removal.
  *
  * Params:
  *    set - The hashset to operate on.
@@ -123,8 +119,8 @@ Boolean ts_hashset_contains(ConcurrentHashSet *set, void *item);
 Status ts_hashset_remove(ConcurrentHashSet *set, void *item, void (*destructor)(void *));
 
 /**
- * Removes all elements from the hashset. If 'destructor' is not NULL, it will be
- * invoked on each element in the hashset after being removed.
+ * Removes all elements from the hashset. If `destructor` is not NULL, it will be invoked on each
+ * element in the hashset after being removed.
  *
  * Params:
  *    set - The hashset to operate on.
@@ -155,9 +151,8 @@ long ts_hashset_size(ConcurrentHashSet *set);
 Boolean ts_hashset_isEmpty(ConcurrentHashSet *set);
 
 /**
- * Allocates and generates an array containing all of the hashset's elements in no
- * particular order, then stores the array into '*array'. Caller is responsible for
- * freeing the array when finished.
+ * Allocates and generates an array containing all of the hashset's elements in no particular order,
+ * then stores the array into `*array`. Caller is responsible for freeing the array when finished.
  *
  * Params:
  *    set - The hashset to operate on.
@@ -170,9 +165,8 @@ Boolean ts_hashset_isEmpty(ConcurrentHashSet *set);
 Status ts_hashset_toArray(ConcurrentHashSet *set, Array **array);
 
 /**
- * Returns an Iterator instance to iterate over the the hashset's elements in no
- * particular order. Caller is responsible for destroying the iterator instance when
- * finished.
+ * Returns an Iterator instance to iterate over the the hashset's elements in no particular order.
+ * Caller is responsible for destroying the iterator instance when finished.
  *
  * Params:
  *    set - The hashset to operate on.
@@ -185,8 +179,8 @@ Status ts_hashset_toArray(ConcurrentHashSet *set, Array **array);
 Status ts_hashset_iterator(ConcurrentHashSet *set, ConcurrentIterator **iter);
 
 /**
- * Destroys the hashset instance by freeing all of its reserved memory. If 'destructor'
- * is not NULL, it will be invoked on each element before the hashset is destroyed.
+ * Destroys the hashset instance by freeing all of its reserved memory. If `destructor` is not NULL,
+ * it will be invoked on each element before the hashset is destroyed.
  *
  * Params:
  *    set - The hashset to destroy.

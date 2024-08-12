@@ -3,23 +3,20 @@
  *
  * Copyright (c) 2020 Cole Vikupitz
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #ifndef _CDS_TS_HASHMAP_H__
@@ -39,14 +36,13 @@
 typedef struct ts_hashmap ConcurrentHashMap;
 
 /**
- * Constructs a new hashmap instance with the specified starting capacity and load
- * factor, then stores the new instance into '*map'. If the capacity specified is
- * <= 0, a default capacity is assigned. If the load factor specified is <= 0.0, a
- * default load factor is assigned.
+ * Constructs a new hashmap instance with the specified starting capacity and load factor, then
+ * stores the new instance into `*map`. If the capacity specified is <= 0, a default capacity is
+ * assigned. If the load factor specified is <= 0.0, a default load factor is assigned.
  *
- * The hash function specified should return an index number such that hash(obj, N)
- * will return the hashed value of 'obj' in an array of size N. For example, if using
- * char * keys, you might define a hash function like this:
+ * The hash function specified should return an index number such that hash(obj, N) will return the
+ * hashed value of `obj` in an array of size N. For example, if using char * keys, you might define
+ * a hash function like this:
  *
  *    #define PRIME 7L
  *    long hash(void *a, long N) {
@@ -58,14 +54,13 @@ typedef struct ts_hashmap ConcurrentHashMap;
  *        return val;
  *    }
  *
- * The comparator function specified should return an integer comparing the two
- * specified keys, such that cmp(a, b) returns 0 when a == b, or !0 when a != b.
+ * The comparator function specified should return an integer comparing the two specified keys, such
+ * that cmp(a, b) returns 0 when a == b, or !0 when a != b.
  *
- * The key destructor function should be a function that performs any de-allocation
- * needed on the hashmap's keys (if applicable). This function will be invoked on
- * the entry's key prior to being removed, the hashmap being cleared, or the hashmap
- * being destructed. If no de-allocation/destructor for the custom keys is required,
- * you may pass NULL as this parameter.
+ * The key destructor function should be a function that performs any de-allocation needed on the
+ * hashmap's keys (if applicable). This function will be invoked on the entry's key prior to being
+ * removed, the hashmap being cleared, or the hashmap being destructed. If no de-allocation or
+ * destructor for the custom keys is required, you may pass NULL as this parameter.
  *
  * Params:
  *    map - The pointer address to store the new HashMap instance.
@@ -83,8 +78,8 @@ Status ts_hashmap_new(ConcurrentHashMap **map, long (*hash)(void *, long),
         void (*keyDestructor)(void *));
 
 /**
- * Locks the hashmap, providing exclusive access to the calling thread. Caller
- * is responsible for unlocking the hashmap to allow other threads access.
+ * Locks the hashmap, providing exclusive access to the calling thread. Caller is responsible for
+ * unlocking the hashmap to allow other threads access.
  *
  * Params:
  *    map - The hashmap to operate on.
@@ -104,9 +99,8 @@ void ts_hashmap_lock(ConcurrentHashMap *map);
 void ts_hashmap_unlock(ConcurrentHashMap *map);
 
 /**
- * Associates the specified value with the specified key in the hashmap. If the
- * hashmap previously contained a mapping for the key, the old value is replaced,
- * and stored into '*previous'.
+ * Associates the specified value with the specified key in the hashmap. If the hashmap previously
+ * contained a mapping for the key, the old value is replaced, and stored into `*previous`.
  *
  * Params:
  *    map - The hashmap to operate on.
@@ -116,14 +110,13 @@ void ts_hashmap_unlock(ConcurrentHashMap *map);
  * Returns:
  *    ENTRY_INSERTED - Entry was inserted.
  *    ENTRY_REPLACED - Entry was updated in the hashmap, and the old entry was stored into
- *                     '*previous' due to the key already existing.
+ *                     `*previous` due to the key already existing.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_hashmap_put(ConcurrentHashMap *map, void *key, void *value, void **previous);
 
 /**
- * Returns TRUE if the hashmap contains a mapping for the specified key, FALSE if
- * otherwise.
+ * Returns TRUE if the hashmap contains a mapping for the specified key, FALSE if otherwise.
  *
  * Params:
  *    map - The hashmap to operate on.
@@ -134,8 +127,7 @@ Status ts_hashmap_put(ConcurrentHashMap *map, void *key, void *value, void **pre
 Boolean ts_hashmap_containsKey(ConcurrentHashMap *map, void *key);
 
 /**
- * Fetches the value to which the specified key is mapped, and stores the result
- * into '*value'.
+ * Fetches the value to which the specified key is mapped, and stores the result into `*value`.
  *
  * Params:
  *    map - The hashmap to operate on.
@@ -163,8 +155,8 @@ Status ts_hashmap_get(ConcurrentHashMap *map, void *key, void **value);
 Status ts_hashmap_remove(ConcurrentHashMap *map, void *key, void **value);
 
 /**
- * Removes all elements from the hashmap. If 'destructor' is not NULL, it will be
- * invoked on each element in the hashmap after being removed.
+ * Removes all elements from the hashmap. If `destructor` is not NULL, it will be invoked on each
+ * element in the hashmap after being removed.
  *
  * Params:
  *    map - The hashmap to operate on.
@@ -195,9 +187,8 @@ long ts_hashmap_size(ConcurrentHashMap *map);
 Boolean ts_hashmap_isEmpty(ConcurrentHashMap *map);
 
 /**
- * Allocates and generates an array containing all of the hashmap's keys in no
- * particular order, then stores the array into '*keys'. Caller is responsible for
- * freeing the array when finished.
+ * Allocates and generates an array containing all of the hashmap's keys in no particular order,
+ * then stores the array into `*keys`. Caller is responsible for freeing the array when finished.
  *
  * Params:
  *    map - The hashmap to operate on.
@@ -210,10 +201,9 @@ Boolean ts_hashmap_isEmpty(ConcurrentHashMap *map);
 Status ts_hashmap_keyArray(ConcurrentHashMap *map, Array **keys);
 
 /**
- * Allocates and generates an array containing all of the hashmap's elements in no
- * particular order, then stores the array into '*entries'. Note that the items
- * provided in the array are 'HmEntry*' values. Caller is responsible for freeing
- * the array when finished.
+ * Allocates and generates an array containing all of the hashmap's elements in no particular order,
+ * then stores the array into `*entries`. Note that the items provided in the array are `HmEntry*`
+ * values. Caller is responsible for freeing the array when finished.
  *
  * Params:
  *    map - The hashmap to operate on.
@@ -226,10 +216,9 @@ Status ts_hashmap_keyArray(ConcurrentHashMap *map, Array **keys);
 Status ts_hashmap_entryArray(ConcurrentHashMap *map, Array **entries);
 
 /**
- * Creates an Iterator instance to iterate over the the hashmap's elements in no
- * particular order, then stores the iterator into '*iter'. Note that the items
- * being iterated over are 'HmEntry*' values. Caller is responsible for destroying
- * the iterator instance when finished.
+ * Creates an Iterator instance to iterate over the the hashmap's elements in no particular order,
+ * then stores the iterator into `*iter`. Note that the items being iterated over are `HmEntry*`
+ * values. Caller is responsible for destroying the iterator instance when finished.
  *
  * Params:
  *    map - The hashmap to operate on.
@@ -242,8 +231,8 @@ Status ts_hashmap_entryArray(ConcurrentHashMap *map, Array **entries);
 Status ts_hashmap_iterator(ConcurrentHashMap *map, ConcurrentIterator **iter);
 
 /**
- * Destroys the hashmap instance by freeing all of its reserved memory. If 'destructor'
- * is not NULL, it will be invoked on each element before the hashmap is destroyed.
+ * Destroys the hashmap instance by freeing all of its reserved memory. If `destructor` is not NULL,
+ * it will be invoked on each element before the hashmap is destroyed.
  *
  * Params:
  *    map - The hashmap to destroy.

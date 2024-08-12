@@ -3,23 +3,20 @@
  *
  * Copyright (c) 2020 Cole Vikupitz
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #ifndef _CDS_BOUNDED_STACK_H__
@@ -31,17 +28,16 @@
 /**
  * Interface for the BoundedStack ADT.
  *
- * The BoundedStack represents a last-in-first-out (LIFO) stack of objects. In
- * addition, the stack is bounded, meaning that it can only hold a set number of
- * elements at a time.
+ * The BoundedStack represents a last-in-first-out (LIFO) stack of objects. In addition, the stack
+ * is bounded, meaning that it can only hold a set number of elements at a time.
  *
  * Modeled after the Java 7 Stack interface.
  */
 typedef struct bounded_stack BoundedStack;
 
 /**
- * Creates a new bounded stack instance, then stores the new instance into '*stack'.
- * If the capacity given is <= 0, a default capacity is assigned.
+ * Creates a new bounded stack instance, then stores the new instance into `*stack`. If the capacity
+ * given is <= 0, a default capacity is assigned.
  *
  * Params:
  *    stack - The pointer address to store the new BoundedStack instance.
@@ -65,8 +61,7 @@ Status boundedstack_new(BoundedStack **stack, long capacity);
 Status boundedstack_push(BoundedStack *stack, void *item);
 
 /**
- * Retrieves, but does not remove, the top element from the stack and stores the
- * result into '*top'.
+ * Retrieves, but does not remove, the top element from the stack and stores the result into `*top`.
  *
  * Params:
  *    stack - The stack to operate on.
@@ -78,7 +73,7 @@ Status boundedstack_push(BoundedStack *stack, void *item);
 Status boundedstack_peek(BoundedStack *stack, void **top);
 
 /**
- * Removes the top element from the stack and stores the result into '*top'.
+ * Removes the top element from the stack and stores the result into `*top`.
  *
  * Params:
  *    stack - The stack to operate on.
@@ -90,8 +85,8 @@ Status boundedstack_peek(BoundedStack *stack, void **top);
 Status boundedstack_pop(BoundedStack *stack, void **top);
 
 /**
- * Removes all elements from the stack. If 'destructor' is not NULL, it will be
- * invoked on each element in the stack after being removed.
+ * Removes all elements from the stack. If `destructor` is not NULL, it will be invoked on each
+ * element in the stack after being removed.
  *
  * Params:
  *    stack - The stack to operate on.
@@ -142,9 +137,9 @@ Boolean boundedstack_isEmpty(BoundedStack *stack);
 Boolean boundedstack_isFull(BoundedStack *stack);
 
 /**
- * Allocates and generates an array containing all of the stack's elements in proper
- * sequence (from the top to bottom element), then stores the array into '*array'.
- * Caller is responsible for freeing the array when finished.
+ * Allocates and generates an array containing all of the stack's elements in proper sequence (from
+ * the top to bottom element), then stores the array into `*array`. Caller is responsible for
+ * freeing the array when finished.
  *
  * Params:
  *    stack - The stack to operate on.
@@ -157,9 +152,9 @@ Boolean boundedstack_isFull(BoundedStack *stack);
 Status boundedstack_toArray(BoundedStack *stack, Array **array);
 
 /**
- * Creates an Iterator instance to iterate over the stack's elements in proper
- * sequence (from top to bottom element), then stores the iterator into '*iter'. Caller
- * is responsible for destroying the iterator instance when finished.
+ * Creates an Iterator instance to iterate over the stack's elements in proper sequence (from top to
+ * bottom element), then stores the iterator into `*iter`. Caller is responsible for destroying the
+ * iterator instance when finished.
  *
  * Params:
  *    stack - The stack to operate on.
@@ -172,8 +167,8 @@ Status boundedstack_toArray(BoundedStack *stack, Array **array);
 Status boundedstack_iterator(BoundedStack *stack, Iterator **iter);
 
 /**
- * Destroys the stack instance by freeing all of its reserved memory. If 'destructor'
- * is not NULL, it will be invoked on each element before the stack is destroyed.
+ * Destroys the stack instance by freeing all of its reserved memory. If `destructor` is not NULL,
+ * it will be invoked on each element before the stack is destroyed.
  *
  * Params:
  *    stack - The stack to destroy.

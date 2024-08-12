@@ -3,23 +3,20 @@
  *
  * Copyright (c) 2020 Cole Vikupitz
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #ifndef _CDS_TS_CIRCULAR_LIST_H__
@@ -31,14 +28,14 @@
 /**
  * Interface for the thread-safe CircularList ADT.
  *
- * The CircularList is a linked list where the head and tail are linked, allowing
- * the elements in the list to be 'rotated' in place. Provides a similar API as
- * the LinkedList, and in addition supports rotating the elements in the list.
+ * The CircularList is a linked list where the head and tail are linked, allowing the elements in
+ * the list to be 'rotated' in place. Provides a similar API as the LinkedList, and in addition
+ * supports rotating the elements in the list.
  */
 typedef struct ts_circular_list ConcurrentCircularList;
 
 /**
- * Constructs a new circular list instance, then stores the new instance into '*list'.
+ * Constructs a new circular list instance, then stores the new instance into `*list`.
  *
  * Params:
  *    list - The pointer address to store the new CircularList instance.
@@ -49,8 +46,8 @@ typedef struct ts_circular_list ConcurrentCircularList;
 Status ts_circularlist_new(ConcurrentCircularList **list);
 
 /**
- * Locks the circular list, providing exclusive access to the calling thread. Caller
- * is responsible for unlocking the list to allow other threads access.
+ * Locks the circular list, providing exclusive access to the calling thread. Caller is responsible
+ * for unlocking the list to allow other threads access.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -94,9 +91,9 @@ Status ts_circularlist_addFirst(ConcurrentCircularList *list, void *item);
 Status ts_circularlist_addLast(ConcurrentCircularList *list, void *item);
 
 /**
- * Inserts the specified element at the specified position in the circular list.
- * Shifts the element currently at that position (if any) and any subsequent
- * elements to the right (adds one to their indices).
+ * Inserts the specified element at the specified position in the circular list. Shifts the element
+ * currently at that position (if any) and any subsequent elements to the right (adds one to their
+ * indices).
  *
  * Params:
  *    list - The circular list to operate on.
@@ -104,14 +101,16 @@ Status ts_circularlist_addLast(ConcurrentCircularList *list, void *item);
  *    item - The element to be inserted.
  * Returns:
  *    OK - Operation was successful.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` > size
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_circularlist_insert(ConcurrentCircularList *list, long i, void *item);
 
 /**
- * Retrieves, but does not remove, the first element of the circular list, and
- * stores the element into '*first'.
+ * Retrieves, but does not remove, the first element of the circular list, and stores the element
+ * into `*first`.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -123,8 +122,8 @@ Status ts_circularlist_insert(ConcurrentCircularList *list, long i, void *item);
 Status ts_circularlist_first(ConcurrentCircularList *list, void **first);
 
 /**
- * Retrieves, but does not remove, the last element of the circular list, and
- * stores the element into '*last'.
+ * Retrieves, but does not remove, the last element of the circular list, and stores the element
+ * into `*last`.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -136,8 +135,8 @@ Status ts_circularlist_first(ConcurrentCircularList *list, void **first);
 Status ts_circularlist_last(ConcurrentCircularList *list, void **last);
 
 /**
- * Retrieves the element at the specified index from the circular list without removing
- * it, and stores the element into '*item'.
+ * Retrieves the element at the specified index from the circular list without removing it, and
+ * stores the element into `*item`.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -146,13 +145,15 @@ Status ts_circularlist_last(ConcurrentCircularList *list, void **last);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Circular list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status ts_circularlist_get(ConcurrentCircularList *list, long i, void **item);
 
 /**
- * Replaces the element at the specified position in the circular list with the specified
- * element. The old element is then placed into '*previous'.
+ * Replaces the element at the specified position in the circular list with the specified element.
+ * The old element is then placed into `*previous`.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -163,13 +164,15 @@ Status ts_circularlist_get(ConcurrentCircularList *list, long i, void **item);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Circular list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status ts_circularlist_set(ConcurrentCircularList *list, long i, void *item, void **previous);
 
 /**
- * Retrieves and removes the first element of the circular list, and stores the
- * removed element into '*first'.
+ * Retrieves and removes the first element of the circular list, and stores the removed element into
+ * `*first`.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -181,8 +184,8 @@ Status ts_circularlist_set(ConcurrentCircularList *list, long i, void *item, voi
 Status ts_circularlist_removeFirst(ConcurrentCircularList *list, void **first);
 
 /**
- * Retrieves and removes the last element of the circular list, and stores the
- * removed element into '*last'.
+ * Retrieves and removes the last element of the circular list, and stores the removed element into
+ * `*last`.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -194,9 +197,8 @@ Status ts_circularlist_removeFirst(ConcurrentCircularList *list, void **first);
 Status ts_circularlist_removeLast(ConcurrentCircularList *list, void **last);
 
 /**
- * Removes the element at the specified position in the circular list. Shifts any
- * subsequent elements to the left (subtracts one from their indices). Stores the
- * removed element into '*item'.
+ * Removes the element at the specified position in the circular list. Shifts any subsequent
+ * elements to the left (subtracts one from their indices). Stores the removed element into `*item`.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -205,14 +207,16 @@ Status ts_circularlist_removeLast(ConcurrentCircularList *list, void **last);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Circular list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status ts_circularlist_remove(ConcurrentCircularList *list, long i, void **item);
 
 /**
- * Rotates the elements in the circular list forward, such that, the first item is moved
- * to the back, and the next element becomes the front. If the list is currently empty,
- * no rotations are performed.
+ * Rotates the elements in the circular list forward, such that, the first item is moved to the
+ * back, and the next element becomes the front. If the list is currently empty, no rotations are
+ * performed.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -222,9 +226,9 @@ Status ts_circularlist_remove(ConcurrentCircularList *list, long i, void **item)
 void ts_circularlist_rotateForward(ConcurrentCircularList *list);
 
 /**
- * Rotates the elements in the circular list backward, such that, the last item is moved
- * to the front, and the previous element becomes the last. If the list is currently empty,
- * no rotations are performed.
+ * Rotates the elements in the circular list backward, such that, the last item is moved to the
+ * front, and the previous element becomes the last. If the list is currently empty, no rotations
+ * are performed.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -234,8 +238,8 @@ void ts_circularlist_rotateForward(ConcurrentCircularList *list);
 void ts_circularlist_rotateBackward(ConcurrentCircularList *list);
 
 /**
- * Removes all elements from the circular list. If 'destructor' is not NULL, it will
- * be invoked on each element in the circular list after being removed.
+ * Removes all elements from the circular list. If `destructor` is not NULL, it will be invoked on
+ * each element in the circular list after being removed.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -266,9 +270,9 @@ long ts_circularlist_size(ConcurrentCircularList *list);
 Boolean ts_circularlist_isEmpty(ConcurrentCircularList *list);
 
 /**
- * Allocates and generates an array containing all of the circular list's elements
- * in proper sequence (from first to last element), then stores the array into '*array'.
- * Caller is responsible for freeing the array when finished.
+ * Allocates and generates an array containing all of the circular list's elements in proper
+ * sequence (from first to last element), then stores the array into `*array`. Caller is responsible
+ * for freeing the array when finished.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -281,9 +285,9 @@ Boolean ts_circularlist_isEmpty(ConcurrentCircularList *list);
 Status ts_circularlist_toArray(ConcurrentCircularList *list, Array **array);
 
 /**
- * Creates an Iterator instance to iterate over the circular list's elements in proper
- * sequence (from first to last element), then stores the iterator into '*iter'. Caller
- * is responsible for destroying the iterator instance when finished.
+ * Creates an Iterator instance to iterate over the circular list's elements in proper sequence
+ * (from first to last element), then stores the iterator into `*iter`. Caller is responsible for
+ * destroying the iterator instance when finished.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -296,9 +300,8 @@ Status ts_circularlist_toArray(ConcurrentCircularList *list, Array **array);
 Status ts_circularlist_iterator(ConcurrentCircularList *list, ConcurrentIterator **iter);
 
 /**
- * Destroys the circular list instance by freeing all of its reserved memory. If
- * 'destructor' is not NULL, it will be invoked on each element before the circular
- * list is destroyed.
+ * Destroys the circular list instance by freeing all of its reserved memory. If `destructor` is not
+ * NULL, it will be invoked on each element before the circular list is destroyed.
  *
  * Params:
  *    list - The circular list to operate on.
