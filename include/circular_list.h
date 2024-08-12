@@ -3,23 +3,20 @@
  *
  * Copyright (c) 2020 Cole Vikupitz
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #ifndef _CDS_CIRCULAR_LIST_H__
@@ -31,14 +28,14 @@
 /**
  * Interface for the CircularList ADT.
  *
- * The CircularList is a linked list where the head and tail are linked, allowing
- * the elements in the list to be 'rotated' in place. Provides a similar API as
- * the LinkedList, and in addition supports rotating the elements in the list.
+ * The CircularList is a linked list where the head and tail are linked, allowing the elements in
+ * the list to be `rotated` in place. Provides a similar API as the LinkedList, and in addition
+ * supports rotating the elements in the list.
  */
 typedef struct circular_list CircularList;
 
 /**
- * Constructs a new circular list instance, then stores the new instance into '*list'.
+ * Constructs a new circular list instance, then stores the new instance into `*list`.
  *
  * Params:
  *    list - The pointer address to store the new CircularList instance.
@@ -73,9 +70,9 @@ Status circularlist_addFirst(CircularList *list, void *item);
 Status circularlist_addLast(CircularList *list, void *item);
 
 /**
- * Inserts the specified element at the specified position in the circular list.
- * Shifts the element currently at that position (if any) and any subsequent
- * elements to the right (adds one to their indices).
+ * Inserts the specified element at the specified position in the circular list. Shifts the element
+ * currently at that position (if any) and any subsequent elements to the right (adds one to their
+ * indices).
  *
  * Params:
  *    list - The circular list to operate on.
@@ -89,8 +86,8 @@ Status circularlist_addLast(CircularList *list, void *item);
 Status circularlist_insert(CircularList *list, long i, void *item);
 
 /**
- * Retrieves, but does not remove, the first element of the circular list, and
- * stores the element into '*first'.
+ * Retrieves, but does not remove, the first element of the circular list, and stores the element
+ * into `*first`.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -102,8 +99,8 @@ Status circularlist_insert(CircularList *list, long i, void *item);
 Status circularlist_first(CircularList *list, void **first);
 
 /**
- * Retrieves, but does not remove, the last element of the circular list, and
- * stores the element into '*last'.
+ * Retrieves, but does not remove, the last element of the circular list, and stores the element
+ * into `*last`.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -115,8 +112,8 @@ Status circularlist_first(CircularList *list, void **first);
 Status circularlist_last(CircularList *list, void **last);
 
 /**
- * Retrieves the element at the specified index from the circular list without removing
- * it, and stores the element into '*item'.
+ * Retrieves the element at the specified index from the circular list without removing it, and
+ * stores the element into `*item`.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -130,8 +127,8 @@ Status circularlist_last(CircularList *list, void **last);
 Status circularlist_get(CircularList *list, long i, void **item);
 
 /**
- * Replaces the element at the specified position in the circular list with the specified
- * element. The old element is then placed into '*previous'.
+ * Replaces the element at the specified position in the circular list with the specified element.
+ * The old element is then placed into `*previous`.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -147,8 +144,8 @@ Status circularlist_get(CircularList *list, long i, void **item);
 Status circularlist_set(CircularList *list, long i, void *item, void **previous);
 
 /**
- * Retrieves and removes the first element of the circular list, and stores the
- * removed element into '*first'.
+ * Retrieves and removes the first element of the circular list, and stores the removed element into
+ * `*first`.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -160,8 +157,8 @@ Status circularlist_set(CircularList *list, long i, void *item, void **previous)
 Status circularlist_removeFirst(CircularList *list, void **first);
 
 /**
- * Retrieves and removes the last element of the circular list, and stores the
- * removed element into '*last'.
+ * Retrieves and removes the last element of the circular list, and stores the removed element into
+ * `*last`.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -173,9 +170,8 @@ Status circularlist_removeFirst(CircularList *list, void **first);
 Status circularlist_removeLast(CircularList *list, void **last);
 
 /**
- * Removes the element at the specified position in the circular list. Shifts any
- * subsequent elements to the left (subtracts one from their indices). Stores the
- * removed element into '*item'.
+ * Removes the element at the specified position in the circular list. Shifts any subsequent
+ * elements to the left (subtracts one from their indices). Stores the removed element into `*item`.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -189,9 +185,9 @@ Status circularlist_removeLast(CircularList *list, void **last);
 Status circularlist_remove(CircularList *list, long i, void **item);
 
 /**
- * Rotates the elements in the circular list forward, such that, the first item is moved
- * to the back, and the next element becomes the front. If the list is currently empty,
- * no rotations are performed.
+ * Rotates the elements in the circular list forward, such that, the first item is moved to the
+ * back, and the next element becomes the front. If the list is currently empty, no rotations are
+ * performed.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -201,9 +197,9 @@ Status circularlist_remove(CircularList *list, long i, void **item);
 void circularlist_rotateForward(CircularList *list);
 
 /**
- * Rotates the elements in the circular list backward, such that, the last item is moved
- * to the front, and the previous element becomes the last. If the list is currently empty,
- * no rotations are performed.
+ * Rotates the elements in the circular list backward, such that, the last item is moved to the
+ * front, and the previous element becomes the last. If the list is currently empty, no rotations
+ * are performed.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -213,8 +209,8 @@ void circularlist_rotateForward(CircularList *list);
 void circularlist_rotateBackward(CircularList *list);
 
 /**
- * Removes all elements from the circular list. If 'destructor' is not NULL, it will
- * be invoked on each element in the circular list after being removed.
+ * Removes all elements from the circular list. If `destructor` is not NULL, it will be invoked on
+ * each element in the circular list after being removed.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -245,9 +241,9 @@ long circularlist_size(CircularList *list);
 Boolean circularlist_isEmpty(CircularList *list);
 
 /**
- * Allocates and generates an array containing all of the circular list's elements
- * in proper sequence (from first to last element), then stores the array into '*array'.
- * Caller is responsible for freeing the array when finished.
+ * Allocates and generates an array containing all of the circular list's elements in proper
+ * sequence (from first to last element), then stores the array into `*array`. Caller is responsible
+ * for freeing the array when finished.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -260,9 +256,9 @@ Boolean circularlist_isEmpty(CircularList *list);
 Status circularlist_toArray(CircularList *list, Array **array);
 
 /**
- * Creates an Iterator instance to iterate over the circular list's elements in proper
- * sequence (from first to last element), then stores the iterator into '*iter'. Caller
- * is responsible for destroying the iterator instance when finished.
+ * Creates an Iterator instance to iterate over the circular list's elements in proper sequence
+ * (from first to last element), then stores the iterator into `*iter`. Caller is responsible for
+ * destroying the iterator instance when finished.
  *
  * Params:
  *    list - The circular list to operate on.
@@ -275,9 +271,8 @@ Status circularlist_toArray(CircularList *list, Array **array);
 Status circularlist_iterator(CircularList *list, Iterator **iter);
 
 /**
- * Destroys the circular list instance by freeing all of its reserved memory. If
- * 'destructor' is not NULL, it will be invoked on each element before the circular
- * list is destroyed.
+ * Destroys the circular list instance by freeing all of its reserved memory. If `destructor` is not
+ * NULL, it will be invoked on each element before the circular list is destroyed.
  *
  * Params:
  *    list - The circular list to operate on.

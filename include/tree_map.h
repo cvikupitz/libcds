@@ -3,23 +3,20 @@
  *
  * Copyright (c) 2020 Cole Vikupitz
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #ifndef _CDS_TREEMAP_H__
@@ -31,35 +28,32 @@
 /**
  * Interface for the TmEntry ADT.
  *
- * This ADT stores the key-value pairings in the TreeMap ADT and are provided back
- * to the caller from invocations to toArray() and iterator().
+ * This ADT stores the key-value pairings in the TreeMap ADT and are provided back to the caller
+ * from invocations to toArray() and iterator().
  */
 typedef struct tm_entry TmEntry;
 
 /**
  * Declaration for the TreeMap ADT.
  *
- * A red-black tree set storing elements based on key-value pairings. The treemap
- * is sorted by the stored keys based on their natural ordering defined through a
- * comparator provided at construction time. Provides self-balancing capabilities
- * for even distribution.
+ * A red-black tree set storing elements based on key-value pairings. The treemap is sorted by the
+ * stored keys based on their natural ordering defined through a comparator provided at construction
+ * time. Provides self-balancing capabilities for even distribution.
  *
  * Modeled after the Java 7 TreeMap interface.
  */
 typedef struct treemap TreeMap;
 
 /**
- * Constructs a new treemap, then stores the new instance into '*tree'.
+ * Constructs a new treemap, then stores the new instance into `*tree`.
  *
- * The comparator function specified should return an integer comparing the two
- * specified keys, such that cmp(a, b) returns 0 when a == b, <0 when a < b, and
- * >0 when a > b.
+ * The comparator function specified should return an integer comparing the two specified keys, such
+ * that cmp(a, b) returns 0 when a == b, <0 when a < b, and >0 when a > b.
  *
- * The key destructor function should be a function that performs any de-allocation
- * needed on the treemap's keys (if applicable). This function will be invoked on
- * the entry's key prior to being removed, the treemap being cleared, or the treemap
- * being destructed. If no de-allocation/destructor for the custom keys is required,
- * you may pass NULL as this parameter.
+ *  The key destructor function should be a function that performs any de-allocation needed on the
+ * treemap's keys (if applicable). This function will be invoked on the entry's key prior to being
+ * removed, the treemap being cleared, or the treemap being destructed. If no de-allocation or
+ * destructor for the custom keys is required, you may pass NULL as this parameter.
  *
  * Params:
  *    tree - The pointer address to store the new TreeMap instance.
@@ -70,12 +64,11 @@ typedef struct treemap TreeMap;
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status treemap_new(TreeMap **tree, int (*keyComparator)(void *, void *),
-        void (*keyDestructor)(void *));
+                   void (*keyDestructor)(void *));
 
 /**
- * Associates the specified value with the specified key in the treemap. If the
- * treemap previously contained a mapping for the key, the old value is replaced, and
- * stored into '*previous'.
+ * Associates the specified value with the specified key in the treemap. If the treemap previously
+ * contained a mapping for the key, the old value is replaced, and stored into `*previous`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -84,15 +77,14 @@ Status treemap_new(TreeMap **tree, int (*keyComparator)(void *, void *),
  *    previous - The pointer address to store the previous value into.
  * Returns:
  *    INSERTED - Key and value was inserted.
- *    REPLACED - Value was updated in the treemap, and the old value was
- *               stored into '*previous' due to the key already existing.
+ *    REPLACED - Value was updated in the treemap, and the old value was stored into `*previous` due
+ *               to the key already existing.
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status treemap_put(TreeMap *tree, void *key, void *value, void **previous);
 
 /**
- * Fetches the first (least) key currently in the treemap, then stores the result
- * into '*firstKey'.
+ * Fetches the first (least) key currently in the treemap, then stores the result into `*firstKey`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -104,8 +96,8 @@ Status treemap_put(TreeMap *tree, void *key, void *value, void **previous);
 Status treemap_firstKey(TreeMap *tree, void **firstKey);
 
 /**
- * Fetches the key-value mapping associated with the least key in this map, then
- * stores the result into '*first'.
+ * Fetches the key-value mapping associated with the least key in this map, then stores the result
+ * into `*first`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -117,8 +109,7 @@ Status treemap_firstKey(TreeMap *tree, void **firstKey);
 Status treemap_first(TreeMap *tree, TmEntry **first);
 
 /**
- * Fetches the last (greatest) key currently in the treemap, then stores the result
- * into '*lastKey'.
+ * Fetches the last (greatest) key currently in the treemap, then stores the result into `*lastKey`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -130,8 +121,8 @@ Status treemap_first(TreeMap *tree, TmEntry **first);
 Status treemap_lastKey(TreeMap *tree, void **lastKey);
 
 /**
- * Fetches the key-value mapping associated with the greatest key in this map, then
- * stores the result into '*last'.
+ * Fetches the key-value mapping associated with the greatest key in this map, then stores the
+ * result into `*last`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -143,8 +134,8 @@ Status treemap_lastKey(TreeMap *tree, void **lastKey);
 Status treemap_last(TreeMap *tree, TmEntry **last);
 
 /**
- * Fetches the greatest key in the treemap less than or equal to the given key, then
- * stores the result into '*floorKey'.
+ * Fetches the greatest key in the treemap less than or equal to the given key, then stores the
+ * result into `*floorKey`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -158,8 +149,8 @@ Status treemap_last(TreeMap *tree, TmEntry **last);
 Status treemap_floorKey(TreeMap *tree, void *key, void **floorKey);
 
 /**
- * Fetches the greatest entry in the treemap less than or equal to the given
- * key, then stores the result into '*floor'.
+ * Fetches the greatest entry in the treemap less than or equal to the given key, then stores the
+ * result into `*floor`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -173,8 +164,8 @@ Status treemap_floorKey(TreeMap *tree, void *key, void **floorKey);
 Status treemap_floor(TreeMap *tree, void *key, TmEntry **floor);
 
 /**
- * Fetches the least key in the treemap greater than or equal to the given key, then
- * stores the result into '*ceilingKey'.
+ * Fetches the least key in the treemap greater than or equal to the given key, then stores the
+ * result into `*ceilingKey`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -188,8 +179,8 @@ Status treemap_floor(TreeMap *tree, void *key, TmEntry **floor);
 Status treemap_ceilingKey(TreeMap *tree, void *key, void **ceilingKey);
 
 /**
- * Fetches the least entry in the treemap greater than or equal to the given key,
- * then stores the result into '*ceiling'.
+ * Fetches the least entry in the treemap greater than or equal to the given key, then stores the
+ * result into `*ceiling`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -203,8 +194,8 @@ Status treemap_ceilingKey(TreeMap *tree, void *key, void **ceilingKey);
 Status treemap_ceiling(TreeMap *tree, void *key, TmEntry **ceiling);
 
 /**
- * Fetches the greatest key in the treemap strictly less than the given key, then
- * stores the result into '*lowerKey'.
+ * Fetches the greatest key in the treemap strictly less than the given key, then stores the result
+ * into `*lowerKey`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -218,8 +209,8 @@ Status treemap_ceiling(TreeMap *tree, void *key, TmEntry **ceiling);
 Status treemap_lowerKey(TreeMap *tree, void *key, void **lowerKey);
 
 /**
- * Fetches the greatest entry in the treemap strictly less than the given key, then
- * stores the result into '*lower'.
+ * Fetches the greatest entry in the treemap strictly less than the given key, then stores the
+ * result into `*lower`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -233,8 +224,8 @@ Status treemap_lowerKey(TreeMap *tree, void *key, void **lowerKey);
 Status treemap_lower(TreeMap *tree, void *key, TmEntry **lower);
 
 /**
- * Fetches the least key in the treemap strictly greater than the given key, then
- * stores the result into '*higherKey'.
+ * Fetches the least key in the treemap strictly greater than the given key, then stores the result
+ * into `*higherKey`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -248,8 +239,8 @@ Status treemap_lower(TreeMap *tree, void *key, TmEntry **lower);
 Status treemap_higherKey(TreeMap *tree, void *key, void **higherKey);
 
 /**
- * Fetches the least entry in the treemap strictly greater than the given key, then
- * stores the result into '*higher'.
+ * Fetches the least entry in the treemap strictly greater than the given key, then stores the
+ * result into `*higher`.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -263,8 +254,7 @@ Status treemap_higherKey(TreeMap *tree, void *key, void **higherKey);
 Status treemap_higher(TreeMap *tree, void *key, TmEntry **higher);
 
 /**
- * Returns TRUE if the treemap contains a mapping for the specified key, FALSE if
- * otherwise.
+ * Returns TRUE if the treemap contains a mapping for the specified key, FALSE if otherwise.
  *
  * Params:
  *    map - The treemap to operate on.
@@ -275,8 +265,7 @@ Status treemap_higher(TreeMap *tree, void *key, TmEntry **higher);
 Boolean treemap_containsKey(TreeMap *tree, void *key);
 
 /**
- * Fetches the value to which the specified key is mapped, and stores the result
- * into '*value'.
+ * Fetches the value to which the specified key is mapped, and stores the result into `*value`.
  *
  * Params:
  *    map - The treemap to operate on.
@@ -290,8 +279,8 @@ Boolean treemap_containsKey(TreeMap *tree, void *key);
 Status treemap_get(TreeMap *tree, void *key, void **value);
 
 /**
- * Retrieves and removes the first (least) entry from the treemap, then stores the
- * removed key and value into '*firstKey' and '*firstValue', respectively.
+ * Retrieves and removes the first (least) entry from the treemap, then stores the removed key and
+ * value into `*firstKey` and `*firstValue`, respectively.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -304,8 +293,8 @@ Status treemap_get(TreeMap *tree, void *key, void **value);
 Status treemap_pollFirst(TreeMap *tree, void **firstKey, void **firstValue);
 
 /**
- * Retrieves and removes the last (greatest) entry from the treemap, then stores the
- * removed key and value into '*lastKey' and '*lastValue', respectively.
+ * Retrieves and removes the last (greatest) entry from the treemap, then stores the removed key and
+ * value into `*lastKey` and `*lastValue`, respectively.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -332,8 +321,8 @@ Status treemap_pollLast(TreeMap *tree, void **lastKey, void **lastValue);
 Status treemap_remove(TreeMap *tree, void *key, void **value);
 
 /**
- * Removes all elements from the treemap. If 'valueDestructor' is not NULL, it
- * will be invoked on each element in the treemap after being removed.
+ * Removes all elements from the treemap. If `valueDestructor` is not NULL, it will be invoked on
+ * each element in the treemap after being removed.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -364,9 +353,9 @@ long treemap_size(TreeMap *tree);
 Boolean treemap_isEmpty(TreeMap *tree);
 
 /**
- * Allocates and generates an array containing all of the treemap's keys in in proper
- * sequence (defined by the key comparator, from least to greatest), then stores the
- * array into '*keys'. Caller is responsible for freeing the array when finished.
+ * Allocates and generates an array containing all of the treemap's keys in in proper sequence
+ * (defined by the key comparator, from least to greatest), then stores the array into `*keys`.
+ * Caller is responsible for freeing the array when finished.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -379,10 +368,10 @@ Boolean treemap_isEmpty(TreeMap *tree);
 Status treemap_keyArray(TreeMap *tree, Array **keys);
 
 /**
- * Allocates and generates an array containing all of the treemap's entries in proper
- * sequence (defined by the key comparator, from least to greatest), then stores the
- * array into '*entries'. Note that the items provided in the array are 'TmEntry*' values.
- * Caller is responsible for freeing the array when finished.
+ * Allocates and generates an array containing all of the treemap's entries in proper sequence
+ * (defined by the key comparator, from least to greatest), then stores the array into `*entries`.
+ * Note that the items provided in the array are `TmEntry*` values. Caller is responsible for
+ * freeing the array when finished.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -395,10 +384,10 @@ Status treemap_keyArray(TreeMap *tree, Array **keys);
 Status treemap_entryArray(TreeMap *tree, Array **entries);
 
 /**
- * Creates an Iterator instance to iterate over the treemap's elements in proper
- * sequence (defined by the key's comparator, from least to greatest), then stores the
- * iterator into '*iter'. Note that the items being iterated over are 'TmEntry*' values.
- * Caller is responsible for destroying the iterator instance when finished.
+ * Creates an Iterator instance to iterate over the treemap's elements in proper sequence (defined
+ * by the key's comparator, from least to greatest), then stores the iterator into `*iter`. Note
+ * that the items being iterated over are `TmEntry*` values. Caller is responsible for destroying
+ * the iterator instance when finished.
  *
  * Params:
  *    tree - The treemap to operate on.
@@ -411,9 +400,8 @@ Status treemap_entryArray(TreeMap *tree, Array **entries);
 Status treemap_iterator(TreeMap *tree, Iterator **iter);
 
 /**
- * Destroys the treemap instance by freeing all of its reserved memory. If
- * 'valueDestructor' is not NULL, it will be invoked on each entry's value before the
- * treemap is destroyed.
+ * Destroys the treemap instance by freeing all of its reserved memory. If `valueDestructor` is not
+ * NULL, it will be invoked on each entry's value before the treemap is destroyed.
  *
  * Params:
  *    tree - The treemap to destroy.

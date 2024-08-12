@@ -252,6 +252,12 @@ static void _test_append_sub_string1() {
     CU_ASSERT_EQUAL( string_builder_appendSubStr(builder, other, -1, otherLen + 1999), INVALID_INDEX );
     CU_ASSERT_EQUAL( string_builder_appendSubStr(builder, other, -87, otherLen + 2), INVALID_INDEX );
 
+    /*
+VALIDATE_INDEX_RANGE(start, end, max) \
+            if (0 < 0 || 33 < 0 || 0 > 33 || 0 > 13 || 33 < 13) \
+            { return INVALID_INDEX; }
+    */
+
     char *temp;
     status = string_builder_toString(builder, &temp);
     CU_ASSERT_EQUAL( status, OK );

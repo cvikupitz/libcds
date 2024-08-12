@@ -3,23 +3,20 @@
  *
  * Copyright (c) 2020 Cole Vikupitz
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction,
+ * including without limitation the rights to use, copy, modify, merge, publish, distribute,
+ * sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in all copies or
+ * substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT
+ * NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 #ifndef _CDS_ARRAYLIST_H__
@@ -38,9 +35,8 @@
 typedef struct arraylist ArrayList;
 
 /**
- * Constructs a new array list instance with the specified starting capacity, then
- * stores the new instance into '*list'. If the capacity given is <= 0, a default
- * capacity is assigned.
+ * Constructs a new array list instance with the specified starting capacity, then stores the new
+ * instance into `*list`. If the capacity given is <= 0, a default capacity is assigned.
  *
  * Params:
  *    list - The pointer address to store the new ArrayList instance.
@@ -64,9 +60,9 @@ Status arraylist_new(ArrayList **list, long capacity);
 Status arraylist_add(ArrayList *list, void *item);
 
 /**
- * Inserts the specified element at the specified position in the array list. Shifts
- * the element currently at that position (if any) and any subsequent elements to the
- * right (adds one to their indices).
+ * Inserts the specified element at the specified position in the array list. Shifts the element
+ * currently at that position (if any) and any subsequent elements to the right (adds one to their
+ * indices).
  *
  * Params:
  *    list - The array list to operate on.
@@ -94,8 +90,7 @@ Status arraylist_insert(ArrayList *list, long i, void *item);
 Status arraylist_get(ArrayList *list, long i, void **item);
 
 /**
- * Replaces the element at the specified position in the array list with the specified
- * element.
+ * Replaces the element at the specified position in the array list with the specified element.
  *
  * Params:
  *    list - The array list to operate on.
@@ -111,8 +106,8 @@ Status arraylist_get(ArrayList *list, long i, void **item);
 Status arraylist_set(ArrayList *list, long i, void *item, void **previous);
 
 /**
- * Removes the element at the specified position in the array list. Shifts any subsequent
- * elements to the left (subtracts one from their indices).
+ * Removes the element at the specified position in the array list. Shifts any subsequent elements
+ * to the left (subtracts one from their indices).
  *
  * Params:
  *    list - The array list to operate on.
@@ -126,8 +121,8 @@ Status arraylist_set(ArrayList *list, long i, void *item, void **previous);
 Status arraylist_remove(ArrayList *list, long i, void **item);
 
 /**
- * Increases the capacity of the array list, if necessary, to ensure that it can hold
- * at least the number of elements specified by the minimum capacity argument.
+ * Increases the capacity of the array list, if necessary, to ensure that it can hold at least the
+ * number of elements specified by the minimum capacity argument.
  *
  * Params:
  *    list - The array list to operate on.
@@ -151,8 +146,8 @@ Status arraylist_ensureCapacity(ArrayList *list, long capacity);
 Status arraylist_trimToSize(ArrayList *list);
 
 /**
- * Removes all elements from the array list. If 'destructor' is not NULL, it will be
- * invoked on each element in the array list after being removed.
+ * Removes all elements from the array list. If `destructor` is not NULL, it will be invoked on each
+ * element in the array list after being removed.
  *
  * Params:
  *    list - The array list to operate on.
@@ -173,8 +168,8 @@ void arraylist_clear(ArrayList *list, void (*destructor)(void *));
 long arraylist_size(ArrayList *list);
 
 /**
- * Returns the array list's current capacity, that is, the maximum number of elements
- * it can hold before resizing is required.
+ * Returns the array list's current capacity, that is, the maximum number of elements it can hold
+ * before resizing is required.
  *
  * Params:
  *    list - The array list to operate on.
@@ -194,9 +189,9 @@ long arraylist_capacity(ArrayList *list);
 Boolean arraylist_isEmpty(ArrayList *list);
 
 /**
- * Allocates and generates an array containing all of the array list's elements in
- * proper sequence (from first to last element), then stores the array into '*array'.
- * Caller is responsible for freeing the array when finished.
+ * Allocates and generates an array containing all of the array list's elements in proper sequence
+ * (from first to last element), then stores the array into `*array`. Caller is responsible for
+ * freeing the array when finished.
  *
  * Params:
  *    list - The array list to operate on.
@@ -209,9 +204,9 @@ Boolean arraylist_isEmpty(ArrayList *list);
 Status arraylist_toArray(ArrayList *list, Array **array);
 
 /**
- * Creates an Iterator instance to iterate over the array list's elements in proper
- * sequence (from first to last element), then stores the iterator into '*iter'. Caller
- * is responsible for destroying the iterator instance when finished.
+ * Creates an Iterator instance to iterate over the array list's elements in proper sequence (from
+ * first to last element), then stores the iterator into `*iter`. Caller is responsible for
+ * destroying the iterator instance when finished.
  *
  * Params:
  *    list - The array list to operate on.
@@ -224,8 +219,8 @@ Status arraylist_toArray(ArrayList *list, Array **array);
 Status arraylist_iterator(ArrayList *list, Iterator **iter);
 
 /**
- * Destroys the array list instance by freeing all of its reserved memory. If 'destructor'
- * is not NULL, it will be invoked on each element before the arraylist is destroyed.
+ * Destroys the array list instance by freeing all of its reserved memory. If `destructor` is not
+ * NULL, it will be invoked on each element before the arraylist is destroyed.
  *
  * Params:
  *    list - The array list to destroy.
