@@ -50,7 +50,7 @@ typedef struct treemap TreeMap;
  * The comparator function specified should return an integer comparing the two specified keys, such
  * that cmp(a, b) returns 0 when a == b, <0 when a < b, and >0 when a > b.
  *
- *  The key destructor function should be a function that performs any de-allocation needed on the
+ * The key destructor function should be a function that performs any de-allocation needed on the
  * treemap's keys (if applicable). This function will be invoked on the entry's key prior to being
  * removed, the treemap being cleared, or the treemap being destructed. If no de-allocation or
  * destructor for the custom keys is required, you may pass NULL as this parameter.

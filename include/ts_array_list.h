@@ -91,7 +91,9 @@ Status ts_arraylist_add(ConcurrentArrayList *list, void *item);
  *    item - The element to be inserted.
  * Returns:
  *    OK - Operation was successful.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` > size
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_arraylist_insert(ConcurrentArrayList *list, long i, void *item);
@@ -106,7 +108,9 @@ Status ts_arraylist_insert(ConcurrentArrayList *list, long i, void *item);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Array list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status ts_arraylist_get(ConcurrentArrayList *list, long i, void **item);
 
@@ -122,7 +126,9 @@ Status ts_arraylist_get(ConcurrentArrayList *list, long i, void **item);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Array list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status ts_arraylist_set(ConcurrentArrayList *list, long i, void *item, void **previous);
 
@@ -137,7 +143,9 @@ Status ts_arraylist_set(ConcurrentArrayList *list, long i, void *item, void **pr
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Array list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status ts_arraylist_remove(ConcurrentArrayList *list, long i, void **item);
 

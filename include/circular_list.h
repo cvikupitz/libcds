@@ -80,7 +80,9 @@ Status circularlist_addLast(CircularList *list, void *item);
  *    item - The element to be inserted.
  * Returns:
  *    OK - Operation was successful.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status circularlist_insert(CircularList *list, long i, void *item);
@@ -122,7 +124,9 @@ Status circularlist_last(CircularList *list, void **last);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Circular list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status circularlist_get(CircularList *list, long i, void **item);
 
@@ -139,7 +143,9 @@ Status circularlist_get(CircularList *list, long i, void **item);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Circular list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status circularlist_set(CircularList *list, long i, void *item, void **previous);
 
@@ -180,7 +186,9 @@ Status circularlist_removeLast(CircularList *list, void **last);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Circular list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status circularlist_remove(CircularList *list, long i, void **item);
 

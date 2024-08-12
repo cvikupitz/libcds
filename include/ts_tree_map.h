@@ -29,7 +29,7 @@
 /**
  * Declaration for the thread-safe TreeMap ADT.
  *
- *  A red-black tree set storing elements based on key-value pairings. The treemap is sorted by the
+ * A red-black tree set storing elements based on key-value pairings. The treemap is sorted by the
  * stored keys based on their natural ordering defined through a comparator provided at construction
  * time. Provides self-balancing capabilities for even distribution.
  *

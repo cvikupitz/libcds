@@ -70,7 +70,9 @@ Status arraylist_add(ArrayList *list, void *item);
  *    item - The element to be inserted.
  * Returns:
  *    OK - Operation was successful.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` > size
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status arraylist_insert(ArrayList *list, long i, void *item);
@@ -85,7 +87,9 @@ Status arraylist_insert(ArrayList *list, long i, void *item);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Array list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status arraylist_get(ArrayList *list, long i, void **item);
 
@@ -101,7 +105,9 @@ Status arraylist_get(ArrayList *list, long i, void **item);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Array list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status arraylist_set(ArrayList *list, long i, void *item, void **previous);
 
@@ -116,7 +122,9 @@ Status arraylist_set(ArrayList *list, long i, void *item, void **previous);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Array list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status arraylist_remove(ArrayList *list, long i, void **item);
 

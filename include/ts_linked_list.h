@@ -102,7 +102,9 @@ Status ts_linkedlist_addLast(ConcurrentLinkedList *list, void *item);
  *    item - The element to be inserted.
  * Returns:
  *    OK - Operation was successful.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` > size
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status ts_linkedlist_insert(ConcurrentLinkedList *list, long i, void *item);
@@ -144,7 +146,9 @@ Status ts_linkedlist_last(ConcurrentLinkedList *list, void **last);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Linked list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status ts_linkedlist_get(ConcurrentLinkedList *list, long i, void **item);
 
@@ -161,7 +165,9 @@ Status ts_linkedlist_get(ConcurrentLinkedList *list, long i, void **item);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Linked list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status ts_linkedlist_set(ConcurrentLinkedList *list, long i, void *item, void **previous);
 
@@ -200,7 +206,9 @@ Status ts_linkedlist_removeLast(ConcurrentLinkedList *list, void **last);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Linked list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status ts_linkedlist_remove(ConcurrentLinkedList *list, long i, void **item);
 

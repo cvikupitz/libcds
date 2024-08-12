@@ -81,7 +81,9 @@ Status linkedlist_addLast(LinkedList *list, void *item);
  *    item - The element to be inserted.
  * Returns:
  *    OK - Operation was successful.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index > size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` > size
  *    ALLOC_FAILURE - Failed to allocate enough memory from the heap.
  */
 Status linkedlist_insert(LinkedList *list, long i, void *item);
@@ -123,7 +125,9 @@ Status linkedlist_last(LinkedList *list, void **last);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Linked list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status linkedlist_get(LinkedList *list, long i, void **item);
 
@@ -139,7 +143,9 @@ Status linkedlist_get(LinkedList *list, long i, void **item);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Linked list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
  */
 Status linkedlist_set(LinkedList *list, long i, void *item, void **previous);
 
@@ -178,8 +184,9 @@ Status linkedlist_removeLast(LinkedList *list, void **last);
  * Returns:
  *    OK - Operation was successful.
  *    STRUCT_EMPTY - Linked list is currently empty.
- *    INVALID_INDEX - Index given is out of range (index < 0 || index >= size()).
- */
+ *    INVALID_INDEX - Index given is invalid:
+ *       1.) `i` < 0
+ *       2.) `i` >= size
 Status linkedlist_remove(LinkedList *list, long i, void **item);
 
 /**
